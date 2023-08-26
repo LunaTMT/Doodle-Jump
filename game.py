@@ -47,10 +47,7 @@ class Game:
 
     def update(self):
         self.bullets.update()
-
-        for platform in self.platforms.sprites():
-            platform.update()
-
+        self.platforms.update()
         self.player.update()
         
 
@@ -69,7 +66,7 @@ class Game:
             self.handle_events()
             self.update()
             self.draw()
-            self.clock.tick(60)
+            self.clock.tick(10)
 
         pygame.quit()
         sys.exit()

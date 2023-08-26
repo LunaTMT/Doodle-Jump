@@ -14,15 +14,15 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         self.game = game
+        self.CENTER_X = game.CENTER_X
+        self.CENTER_Y = game.CENTER_Y
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
         self.JUMP_STRENGTH = game.JUMP_STRENGTH
 
         self.default_x = self.x = x
         self.default_y = self.y = y
-        self.start_y = 0
-        self.excess_y = 0
-        self.previous_y_difference = 0
+        self.previous_y_difference = int(self.y - self.CENTER_Y)
 
         self.speed = 5 
         
@@ -55,6 +55,8 @@ class Player(pygame.sprite.Sprite):
         self.jumping = False
         self.falling = False
 
+        self.counter = 0
+
     def handle_events(self, event=None):
         keys = pygame.key.get_pressed()
         if keys[K_LEFT]:
@@ -86,8 +88,8 @@ class Player(pygame.sprite.Sprite):
         self.game.bullets.add(bullet)
 
     def jump(self):
-        self.excess_y = (self.SCREEN_HEIGHT // 2) - (self.y - 273)
-        #print(self.excess_y)
+        self.excess_y = self.CENTER_X - (self.y - 273)
+
         self.velocity_y = JUMP_STRENGTH
         self.on_ground = False
         self.jumping = True
@@ -97,7 +99,7 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.velocity_y += GRAVITY
         self.y += self.velocity_y
-
+        
         #Gravity update
         if self.velocity_y > GRAVITY:
             self.falling = True 
@@ -137,14 +139,17 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = (self.x, self.y)
 
         
-        if self.y < (self.SCREEN_HEIGHT // 2)  - self.rect.height:
-            difference = (self.y - 450) - self.previous_y_difference
-            self.previous_y_difference = self.y - 450
+        if self.y < self.CENTER_Y - self.rect.height:
+            
+            difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
+            self.previous_y_difference = int(self.y - self.CENTER_Y)
 
-            for platform in self.game.platforms.sprites():
-                platform.rect.y -= int(difference)
+            for tile in self.game.platforms.sprites():
+                tile.rect.y -= int(difference)
 
+            print(difference, self.previous_y_difference, int(self.y))
             self.rect.y = (self.SCREEN_HEIGHT // 2) - self.rect.height
+            
        
 
         #Set the rect x and y depending on all this.

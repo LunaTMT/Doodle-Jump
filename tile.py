@@ -2,13 +2,15 @@ import pygame
 
 class Tile(pygame.sprite.Sprite):
 
+    SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
+    DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 58, 18))  # Extract a 32x32 sprite
+
+
     def __init__(self, game, x, y):
         super().__init__()
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
 
-        SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
-        self.DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 58, 18))  # Extract a 32x32 sprite
         self.x = x
         self.y = y
         self.image = self.DEFAULT_IMAGE
