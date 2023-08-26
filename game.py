@@ -7,8 +7,8 @@ from random import choice, randint
 
 pygame.init()
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 900
 GRAVITY = 0.3 # Adjust gravity strength
 JUMP_STRENGTH = -10  # Adjust jump strength
 
@@ -18,6 +18,11 @@ clock = pygame.time.Clock()
 pygame.init()
 pygame.mixer.init()
 
+class AllSprites(pygame.sprite.Group):
+    def draw(self, surface):
+        for sprite in self.sprites():
+            sprite.draw(surface)
+
 all_sprites = pygame.sprite.Group()
 platforms = pygame.sprite.Group()
 
@@ -25,22 +30,13 @@ platforms = pygame.sprite.Group()
 class Game:
     def __init__(self):
         self.running = True
-        
+        self.background_image = pygame.image.load("Doodle_Jump/assets/images/background.png")
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.platform1 = Platform(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 40)
         self.platform2 = Platform(SCREEN_WIDTH // 2 + 100, SCREEN_HEIGHT - 80)
 
-       
-        for i in range(30):
-
-            platform = Platform(randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
-            
-            collision = pygame.sprite.spritecollide(platform, platforms, False, pygame.sprite.collide_mask)
-            if collision:
-                print("Collision")
-            else:
-                all_sprites.add(platform)
-                platforms.add(platform)
+    
+        self.generate_tiles(30)
 
         all_sprites.add(self.player)
         all_sprites.add(self.platform1)
@@ -68,7 +64,9 @@ class Game:
 
     def draw(self):
         screen.fill(colours.WHITE)
+        screen.blit(self.background_image, (0, 0))
         all_sprites.draw(screen)
+        self.player.draw(screen)
         pygame.display.flip()
 
     def run(self):
@@ -80,6 +78,20 @@ class Game:
 
         pygame.quit()
         sys.exit()
+
+    def generate_tiles(self, n):
+        for _ in range(n):
+            platform = Platform(randint(58, SCREEN_WIDTH - 58), randint(0, SCREEN_HEIGHT))
+            collision = pygame.sprite.spritecollide(platform, platforms, False, pygame.sprite.collide_mask)
+            
+            while collision:
+                platform = Platform(randint(58, SCREEN_WIDTH - 58 ), randint(0, SCREEN_HEIGHT))
+                collision = pygame.sprite.spritecollide(platform, platforms, False, pygame.sprite.collide_mask)
+            
+            all_sprites.add(platform)
+            platforms.add(platform)
+
+
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -100,27 +112,34 @@ class Platform(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
 
         self.x = x
         self.y = y
-        self.width = 50
-        self.height = 50
         self.color = (0, 255, 0)
         self.speed = 5  
         
         self.left_image = pygame.image.load("Doodle_Jump/assets/images/left.png").convert_alpha()
+        self.left_image_nose = pygame.image.load("Doodle_Jump/assets/images/left_nose.png").convert_alpha()
+
         self.left_jump_image = pygame.image.load("Doodle_Jump/assets/images/left_jump.png").convert_alpha()
-
+        self.left_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/left_jump_nose.png").convert_alpha()
+        
         self.right_image = pygame.image.load("Doodle_Jump/assets/images/right.png").convert_alpha()
+        self.right_image_nose = pygame.image.load("Doodle_Jump/assets/images/right_nose.png").convert_alpha()
+
         self.right_jump_image = pygame.image.load("Doodle_Jump/assets/images/right_jump.png").convert_alpha()
-
-        self.shoot_image = pygame.image.load("Doodle_Jump/assets/images/shoot_jump.png").convert_alpha()
-        self.shoot_jump_image = pygame.image.load("Doodle_Jump/assets/images/shoot.png").convert_alpha()
-
+        self.right_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/right_jump_nose.png").convert_alpha()
+        
+        self.shoot_image = pygame.image.load("Doodle_Jump/assets/images/shoot.png").convert_alpha()
+        self.shoot_image_nose = pygame.image.load("Doodle_Jump/assets/images/shoot_nose.png").convert_alpha()
+        
+        self.shoot_jump_image = pygame.image.load("Doodle_Jump/assets/images/shoot_jump.png").convert_alpha()
+        self.shoot_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/shoot_jump_nose.png").convert_alpha()
+        
+        self.prior_nose = self.nose = self.left_image_nose
         self.prior_image = self.image = self.left_image
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -130,6 +149,7 @@ class Player(pygame.sprite.Sprite):
         self.on_ground = False
         self.jumping = False
         self.falling = False
+
 
         
     def handle_events(self, event=None):
@@ -144,19 +164,20 @@ class Player(pygame.sprite.Sprite):
         if event and event.type == KEYDOWN:
             if event.key in (K_SPACE, K_UP):
                 self.shoot()
-                
-
-
 
     def move_left(self):
         self.prior_image = self.image = self.left_image
+        self.prior_nose = self.nose = self.left_image_nose
         self.x -= self.speed
 
     def move_right(self):
         self.prior_image = self.image = self.right_image
+        self.prior_nose = self.nose = self.right_image_nose
         self.x += self.speed
 
     def shoot(self):
+        self.prior_image = self.image = self.shoot_image
+        self.prior_nose = self.nose = self.shoot_image_nose
         shoot_sound = choice((sounds.shoot_1, sounds.shoot_2))
         shoot_sound.play()
         bullet = Bullet(self.rect.centerx, self.rect.top)
@@ -183,12 +204,16 @@ class Player(pygame.sprite.Sprite):
             match self.image:
                 case self.left_image:
                     self.image = self.left_jump_image
+                    self.nose  = self.left_jump_image_nose
                 case self.right_image:
                     self.image = self.right_jump_image
+                    self.nose  = self.right_jump_image_nose
                 case self.shoot_image:
                     self.image = self.shoot_jump_image
+                    self.nose  = self.shoot_jump_image_nose
         else:
             self.image = self.prior_image
+            self.nose = self.prior_nose
             
             
         if self.y > SCREEN_HEIGHT - self.rect.height:
@@ -196,11 +221,18 @@ class Player(pygame.sprite.Sprite):
             self.velocity_y = 0
             self.on_ground = True
             
+
+        if self.x > SCREEN_WIDTH:
+            self.x = 0
+        elif self.x < 0:
+            self.x = SCREEN_WIDTH
+
         self.rect.topleft = (self.x, self.y)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-
+        if self.nose:
+            screen.blit(self.nose, self.rect)
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
