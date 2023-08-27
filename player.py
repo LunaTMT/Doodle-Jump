@@ -56,6 +56,8 @@ class Player(pygame.sprite.Sprite):
         self.falling = False
 
         self.counter = 0
+        self.differences = []
+    
 
     def handle_events(self, event=None):
         keys = pygame.key.get_pressed()
@@ -129,6 +131,9 @@ class Player(pygame.sprite.Sprite):
             self.velocity_y = 0
             self.on_ground = True
         
+
+
+
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side
         if self.x > self.SCREEN_WIDTH:
@@ -141,13 +146,17 @@ class Player(pygame.sprite.Sprite):
         
         if self.y < self.CENTER_Y - self.rect.height:
             
+            
             difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
             self.previous_y_difference = int(self.y - self.CENTER_Y)
+            
+            for platform in self.game.platforms.sprites():
+                platform.rect.y -= difference
 
-            for tile in self.game.platforms.sprites():
-                tile.rect.y -= int(difference)
-
-            print(difference, self.previous_y_difference, int(self.y))
+            for platform in self.game.movable_platforms.sprites():
+                platform.rect.y -= difference
+            
+            #print(difference, self.previous_y_difference, int(self.y), self.previous_y_difference - self.y)
             self.rect.y = (self.SCREEN_HEIGHT // 2) - self.rect.height
             
        

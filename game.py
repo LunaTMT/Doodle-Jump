@@ -4,7 +4,7 @@ import assets.colours as colours
 import assets.sounds as sounds
 from random import choice, randint
 from player import Player
-from tile import Tile
+from tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
 
 class Game:
 
@@ -21,7 +21,10 @@ class Game:
     clock = pygame.time.Clock()
 
     all_sprites = pygame.sprite.Group()
+    movable_platforms = pygame.sprite.Group()
     platforms = pygame.sprite.Group()
+    
+   
     bullets = pygame.sprite.Group()
 
 
@@ -30,7 +33,12 @@ class Game:
         self.background_image = pygame.image.load("Doodle_Jump/assets/images/background.png")
         self.player = Player(self, self.CENTER_X, self.CENTER_Y)
         self.all_sprites.add(self.player)
-        self.generate_tiles(20)
+        self.generate_tiles(n=10)
+        self.generate_tiles(n=2, top=False, tile_type=MovingTile)
+        self.generate_tiles(n=2, top=False, tile_type=ShiftingTile)
+        self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
+        self.generate_tiles(n=1, top=False, tile_type=DisappearingTile)
+        self.generate_tiles(n=5, top=False, tile_type=BrokenTile)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -38,24 +46,23 @@ class Game:
                 self.running = False
             self.player.handle_events(event)
 
-        self.player.handle_events()
-        
-        collisions = pygame.sprite.spritecollide(self.player, self.platforms, False, pygame.sprite.collide_mask)
-        if collisions and self.player.falling:
-            self.player.jump()
+            for platform in self.movable_platforms:
+                platform.handle_events(event)
 
+        self.player.handle_events()
 
     def update(self):
         self.bullets.update()
+        self.movable_platforms.update()
         self.platforms.update()
         self.player.update()
         
-
     def draw(self):
         self.screen.fill(colours.WHITE)
         self.screen.blit(self.background_image, (0, 0))
-        
+
         self.bullets.draw(self.screen)
+        self.movable_platforms.draw(self.screen)
         self.platforms.draw(self.screen)
         self.player.draw(self.screen)
 
@@ -66,31 +73,36 @@ class Game:
             self.handle_events()
             self.update()
             self.draw()
-            self.clock.tick(10)
+            self.clock.tick(60)
 
         pygame.quit()
         sys.exit()
 
-    def generate_tiles(self, n, top=False):
+    def generate_tiles(self, n, top=False, tile_type=Tile):
         
+        """Need to change this function because the collision detections and spawning is working fully"""
         for _ in range(n):
             
-            x, y = randint(58, self.SCREEN_WIDTH - 58), (0 if top else randint(0, self.SCREEN_HEIGHT))
-            new_platform_rect = pygame.Rect(x, y, 58, 18)
+            x, y = randint(90, self.SCREEN_WIDTH - 90), (0 if top else randint(0, self.SCREEN_HEIGHT))
+            new_platform_rect = pygame.Rect(x, y, 90, 40)
 
-            while any(new_platform_rect.colliderect(platform) for platform in self.platforms.sprites()):
-                x, y = randint(58, self.SCREEN_WIDTH - 58), (0 if top else randint(0, self.SCREEN_HEIGHT))
-                new_platform_rect = pygame.Rect(x, y, 58, 18)
-            
-            platform = Tile(self, x, y)
-            self.all_sprites.add(platform)
-            self.platforms.add(platform)
+            while any(new_platform_rect.colliderect(platform) for platform in  self.movable_platforms.sprites()):
+                print("collision")
+                x, y = randint(90, self.SCREEN_WIDTH - 90), (0 if top else randint(0, self.SCREEN_HEIGHT))
+                new_platform_rect = pygame.Rect(x, y, 90, 40)
 
-class Platforms(pygame.sprite.Group):
+            platform = tile_type(self, x, y)
+
+            if tile_type == MoveableTile:
+                self.movable_platforms.add(platform)
+            else:
+                self.platforms.add(platform)
+
+"""class Platforms(pygame.sprite.Group):
     def update(self):
         # Custom update logic for the entire group
         for platform in self.sprites():
-            platform.update()
+            platform.update()"""
 
 
 
