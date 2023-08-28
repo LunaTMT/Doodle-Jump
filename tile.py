@@ -6,6 +6,7 @@ class Tile(pygame.sprite.Sprite):
 
     SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 0, 58, 18))  # Extract a 32x32 sprite
+    LARGE_DEFAULT_IMAGE =  pygame.image.load("Doodle_Jump/assets/images/tiles/large_default.png")
     MOVING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 19, 58, 17)) 
     DISAPPEARING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 55, 58, 17)) 
     SHIFTING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 182, 58, 17)) 
@@ -16,7 +17,7 @@ class Tile(pygame.sprite.Sprite):
     BROKEN_TILE_IMAGE_2  = SPRITE_SHEET.subsurface(pygame.Rect(0, 116, 62, 27)) 
     BROKEN_TILE_IMAGE_3  = SPRITE_SHEET.subsurface(pygame.Rect(0, 148, 62, 32)) 
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, menu=False):
         super().__init__()
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
@@ -26,7 +27,7 @@ class Tile(pygame.sprite.Sprite):
 
         self.x = x
         self.y = y
-        self.image = self.DEFAULT_IMAGE
+        self.image = self.DEFAULT_IMAGE if not menu else self.LARGE_DEFAULT_IMAGE
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, self.y)
@@ -164,8 +165,7 @@ class ShiftingTile(Tile):
             
             if self.target_x - 5 <= self.rect.x <= self.target_x + 5:
                 self.shift = False
-         
-            
+             
 class MoveableTile(Tile):
     def __init__(self, game, x, y):
         super().__init__(game, x, y)
@@ -174,7 +174,7 @@ class MoveableTile(Tile):
         self.moved = False
 
     def handle_events(self, event):
-        print(self.moved)
+        
         
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not self.moved:
             if self.rect.collidepoint(event.pos):
@@ -194,8 +194,9 @@ class MoveableTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if collision and self.player.falling:
             self.player.jump()
-
+           
             if self.moving:
+                self.moving = False
                 self.moved = True
 
 

@@ -5,19 +5,24 @@ import assets.sounds as sounds
 from random import choice, randint
 
 
-GRAVITY = 0.4 # Adjust gravity strength
-JUMP_STRENGTH = -15 
+
 
 class Player(pygame.sprite.Sprite):
 
+
+    
     def __init__(self, game, x, y):
         super().__init__()
 
         self.game = game
+        
+ 
+
         self.CENTER_X = game.CENTER_X
         self.CENTER_Y = game.CENTER_Y
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
+        self.GRAVITY = game.GRAVITY
         self.JUMP_STRENGTH = game.JUMP_STRENGTH
 
         self.default_x = self.x = x
@@ -26,23 +31,23 @@ class Player(pygame.sprite.Sprite):
 
         self.speed = 5 
         
-        self.left_image = pygame.image.load("Doodle_Jump/assets/images/left.png").convert_alpha()
-        self.left_image_nose = pygame.image.load("Doodle_Jump/assets/images/left_nose.png").convert_alpha()
+        self.left_image = pygame.image.load("Doodle_Jump/assets/images/player/left.png").convert_alpha()
+        self.left_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/left_nose.png").convert_alpha()
 
-        self.left_jump_image = pygame.image.load("Doodle_Jump/assets/images/left_jump.png").convert_alpha()
-        self.left_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/left_jump_nose.png").convert_alpha()
+        self.left_jump_image = pygame.image.load("Doodle_Jump/assets/images/player/left_jump.png").convert_alpha()
+        self.left_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/left_jump_nose.png").convert_alpha()
         
-        self.right_image = pygame.image.load("Doodle_Jump/assets/images/right.png").convert_alpha()
-        self.right_image_nose = pygame.image.load("Doodle_Jump/assets/images/right_nose.png").convert_alpha()
+        self.right_image = pygame.image.load("Doodle_Jump/assets/images/player/right.png").convert_alpha()
+        self.right_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/right_nose.png").convert_alpha()
 
-        self.right_jump_image = pygame.image.load("Doodle_Jump/assets/images/right_jump.png").convert_alpha()
-        self.right_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/right_jump_nose.png").convert_alpha()
+        self.right_jump_image = pygame.image.load("Doodle_Jump/assets/images/player/right_jump.png").convert_alpha()
+        self.right_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/right_jump_nose.png").convert_alpha()
         
-        self.shoot_image = pygame.image.load("Doodle_Jump/assets/images/shoot.png").convert_alpha()
-        self.shoot_image_nose = pygame.image.load("Doodle_Jump/assets/images/shoot_nose.png").convert_alpha()
+        self.shoot_image = pygame.image.load("Doodle_Jump/assets/images/player/shoot.png").convert_alpha()
+        self.shoot_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/shoot_nose.png").convert_alpha()
         
-        self.shoot_jump_image = pygame.image.load("Doodle_Jump/assets/images/shoot_jump.png").convert_alpha()
-        self.shoot_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/shoot_jump_nose.png").convert_alpha()
+        self.shoot_jump_image = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump.png").convert_alpha()
+        self.shoot_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump_nose.png").convert_alpha()
         
         self.prior_nose = self.nose = self.left_image_nose
         self.prior_image = self.image = self.left_image
@@ -50,6 +55,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, self.y)
         
+        self.prior_y_velocity = 0
         self.velocity_y = 0
         self.on_ground = False
         self.jumping = False
@@ -57,21 +63,15 @@ class Player(pygame.sprite.Sprite):
 
         self.counter = 0
         self.differences = []
-    
+        self.paused = False
 
-    def handle_events(self, event=None):
-        keys = pygame.key.get_pressed()
-        if keys[K_LEFT]:
-            self.move_left()
-        if keys[K_RIGHT]:
-            self.move_right()
-        if keys[K_SPACE] or keys[K_UP]:
-            self.prior_image = self.image = self.shoot_image
-            self.prior_nose = self.nose = self.shoot_image_nose
-        
-        if event and event.type == KEYDOWN:
-            if event.key in (K_SPACE, K_UP):
+    def handle_events(self, event):
+        if not self.paused: 
+            if ((event.type == KEYDOWN and event.key in (K_SPACE, K_UP)) or 
+                (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1)):
                 self.shoot()
+
+           
 
     def move_left(self):
         self.prior_image = self.image = self.left_image
@@ -92,18 +92,31 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.excess_y = self.CENTER_X - (self.y - 273)
 
-        self.velocity_y = JUMP_STRENGTH
+        self.velocity_y = self.JUMP_STRENGTH
         self.on_ground = False
         self.jumping = True
         sounds.jump.play()
         
 
     def update(self):
-        self.velocity_y += GRAVITY
+
+        keys = pygame.key.get_pressed()
+            
+        if keys[K_LEFT]:
+            self.move_left()
+        if keys[K_RIGHT]:
+            self.move_right()
+        if keys[K_SPACE] or keys[K_UP]:
+            self.prior_image = self.image = self.shoot_image
+            self.prior_nose = self.nose = self.shoot_image_nose
+
+
+
+        self.velocity_y += self.GRAVITY
         self.y += self.velocity_y
         
         #Gravity update
-        if self.velocity_y > GRAVITY:
+        if self.velocity_y > self.GRAVITY:
             self.falling = True 
             self.jumping = False
         else:
