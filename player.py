@@ -9,15 +9,11 @@ from random import choice, randint
 
 class Player(pygame.sprite.Sprite):
 
-
-    
     def __init__(self, game, x, y):
         super().__init__()
 
         self.game = game
-        
- 
-
+    
         self.CENTER_X = game.CENTER_X
         self.CENTER_Y = game.CENTER_Y
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
@@ -66,7 +62,7 @@ class Player(pygame.sprite.Sprite):
         self.paused = False
 
     def handle_events(self, event):
-        if not self.paused: 
+        if not self.paused:
             if ((event.type == KEYDOWN and event.key in (K_SPACE, K_UP)) or 
                 (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1)):
                 self.shoot()
@@ -91,7 +87,6 @@ class Player(pygame.sprite.Sprite):
 
     def jump(self):
         self.excess_y = self.CENTER_X - (self.y - 273)
-
         self.velocity_y = self.JUMP_STRENGTH
         self.on_ground = False
         self.jumping = True
@@ -109,8 +104,6 @@ class Player(pygame.sprite.Sprite):
         if keys[K_SPACE] or keys[K_UP]:
             self.prior_image = self.image = self.shoot_image
             self.prior_nose = self.nose = self.shoot_image_nose
-
-
 
         self.velocity_y += self.GRAVITY
         self.y += self.velocity_y
@@ -144,9 +137,6 @@ class Player(pygame.sprite.Sprite):
             self.velocity_y = 0
             self.on_ground = True
         
-
-
-
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side
         if self.x > self.SCREEN_WIDTH:

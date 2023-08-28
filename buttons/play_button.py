@@ -1,10 +1,14 @@
 import pygame
 import assets.sounds as sounds
 
+from player import Player
+
 class PlayButton:
     def __init__(self, game):
         self.game = game
         self.player = game.player
+        self.CENTER_X = game.CENTER_X
+        self.CENTER_Y = game.CENTER_Y
 
         self.image = pygame.image.load("Doodle_Jump/assets/images/buttons/play.png")
         self.hover_image = pygame.image.load("Doodle_Jump/assets/images/buttons/play_highlight.png")
@@ -36,8 +40,12 @@ class PlayButton:
                 self.clicked = False
                 self.hide = True
                 
+                self.game.player = Player(self.game, self.CENTER_X, self.CENTER_Y)
+                self.game.all_sprites.add(self.player)
                 self.game.main_menu = False
                 self.game.play_game = True
+                self.game.initialise_game_objects()
+
                 sounds.button.play()
 
     def draw(self, screen):

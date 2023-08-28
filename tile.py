@@ -22,6 +22,7 @@ class Tile(pygame.sprite.Sprite):
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
+        
         self.CENTER_X = game.CENTER_X
         self.player = game.player
 
@@ -89,12 +90,14 @@ class MovingTile(Tile):
         self.speed = random.randint(1, 4)
         self.image = self.MOVING_TILE_IMAGE
         self._generate_boudaries()
+        self.paused = False
 
     def update(self):
-        self.rect.x += self.velocity * self.speed
-        self.boundary_check()
-        self.death_check()
-        self.player_collision_check()
+        if not self.player.paused:
+            self.rect.x += self.velocity * self.speed
+            self.boundary_check()
+            self.death_check()
+            self.player_collision_check()
 
     def boundary_check(self):
         if self.rect.right > self.max_right:

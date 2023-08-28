@@ -3,11 +3,14 @@ import sys
 import assets.colours as colours
 import assets.sounds as sounds
 from random import choice, randint
-from player import Player
+
 from tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
 from buttons.pause_button import PauseButton
 from buttons.resume_button import ResumeButton
 from buttons.play_button import PlayButton
+
+from player import Player
+from menu_player import MenuPlayer
 
 class Game:
 
@@ -37,16 +40,22 @@ class Game:
 
 
     def __init__(self):
-        self.running = True#
+        self.running = True
         self.main_menu = True
         self.play_game = False
 
-        self.player = Player(self, self.CENTER_X, self.CENTER_Y)
-        self.all_sprites.add(self.player)
-        self.resume_button = ResumeButton(self)
-        self.pause_button = PauseButton(self)
+        
+        self.player = MenuPlayer(self, 110, 750)
+        self.main_menu_platform = Tile(self, 140, 763)
+
         self.play_button = PlayButton(self)
         
+    
+        
+    def initialise_game_objects(self):
+        self.resume_button = ResumeButton(self)
+        self.pause_button = PauseButton(self)
+
         self.generate_tiles(n=8)
         self.generate_tiles(n=1, top=False, tile_type=MovingTile)
         self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
@@ -72,8 +81,13 @@ class Game:
     
 
     def update(self):
+        
+        
         if self.main_menu:
+            self.player.update()
             self.play_button.update()
+            self.main_menu_platform.update()
+           
 
         if self.play_game:
             self.bullets.update()
@@ -86,6 +100,7 @@ class Game:
         if self.main_menu:
             self.draw_main_menu()
             self.play_button.draw(self.screen)
+            self.player.draw(self.screen)
 
         if self.play_game:
             self.screen.fill(colours.WHITE)
@@ -138,8 +153,7 @@ class Game:
         
     def draw_main_menu(self):
         self.screen.blit(self.MAIN_MENU_IMAGE, (0, 0))
-        platform = Tile(self, 117, 763, menu=True)
-        platform.draw(self.screen)
+        self.main_menu_platform.draw(self.screen)
 
 
 
