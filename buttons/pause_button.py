@@ -10,7 +10,7 @@ class PauseButton:
         self.image = pygame.image.load("Doodle_Jump/assets/images/buttons/pause.png")
         self.rect = self.image.get_rect()
         self.rect.x = game.SCREEN_WIDTH - self.rect.width - 10
-        self.rect.y = 10
+        self.rect.y = 20
 
         self.clicked = False
         self.hide = False

@@ -43,12 +43,16 @@ class Game:
         self.running = True
         self.main_menu = True
         self.play_game = False
+        pygame.init()
         
         self.player = MenuPlayer(self, 110, 750)
         self.main_menu_platform = Tile(self, 140, 763)
         self.play_button = PlayButton(self)
         
         self.frame = 0
+
+        
+        self.score_font = pygame.font.Font(None, 50)
     
         
     def initialise_game_objects(self):
@@ -57,7 +61,7 @@ class Game:
 
         
         self.monsters.add(Monster(self))
-        self.generate_tiles(n=10)
+        self.generate_tiles(n=5)
         self.generate_tiles(n=1, top=False, tile_type=MovingTile)
         self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
         self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
@@ -83,13 +87,11 @@ class Game:
 
     def update(self):
         
-        
         if self.main_menu:
             self.player.update()
             self.play_button.update()
             self.main_menu_platform.update()
-           
-
+        
         if self.play_game:
             self.bullets.update()
             self.movable_platforms.update()
@@ -114,7 +116,9 @@ class Game:
             self.player.draw(self.screen)
             self.monsters.draw(self.screen)
             
+            
             self.draw_top()
+            self.draw_score()
             self.pause_button.draw(self.screen)
             self.resume_button.draw(self.screen)
 
@@ -160,5 +164,8 @@ class Game:
         self.screen.blit(self.MAIN_MENU_IMAGE, (0, 0))
         self.main_menu_platform.draw(self.screen)
 
+    def draw_score(self):
 
+        score_text = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
+        self.screen.blit(score_text, (20, 20))
 

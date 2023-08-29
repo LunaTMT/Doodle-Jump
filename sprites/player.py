@@ -60,6 +60,7 @@ class Player(pygame.sprite.Sprite):
         
         self.prior_y_velocity = 0
         self.velocity_y = 0
+        self.score = 0
         self.on_ground = False
         self.jumping = False
         self.falling = False
@@ -102,9 +103,12 @@ class Player(pygame.sprite.Sprite):
         
 
     def update(self):
+        print(self.y)
         self.update_movement()
         self.update_position_based_on_gravity()
         self.update_directional_image()
+        self.update_score()
+
         self.fall_check()
 
         self.y_boundary_check()
@@ -154,6 +158,16 @@ class Player(pygame.sprite.Sprite):
             self.image = self.prior_image
             self.nose = self.prior_nose
 
+
+    def update_score(self):
+        print(int(self.y))
+        if self.y > 0:
+            self.score = max(self.score, self.SCREEN_HEIGHT - self.y - self.CENTER_Y)
+        elif self.y < 0:
+            self.score = max(self.score, self.SCREEN_HEIGHT + abs(self.y) - self.CENTER_Y)
+    
+
+
     def fall_check(self):
         if self.velocity_y > 20 and not self.end_game:
             sounds.fall.play()
@@ -201,9 +215,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = (self.SCREEN_HEIGHT // 2) - self.rect.height
 
     def draw(self, screen):
-        
-        
-        
+
         screen.blit(self.image, self.rect)
         if self.nose:
             screen.blit(self.nose, self.rect)
