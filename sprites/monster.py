@@ -15,7 +15,7 @@ class Monster(pygame.sprite.Sprite):
     TERRIFIER = SPRITE_SHEET.subsurface(pygame.Rect(3, 421, 58, 86))  # Extract a 32x32 sprite
     FAT_GREEN = SPRITE_SHEET.subsurface(pygame.Rect(0, 359, 84, 53))  # Extract a 32x32 sprite
     BAT = SPRITE_SHEET.subsurface(pygame.Rect(148, 0, 77, 45))
-    DOUBLE = SPRITE_SHEET.subsurface(pygame.Rect(63, 180, 80, 50))
+    DOUBLE = SPRITE_SHEET.subsurface(pygame.Rect(63, 183, 80, 53))
     CUCUMBER = SPRITE_SHEET.subsurface(pygame.Rect(512, 425, 65, 85))
     BALL = SPRITE_SHEET.subsurface(pygame.Rect(149, 263, 46, 39))
     UGLY = SPRITE_SHEET.subsurface(pygame.Rect(514, 70, 87, 54))
@@ -53,10 +53,10 @@ class Monster(pygame.sprite.Sprite):
         
    
         self.angle = 0 
-        self.speed = random.randint(1,5)
+        self.prior_speed = self.speed = random.randint(1,5)
 
-        self.speed_x = random.randint(1,5)
-        self.speed_y = random.randint(1,5)
+        self.prior_speed_x = self.speed_x = random.randint(1,5)
+        self.prior_speed_y = self.speed_y = random.randint(1,5)
         
         self.direction = 1
         self.direction_x = 1
@@ -84,6 +84,7 @@ class Monster(pygame.sprite.Sprite):
         
         if self.rect.colliderect(self.game.player.rect) and not self.collision:
             self.game.player.paused = True
+            self.game.player.knocked_out = True
             self.game.player.velocity_y = -1
             self.collision = True
             sounds.thump.set_volume(4)
@@ -93,7 +94,7 @@ class Monster(pygame.sprite.Sprite):
         
 
     def killed_check(self):
-        if pygame.sprite.spritecollide(self, self.game.bullets, False):
+        if pygame.sprite.spritecollide(self, self.game.bullets, True):
             random.choice((sounds.die_1, sounds.die_2)).play()
             self.sound.stop()
             self.kill()

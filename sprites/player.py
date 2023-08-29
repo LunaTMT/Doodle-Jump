@@ -44,12 +44,19 @@ class Player(pygame.sprite.Sprite):
         
         self.shoot_jump_image = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump.png").convert_alpha()
         self.shoot_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump_nose.png").convert_alpha()
-        
+
+    
         self.prior_nose = self.nose = self.left_image_nose
         self.prior_image = self.image = self.left_image
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, self.y)
+        
+        self.stars_1 = pygame.image.load("Doodle_Jump/assets/images/animations/stars_1.png").convert_alpha()
+        self.stars_2 = pygame.image.load("Doodle_Jump/assets/images/animations/stars_2.png").convert_alpha()
+        self.stars_3 = pygame.image.load("Doodle_Jump/assets/images/animations/stars_3.png").convert_alpha()
+        self.stars_location = (self.rect.x, self.rect.top-10)
+        self.knocked_out_animation = [self.stars_1,  self.stars_2,  self.stars_3]
         
         self.prior_y_velocity = 0
         self.velocity_y = 0
@@ -60,6 +67,7 @@ class Player(pygame.sprite.Sprite):
         self.counter = 0
         self.differences = []
         self.paused = False
+        self.knocked_out = False
 
     def handle_events(self, event):
         if not self.paused:
@@ -94,11 +102,20 @@ class Player(pygame.sprite.Sprite):
         
 
     def update(self):
+        self.update_movement()
+        self.update_position_based_on_gravity()
+        self.update_directional_image()
+        self.fall_check()
+
+        self.y_boundary_check()
+        self.x_boundary_check()
+
+        self.update_other_sprites_based_upon_player_jump_difference()
         
         
+    def update_movement(self):
         keys = pygame.key.get_pressed()
         mouse_buttons = pygame.mouse.get_pressed()
-
         
         if keys[K_LEFT]:
             self.move_left()
@@ -108,16 +125,19 @@ class Player(pygame.sprite.Sprite):
             self.prior_image = self.image = self.shoot_image
             self.prior_nose = self.nose = self.shoot_image_nose
 
+        
+    def update_position_based_on_gravity(self):
         self.velocity_y += self.GRAVITY
         self.y += self.velocity_y
-        
+    
         #Gravity update
         if self.velocity_y > self.GRAVITY:
             self.falling = True 
             self.jumping = False
         else:
             self.falling = False
-        
+
+    def update_directional_image(self): 
         #Alter images depending on whether the sprite is jumping, else revert to default
         if self.jumping:
             match self.image:
@@ -133,15 +153,26 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = self.prior_image
             self.nose = self.prior_nose
-            
+
+    def fall_check(self):
+        if self.velocity_y > 20 and not self.end_game:
+            sounds.fall.play()
+            self.end_game = True
+
+
+    def y_boundary_check(self):
         #end game state check
-        if self.y > self.SCREEN_HEIGHT - self.rect.height and not self.end_game:
+        
+        if self.y >= self.SCREEN_HEIGHT - self.rect.height:
             self.y = self.SCREEN_HEIGHT - self.rect.height
             self.velocity_y = 0
             self.on_ground = True
-            self.end_game = True
-            sounds.fall.play()
-        
+            
+            if not self.end_game:
+                self.end_game = True
+                sounds.fall.play()
+            
+    def x_boundary_check(self):
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side
         if self.x > self.SCREEN_WIDTH:
@@ -152,8 +183,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = (self.x, self.y)
 
         
+    def update_other_sprites_based_upon_player_jump_difference(self):
         if self.y < self.CENTER_Y - self.rect.height:
-            
             
             difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
             self.previous_y_difference = int(self.y - self.CENTER_Y)
@@ -166,18 +197,19 @@ class Player(pygame.sprite.Sprite):
             
             for monster in self.game.monsters.sprites():
                 monster.rect.y -= difference
-            #print(difference, self.previous_y_difference, int(self.y), self.previous_y_difference - self.y)
+        
             self.rect.y = (self.SCREEN_HEIGHT // 2) - self.rect.height
-            
-        
-
-            #Set the rect x and y depending on all this.
-        
 
     def draw(self, screen):
+        
+        
+        
         screen.blit(self.image, self.rect)
         if self.nose:
             screen.blit(self.nose, self.rect)
+        if self.knocked_out:
+            screen.blit(self.knocked_out_animation[self.game.frame % 3], (self.rect.x, self.rect.top - 10))
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):

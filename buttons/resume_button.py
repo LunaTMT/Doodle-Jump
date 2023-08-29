@@ -21,6 +21,14 @@ class ResumeButton(PauseButton):
                 self.game.GRAVITY = self.player.GRAVITY = 0.4
                 self.player.velocity_y = self.player.prior_y_velocity
                 self.player.paused = False
+
+                for monster in self.monsters:
+                    pygame.mixer.unpause()
+                    monster.speed   = monster.prior_speed
+                    monster.speed_x = monster.prior_speed_x 
+                    monster.speed_y = monster.prior_speed_y 
+
+
                 self.hide = True
                 self.clicked = False
                 self.game.pause_button.hide = False

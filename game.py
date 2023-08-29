@@ -4,7 +4,7 @@ import assets.colours as colours
 import assets.sounds as sounds
 from random import choice, randint
 
-from tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
+from sprites.tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
 from buttons.pause_button import PauseButton
 from buttons.resume_button import ResumeButton
 from buttons.play_button import PlayButton
@@ -21,6 +21,8 @@ class Game:
     CENTER_Y = SCREEN_HEIGHT // 2
     GRAVITY = 0.4 # Adjust gravity strength
     JUMP_STRENGTH = -15  # Adjust jump strength
+    
+    FRAME_RATE = 60
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     BACKGROUND_IMAGE = pygame.image.load("Doodle_Jump/assets/images/backgrounds/background.png")
@@ -46,6 +48,7 @@ class Game:
         self.main_menu_platform = Tile(self, 140, 763)
         self.play_button = PlayButton(self)
         
+        self.frame = 0
     
         
     def initialise_game_objects(self):
@@ -122,7 +125,9 @@ class Game:
             self.handle_events()
             self.update()
             self.draw()
+            self.frame += 1
             self.clock.tick(60)
+            
 
         pygame.quit()
         sys.exit()
