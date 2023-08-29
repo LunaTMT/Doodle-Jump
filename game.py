@@ -9,8 +9,9 @@ from buttons.pause_button import PauseButton
 from buttons.resume_button import ResumeButton
 from buttons.play_button import PlayButton
 
-from player import Player
-from menu_player import MenuPlayer
+from sprites.player import Player
+from sprites.menu_player import MenuPlayer
+from sprites.monster import Monster
 
 class Game:
 
@@ -22,13 +23,9 @@ class Game:
     JUMP_STRENGTH = -15  # Adjust jump strength
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
     BACKGROUND_IMAGE = pygame.image.load("Doodle_Jump/assets/images/backgrounds/background.png")
-
     TOP_IMAGE =  pygame.image.load("Doodle_Jump/assets/images/backgrounds/top.png").convert_alpha()
-
     MAIN_MENU_IMAGE = pygame.image.load("Doodle_Jump/assets/images/backgrounds/main_menu.png").convert_alpha()
-
 
     pygame.display.set_caption("Doodle Jump")
     clock = pygame.time.Clock()
@@ -37,17 +34,16 @@ class Game:
     movable_platforms = pygame.sprite.Group()
     platforms = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
+    monsters = pygame.sprite.Group()
 
 
     def __init__(self):
         self.running = True
         self.main_menu = True
         self.play_game = False
-
         
         self.player = MenuPlayer(self, 110, 750)
         self.main_menu_platform = Tile(self, 140, 763)
-
         self.play_button = PlayButton(self)
         
     
@@ -56,12 +52,14 @@ class Game:
         self.resume_button = ResumeButton(self)
         self.pause_button = PauseButton(self)
 
-        self.generate_tiles(n=8)
+        
+        self.monsters.add(Monster(self))
+        self.generate_tiles(n=10)
         self.generate_tiles(n=1, top=False, tile_type=MovingTile)
         self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
         self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
-        self.generate_tiles(n=1, top=False, tile_type=DisappearingTile)
-        self.generate_tiles(n=4, top=False, tile_type=BrokenTile)
+        self.generate_tiles(n=3, top=False, tile_type=DisappearingTile)
+        self.generate_tiles(n=1, top=False, tile_type=BrokenTile)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -94,6 +92,7 @@ class Game:
             self.movable_platforms.update()
             self.platforms.update()
             self.player.update()
+            self.monsters.update()
 
         
     def draw(self):
@@ -110,6 +109,7 @@ class Game:
             self.movable_platforms.draw(self.screen)
             self.platforms.draw(self.screen)
             self.player.draw(self.screen)
+            self.monsters.draw(self.screen)
             
             self.draw_top()
             self.pause_button.draw(self.screen)

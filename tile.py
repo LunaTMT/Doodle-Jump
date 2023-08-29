@@ -39,7 +39,7 @@ class Tile(pygame.sprite.Sprite):
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling:
+        if collision and self.player.falling and not self.player.paused:
             self.player.jump()
 
     def death_check(self):
@@ -79,7 +79,7 @@ class BrokenTile(Tile):
     def player_collision_check(self):
         if not self.fall:
             collision = pygame.sprite.collide_rect(self.player, self)
-            if collision and self.player.falling:
+            if collision and self.player.falling and not self.player.paused:
                 sounds.tile_break.play()
                 self.fall = True
                 
@@ -126,7 +126,7 @@ class DisappearingTile(Tile):
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling:
+        if collision and self.player.falling and not self.player.paused:
             sounds.tile_disappear.play()
             self.player.jump()
             self.game.generate_tiles(1, top=True, tile_type = type(self))
@@ -149,7 +149,7 @@ class ShiftingTile(Tile):
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling:
+        if collision and self.player.falling and not self.player.paused:
             
             target_x = random.randint(self.lower_bound, self.upper_bound)
             while self.rect.left - 50 < target_x < self.rect.right + 50:
@@ -195,7 +195,7 @@ class MoveableTile(Tile):
     
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling:
+        if collision and self.player.falling and not self.player.paused:
             self.player.jump()
            
             if self.moving:

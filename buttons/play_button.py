@@ -1,7 +1,7 @@
 import pygame
 import assets.sounds as sounds
 
-from player import Player
+from sprites.player import Player
 
 class PlayButton:
     def __init__(self, game):
