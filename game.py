@@ -12,6 +12,7 @@ from buttons.play_button import PlayButton
 from sprites.player import Player
 from sprites.menu_player import MenuPlayer
 from sprites.monster import Monster
+from sprites.blackhole import Blackhole
 
 class Game:
 
@@ -37,13 +38,14 @@ class Game:
     platforms = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     monsters = pygame.sprite.Group()
-
+ 
 
     def __init__(self):
         self.running = True
         self.main_menu = True
         self.play_game = False
         pygame.init()
+        
         
         self.player = MenuPlayer(self, 110, 750)
         self.main_menu_platform = Tile(self, 140, 763)
@@ -60,7 +62,9 @@ class Game:
         self.pause_button = PauseButton(self)
 
         
-        self.monsters.add(Monster(self))
+
+        #self.monsters.add(Monster(self))
+        self.blackhole = Blackhole(self)
         self.generate_tiles(n=5)
         self.generate_tiles(n=1, top=False, tile_type=MovingTile)
         self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
@@ -98,6 +102,7 @@ class Game:
             self.platforms.update()
             self.player.update()
             self.monsters.update()
+            self.blackhole.update()
 
         
     def draw(self):
@@ -115,6 +120,7 @@ class Game:
             self.platforms.draw(self.screen)
             self.player.draw(self.screen)
             self.monsters.draw(self.screen)
+            self.blackhole.draw(self.screen)
             
             
             self.draw_top()
