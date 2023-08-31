@@ -60,13 +60,14 @@ class Player(pygame.sprite.Sprite):
         self.stars_location = (self.rect.x, self.rect.top-10)
         self.knocked_out_animation = [self.stars_1,  self.stars_2,  self.stars_3]
         
-
         
-        #self.black_hole_location = (game.blackhole.rect.centerx, game.blackhole.rect.centery) 
-        self.scale_speed = 0.005  # Adjust scale change speed as needed
-        self.current_location = [self.original_rect.x, self.original_rect.y]
+        self.rect = self.image.get_rect()
+    
+        self.movement_speed = 1
+        self.current_position = (self.rect.x, self.rect.y)
+        self.current_scale = 1.0
+        self.scale_speed = 0.002
         self.image_scale = 1
-
 
         self.blackhole_collision = False
         self.prior_y_velocity = 0
@@ -114,20 +115,20 @@ class Player(pygame.sprite.Sprite):
         
 
     def update(self):
-        print(self.y)
-        self.update_movement()
-        self.update_position_based_on_gravity()
-        self.update_directional_image()
-        self.update_score()
-
-        self.fall_check()
-
-        self.y_boundary_check()
-        self.x_boundary_check()
-        self.blackhole_check()
-
-        self.update_other_sprites_based_upon_player_jump_difference()
         
+        if not self.blackhole_collision:
+            self.update_movement()
+            self.update_position_based_on_gravity()
+            self.update_directional_image()
+            self.update_score()
+
+            self.fall_check()
+
+            self.y_boundary_check()
+            self.x_boundary_check()
+            self.update_other_sprites_based_upon_player_jump_difference()
+        else:
+            self.blackhole_check()
         
     def update_movement(self):
         keys = pygame.key.get_pressed()
@@ -143,15 +144,16 @@ class Player(pygame.sprite.Sprite):
 
         
     def update_position_based_on_gravity(self):
-        self.velocity_y += self.GRAVITY
-        self.y += self.velocity_y
-    
-        #Gravity update
-        if self.velocity_y > self.GRAVITY:
-            self.falling = True 
-            self.jumping = False
-        else:
-            self.falling = False
+        if not self.blackhole_collision:
+            self.velocity_y += self.GRAVITY
+            self.y += self.velocity_y
+        
+            #Gravity update
+            if self.velocity_y > self.GRAVITY:
+                self.falling = True 
+                self.jumping = False
+            else:
+                self.falling = False
 
     def update_directional_image(self): 
         #Alter images depending on whether the sprite is jumping, else revert to default
@@ -172,7 +174,6 @@ class Player(pygame.sprite.Sprite):
 
 
     def update_score(self):
-        print(int(self.y))
         if self.y > 0:
             self.score = max(self.score, self.SCREEN_HEIGHT - self.y - self.CENTER_Y)
         elif self.y < 0:
@@ -185,7 +186,6 @@ class Player(pygame.sprite.Sprite):
             sounds.fall.play()
             self.end_game = True
 
-
     def y_boundary_check(self):
         #end game state check
         
@@ -197,7 +197,7 @@ class Player(pygame.sprite.Sprite):
             if not self.end_game:
                 self.end_game = True
                 sounds.fall.play()
-            
+                
     def x_boundary_check(self):
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side
@@ -207,8 +207,35 @@ class Player(pygame.sprite.Sprite):
             self.x = self.SCREEN_WIDTH
 
         self.rect.topleft = (self.x, self.y)
+    
+    def blackhole_check(self):
+        blackhole_location = (self.game.blackhole.rect.centerx, self.game.blackhole.rect.centery)
+        if self.blackhole_collision and (self.rect.x, self.rect.y) != blackhole_location:
 
-        
+            dx = self.game.blackhole.rect.centerx - self.rect.centerx
+            dy = self.game.blackhole.rect.centery - self.rect.centery
+            distance = pygame.math.Vector2(dx, dy).length()
+  
+            if distance >= 1:
+                direction = pygame.math.Vector2(dx, dy).normalize()
+                movement_speed = 5
+                self.rect.move_ip(direction * movement_speed)
+            else:
+                self.rect.x = self.game.blackhole.rect.centerx
+                self.rect.y = self.game.blackhole.rect.centery
+                
+            if self.image_scale > 0.02:
+                self.image_scale -= 0.02
+                self.image = self.resize_image(self.image_scale)
+                scaled_rect = self.image.get_rect()
+                scaled_rect.center = self.rect.center 
+                self.rect = scaled_rect
+                self.nose = self.resize_image(self.image_scale)
+
+    def resize_image(self, scale):
+        return pygame.transform.scale(self.image, (int(self.rect.width * scale), int(self.rect.height * scale)))
+
+
     def update_other_sprites_based_upon_player_jump_difference(self):
         if self.y < self.CENTER_Y - self.rect.height:
             
@@ -224,40 +251,17 @@ class Player(pygame.sprite.Sprite):
             for monster in self.game.monsters.sprites():
                 monster.rect.y -= difference
             
+           
             self.game.blackhole.rect.y -= difference
         
             self.rect.y = (self.SCREEN_HEIGHT // 2) - self.rect.height
 
-    def blackhole_check(self):
-        blackhole_location = [self.game.blackhole.rect.centerx, self.game.blackhole.rect.centery]
-        if self.blackhole_collision and (self.rect.x, self.rect.y) != blackhole_location:
-
-            # Move towards the target location
-            dx = blackhole_location[0] - self.rect.x
-            dy = blackhole_location[1] - self.rect.y
-            distance = pygame.math.Vector2(dx, dy).length()
-            if distance > self.speed:
-                direction = pygame.math.Vector2(dx, dy).normalize()
-                self.rect.x += direction.x * self.speed
-                self.rect.y += direction.y * self.speed
-            else:
-                self.rect.x, self.rect.y = blackhole_location
-
-            if self.image_scale > 0:
-                self.image_scale -= self.scale_speed
-
-
-    def resize_image(self, scale):
-            return pygame.transform.scale(self.image, (int(self.original_rect.width * scale), int(self.original_rect.height * scale)))
-
     def draw(self, screen):
-
-        if self.image_scale > 0 and self.blackhole_collision:
-            scaled_image = self.resize_image(self.image_scale)
-            scaled_rect = scaled_image.get_rect(center=(self.rect.x, self.rect.y))
-            screen.blit(scaled_image, scaled_rect)
-        else:
-            screen.blit(self.image, self.rect)
+        
+  
+  
+        screen.blit(self.image, self.rect)
+        
         
         if self.nose:
             screen.blit(self.nose, self.rect)

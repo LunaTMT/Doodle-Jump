@@ -61,16 +61,14 @@ class Game:
         self.resume_button = ResumeButton(self)
         self.pause_button = PauseButton(self)
 
-        
-
         #self.monsters.add(Monster(self))
         self.blackhole = Blackhole(self)
-        self.generate_tiles(n=5)
-        self.generate_tiles(n=1, top=False, tile_type=MovingTile)
-        self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
-        self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
-        self.generate_tiles(n=3, top=False, tile_type=DisappearingTile)
-        self.generate_tiles(n=1, top=False, tile_type=BrokenTile)
+        self.generate_tiles(n=10)
+        #self.generate_tiles(n=1, top=False, tile_type=MovingTile)
+        #self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
+        #self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
+        #self.generate_tiles(n=3, top=False, tile_type=DisappearingTile)
+        #self.generate_tiles(n=1, top=False, tile_type=BrokenTile)
 
     def handle_events(self):
         for event in pygame.event.get():
