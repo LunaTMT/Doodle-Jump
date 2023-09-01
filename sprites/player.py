@@ -4,6 +4,7 @@ import assets.colours as colours
 import assets.sounds as sounds
 from random import choice, randint
 from sprites.power_ups.rocket import Rocket
+from sprites.power_ups.propeller import Propeller
 
 
 
@@ -45,6 +46,7 @@ class Player(pygame.sprite.Sprite):
         self.shoot_jump_image = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump.png").convert_alpha()
         self.shoot_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump_nose.png").convert_alpha()
 
+
     
         self.prior_nose = self.nose = self.left_image_nose
         self.prior_image = self.image = self.left_image
@@ -76,6 +78,8 @@ class Player(pygame.sprite.Sprite):
 
         self.flipped = False
         self.using_jetpack = False
+        self.using_propeller = False
+        self.power_ups = (self.using_jetpack, self.using_propeller)
         self.left = True 
         self.right = False
         self.black_hole_collided_with = None
@@ -111,23 +115,27 @@ class Player(pygame.sprite.Sprite):
         self.left = False
         self.flipped = False
 
+    def using_power_up(self):
+        return any((self.using_jetpack, self.using_propeller))
+
     def shoot(self):
-        if not self.using_jetpack:
+        if not self.using_power_up():
             shoot_sound = choice((sounds.shoot_1, sounds.shoot_2))
             shoot_sound.play()
             bullet = Bullet(self.rect.centerx, self.rect.top)
             self.game.bullets.add(bullet)
 
     def jump(self, play_sound=True):
-        self.game.frame = 0
-        self.excess_y = self.CENTER_X - (self.y - 273)
-        self.velocity_y = self.JUMP_STRENGTH
-        self.on_ground = False
-        self.jumping = True
+        if not self.using_power_up():
+            self.game.frame = 0
+            self.excess_y = self.CENTER_X - (self.y - 273)
+            self.velocity_y = self.JUMP_STRENGTH
+            self.on_ground = False
+            self.jumping = True
 
-        if play_sound:
-            sounds.jump.play()
-    
+            if play_sound:
+                sounds.jump.play()
+        
 
     def update(self):
         if not self.blackhole_collision:
@@ -152,7 +160,7 @@ class Player(pygame.sprite.Sprite):
             self.move_left()
         if keys[K_RIGHT]:
             self.move_right()
-        if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.using_jetpack:
+        if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.using_power_up():
             self.prior_image = self.image = self.shoot_image
             self.prior_nose = self.nose = self.shoot_image_nose
 
@@ -161,11 +169,16 @@ class Player(pygame.sprite.Sprite):
         if not self.blackhole_collision:
             self.velocity_y += self.GRAVITY
             self.y += self.velocity_y
-        
+
+            if self.velocity_y == 0:
+                print("falling")
+
             #Gravity update
             if self.velocity_y > self.GRAVITY:
+                
                 self.falling = True 
                 self.using_jetpack = False
+                self.using_propeller = False
                 self.jumping = False
             else:
                 self.falling = False
@@ -195,7 +208,9 @@ class Player(pygame.sprite.Sprite):
             self.score = max(self.score, self.SCREEN_HEIGHT + abs(self.y) - self.CENTER_Y)
     
     def fall_check(self):
+        #print(self.rect.y)
         if self.velocity_y > 30 and not self.end_game:
+            print(True)
             sounds.fall.play()
             self.end_game = True
 
@@ -277,8 +292,18 @@ class Player(pygame.sprite.Sprite):
         if self.knocked_out:
             screen.blit(self.knocked_out_animation[self.game.frame % 3], (self.rect.x, self.rect.top - 10))
         
+
+        if self.using_power_up and self.image == self.shoot_jump_image:
+            self.image = self.right_image
+            self.nose = self.right_image_nose
+            
+        self.draw_jetpack(screen)
+        self.draw_propeller(screen)
+
+            
+    def draw_jetpack(self, screen):
         if self.using_jetpack:
-                    
+
             if self.right :
                 x = self.rect.x - 5
             else:
@@ -297,6 +322,12 @@ class Player(pygame.sprite.Sprite):
             if self.right:
                 image = pygame.transform.flip(image, True, False)
             screen.blit(image, (x, self.rect.y + 20))
+    
+    def draw_propeller(self, screen):
+        if self.using_propeller:
+            frame = self.game.frame
+            screen.blit(Propeller.PROPELLERS[frame % 4], (self.rect.centerx - 15, self.rect.top - 3))
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):

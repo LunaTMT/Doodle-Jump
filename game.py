@@ -61,8 +61,8 @@ class Game:
         self.pause_button = PauseButton(self)
 
         self.platforms.empty()
-        self.monsters.add(Monster(self))
-        self.blackholes.add(Blackhole(self))
+        #self.monsters.add(Monster(self))
+        #self.blackholes.add(Blackhole(self))
         self.generate_tiles(n=5)
         self.generate_tiles(n=1, top=False, tile_type=MovingTile)
         self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)

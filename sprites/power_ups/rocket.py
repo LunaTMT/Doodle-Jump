@@ -53,7 +53,7 @@ class Rocket(pygame.sprite.Sprite):
 
     def player_collision_check(self):
         collision = self.rect.colliderect(self.game.player.rect)
-        if collision and not self.player.paused and not self.player.using_jetpack:
+        if collision and not self.player.paused and not self.player.using_jetpack and not self.player.using_propeller:
             self.player.JUMP_STRENGTH = -65
             self.player.jump(play_sound=False)
             self.player.JUMP_STRENGTH = -15

@@ -13,6 +13,8 @@ from sprites.power_ups.trampoline import Trampoline
 
 class Tile(pygame.sprite.Sprite):
 
+    ID = 0
+
     SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 0, 58, 18))  # Extract a 32x32 sprite
     LARGE_DEFAULT_IMAGE =  pygame.image.load("Doodle_Jump/assets/images/tiles/large_default.png")
@@ -43,7 +45,7 @@ class Tile(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.power_up = None
 
-        if not isinstance(self, BrokenTile):
+        if not isinstance(self, BrokenTile) and Tile.ID != 0:
             self.generate_power_up()
 
         if isinstance(self, MoveableTile):
@@ -51,11 +53,14 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.game.platforms.add(self)
 
+        Tile.ID += 1
+
 
     def generate_power_up(self):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
-        power_ups = [Rocket, Trampoline, Spring, None, None, None, None]
-        power_up = random.choices(population = power_ups, weights=[0.01, 0.04, 0.2, 3/16, 3/16, 3/16, 3/16])[0]
+        power_ups = [Rocket, Trampoline, Spring, Propeller, None]
+        power_up = random.choices(population = power_ups, weights=[0.5, 5, 10, 0.8, 70])[0]
+        (10, 20, 30, 40, 50)
         if power_up:
             x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
             self.power_up = power_up(self.game, x, self.rect.centery)
