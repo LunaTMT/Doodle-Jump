@@ -8,6 +8,7 @@ class Blackhole(pygame.sprite.Sprite):
         super().__init__()
         self.game = game
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
+        self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
         self.player = game.player
 
         self.image = pygame.image.load("Doodle_Jump/assets/images/backgrounds/blackhole.png").convert_alpha()
@@ -18,10 +19,20 @@ class Blackhole(pygame.sprite.Sprite):
 
     def update(self):
         self.player_collision_check()
+        self.death_check()
 
+    def death_check(self):
+        if self.rect.y > self.SCREEN_HEIGHT:
+            self.kill()
+            self.game.blackholes.add(Blackhole(self.game))
+            del self
+
+        
+       
 
     def player_collision_check(self):
-        if self.rect.colliderect(self.game.player.rect) and not self.collision:
+        if self.rect.colliderect(self.game.player.rect) and not self.collision and not self.player.using_jetpack:
+            self.player.black_hole_collided_with = self
             self.player.paused = True
             self.player.blackhole_collision = True
             self.collision = True

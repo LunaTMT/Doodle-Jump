@@ -1,62 +1,64 @@
 import pygame
-from pygame.locals import *
+import sys
+import math
 
+# Initialize Pygame
 pygame.init()
 
-# Set up display
-width, height = 800, 600
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Moving and Shrinking Rect")
+# Screen dimensions
+screen_width = 800
+screen_height = 600
 
-# Define colors
-red = (255, 0, 0)
+# Colors
+white = (255, 255, 255)
+blue = (0, 0, 255)
 
-# Create a rectangle
-initial_rect = pygame.Rect(100, 100, 100, 100)
+# Create the screen
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Spinning and Moving Rectangle")
 
-# Define target position and size
-target_position = (400, 300)
-target_size = (10, 10)
+# Rectangle properties
+rect_size = 100
+rect_x = (screen_width - rect_size) // 2
+rect_y = (screen_height - rect_size) // 2
+rect_rotation_speed = 2  # Degrees per frame
+rect_movement_speed = 5  # Pixels per frame
 
-# Calculate movement direction
-dx = target_position[0] - initial_rect.x
-dy = target_position[1] - initial_rect.y
-distance = pygame.math.Vector2(dx, dy).length()
-movement_speed = 2
-scale_speed = 0.005
+# Initial rotation angle
+rect_angle = 0
 
-current_position = (initial_rect.x, initial_rect.y)
-current_size = (initial_rect.width, initial_rect.height)
-
+# Main game loop
 running = True
 while running:
     for event in pygame.event.get():
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             running = False
 
-    # Update position
-    if current_position != target_position:
-        if distance > movement_speed:
-            direction = pygame.math.Vector2(dx, dy).normalize()
-            current_position = (current_position[0] + direction.x * movement_speed, current_position[1] + direction.y * movement_speed)
-        else:
-            current_position = target_position
-
-    # Update size
-    if current_size[0] > target_size[0]:
-        current_size = (current_size[0] - scale_speed, current_size[1] - scale_speed)
-
     # Clear the screen
-    screen.fill((255, 255, 255))
+    screen.fill(white)
 
-    # Draw the shrinking rectangle
-    if current_size[0] > 0 and current_size[1] > 0:
-        current_rect = pygame.Rect(current_position[0], current_position[1], current_size[0], current_size[1])
-        pygame.draw.rect(screen, red, current_rect)
+    # Rotate the rectangle
+    rotated_rect = pygame.Surface((rect_size, rect_size), pygame.SRCALPHA)
+    rotated_rect = pygame.transform.rotate(rotated_rect, rect_angle)
+    rect_angle += rect_rotation_speed
+    if rect_angle >= 360:
+        rect_angle -= 360
 
+    # Move the rectangle
+    rect_x += rect_movement_speed
+    if rect_x > screen_width:
+        rect_x = -rect_size
+
+    # Draw the rectangle on the screen
+    pygame.draw.rect(screen, blue, (rect_x, rect_y, rect_size, rect_size))
+    screen.blit(rotated_rect, (rect_x, rect_y))
+
+    # Update the display
     pygame.display.flip()
 
-    if current_size[0] <= 0:
-        running = False
+    # Control the frame rate
+    pygame.time.delay(20)
 
+# Quit Pygame
 pygame.quit()
+sys.exit()

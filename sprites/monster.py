@@ -78,19 +78,23 @@ class Monster(pygame.sprite.Sprite):
         self.killed_check()
         self.player_collision_check()
 
-
-
     def player_collision_check(self):
         
-        if self.rect.colliderect(self.game.player.rect) and not self.collision:
-            self.game.player.paused = True
-            self.game.player.knocked_out = True
-            self.game.player.velocity_y = -1
-            self.collision = True
-            sounds.thump.set_volume(4)
-            sounds.thump.play()
+        if self.rect.colliderect(self.game.player.rect) and not self.collision and not self.player.using_jetpack:
             
-
+            if self.player.falling:
+                self.player.jump()
+                self.sound.stop()
+                self.kill()
+                self.game.monsters.add(Monster(self.game))
+                del self
+            else:
+                self.game.player.paused = True
+                self.game.player.knocked_out = True
+                self.game.player.velocity_y = -1
+                self.collision = True
+                sounds.thump.set_volume(4)
+                sounds.thump.play()
         
 
     def killed_check(self):

@@ -38,6 +38,7 @@ class Game:
     platforms = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     monsters = pygame.sprite.Group()
+    blackholes = pygame.sprite.Group()
  
 
     def __init__(self):
@@ -45,15 +46,13 @@ class Game:
         self.main_menu = True
         self.play_game = False
         pygame.init()
-        
+
         
         self.player = MenuPlayer(self, 110, 750)
         self.main_menu_platform = Tile(self, 140, 763)
         self.play_button = PlayButton(self)
         
         self.frame = 0
-
-        
         self.score_font = pygame.font.Font(None, 50)
     
         
@@ -61,14 +60,15 @@ class Game:
         self.resume_button = ResumeButton(self)
         self.pause_button = PauseButton(self)
 
-        #self.monsters.add(Monster(self))
-        self.blackhole = Blackhole(self)
-        self.generate_tiles(n=10)
-        #self.generate_tiles(n=1, top=False, tile_type=MovingTile)
-        #self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
-        #self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
-        #self.generate_tiles(n=3, top=False, tile_type=DisappearingTile)
-        #self.generate_tiles(n=1, top=False, tile_type=BrokenTile)
+        self.platforms.empty()
+        self.monsters.add(Monster(self))
+        self.blackholes.add(Blackhole(self))
+        self.generate_tiles(n=5)
+        self.generate_tiles(n=1, top=False, tile_type=MovingTile)
+        self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
+        self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
+        self.generate_tiles(n=3, top=False, tile_type=DisappearingTile)
+        self.generate_tiles(n=1, top=False, tile_type=BrokenTile)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -100,7 +100,7 @@ class Game:
             self.platforms.update()
             self.player.update()
             self.monsters.update()
-            self.blackhole.update()
+            self.blackholes.update()
 
         
     def draw(self):
@@ -114,11 +114,18 @@ class Game:
             self.screen.blit(self.BACKGROUND_IMAGE, (0, 0))
 
             self.bullets.draw(self.screen)
-            self.movable_platforms.draw(self.screen)
-            self.platforms.draw(self.screen)
+            
+            for platform in  self.movable_platforms.sprites():
+                platform.draw(self.screen)
+
+            for platform in  self.platforms.sprites():
+                platform.draw(self.screen)
+
+            #self.movable_platforms.draw(self.screen)
+            #self.platforms.draw(self.screen)
             self.player.draw(self.screen)
             self.monsters.draw(self.screen)
-            self.blackhole.draw(self.screen)
+            self.blackholes.draw(self.screen)
             
             
             self.draw_top()
@@ -145,20 +152,14 @@ class Game:
         """Need to change this function because the collision detections and spawning is working fully"""
         for _ in range(n):
             
-            x, y = randint(90, self.SCREEN_WIDTH - 90), (0 if top else randint(0, self.SCREEN_HEIGHT))
+            x, y = randint(90, self.SCREEN_WIDTH - 90), (randint(-100, 0) if top else randint(100, self.SCREEN_HEIGHT))
             new_platform_rect = pygame.Rect(x, y, 90, 40)
 
             while any(new_platform_rect.colliderect(platform) for platform in  self.movable_platforms.sprites()):
-                print("collision")
-                x, y = randint(90, self.SCREEN_WIDTH - 90), (0 if top else randint(0, self.SCREEN_HEIGHT))
+                x, y = randint(90, self.SCREEN_WIDTH - 90),(randint(-100, 0) if top else randint(100, self.SCREEN_HEIGHT))
                 new_platform_rect = pygame.Rect(x, y, 90, 40)
 
-            platform = tile_type(self, x, y)
-            
-            if tile_type == MoveableTile:
-                self.movable_platforms.add(platform)
-            else:
-                self.platforms.add(platform)
+            tile_type(self, x, y)
 
 
     def draw_top(self):
@@ -169,7 +170,6 @@ class Game:
         self.main_menu_platform.draw(self.screen)
 
     def draw_score(self):
-
         score_text = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
         self.screen.blit(score_text, (20, 20))
 

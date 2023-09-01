@@ -3,7 +3,7 @@ from pygame.locals import *
 import assets.colours as colours
 import assets.sounds as sounds
 from random import choice, randint
-
+from sprites.power_ups.rocket import Rocket
 
 
 
@@ -69,16 +69,21 @@ class Player(pygame.sprite.Sprite):
         self.scale_speed = 0.002
         self.image_scale = 1
 
-        self.blackhole_collision = False
+  
         self.prior_y_velocity = 0
         self.velocity_y = 0
         self.score = 0
+
+        self.flipped = False
+        self.using_jetpack = False
+        self.left = True 
+        self.right = False
+        self.black_hole_collided_with = None
+        self.blackhole_collision = False
         self.on_ground = False
         self.jumping = False
         self.falling = False
         self.end_game = False
-        self.counter = 0
-        self.differences = []
         self.paused = False
         self.knocked_out = False
 
@@ -94,28 +99,37 @@ class Player(pygame.sprite.Sprite):
         self.prior_image = self.image = self.left_image
         self.prior_nose = self.nose = self.left_image_nose
         self.x -= self.speed
+        self.left = True
+        self.right = False
+        self.flipped = False
 
     def move_right(self):
         self.prior_image = self.image = self.right_image
         self.prior_nose = self.nose = self.right_image_nose
         self.x += self.speed
+        self.right = True
+        self.left = False
+        self.flipped = False
 
     def shoot(self):
-        shoot_sound = choice((sounds.shoot_1, sounds.shoot_2))
-        shoot_sound.play()
-        bullet = Bullet(self.rect.centerx, self.rect.top)
-        self.game.bullets.add(bullet)
+        if not self.using_jetpack:
+            shoot_sound = choice((sounds.shoot_1, sounds.shoot_2))
+            shoot_sound.play()
+            bullet = Bullet(self.rect.centerx, self.rect.top)
+            self.game.bullets.add(bullet)
 
-    def jump(self):
+    def jump(self, play_sound=True):
+        self.game.frame = 0
         self.excess_y = self.CENTER_X - (self.y - 273)
         self.velocity_y = self.JUMP_STRENGTH
         self.on_ground = False
         self.jumping = True
-        sounds.jump.play()
-        
+
+        if play_sound:
+            sounds.jump.play()
+    
 
     def update(self):
-        
         if not self.blackhole_collision:
             self.update_movement()
             self.update_position_based_on_gravity()
@@ -138,7 +152,7 @@ class Player(pygame.sprite.Sprite):
             self.move_left()
         if keys[K_RIGHT]:
             self.move_right()
-        if keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]:
+        if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.using_jetpack:
             self.prior_image = self.image = self.shoot_image
             self.prior_nose = self.nose = self.shoot_image_nose
 
@@ -151,6 +165,7 @@ class Player(pygame.sprite.Sprite):
             #Gravity update
             if self.velocity_y > self.GRAVITY:
                 self.falling = True 
+                self.using_jetpack = False
                 self.jumping = False
             else:
                 self.falling = False
@@ -179,10 +194,8 @@ class Player(pygame.sprite.Sprite):
         elif self.y < 0:
             self.score = max(self.score, self.SCREEN_HEIGHT + abs(self.y) - self.CENTER_Y)
     
-
-
     def fall_check(self):
-        if self.velocity_y > 20 and not self.end_game:
+        if self.velocity_y > 30 and not self.end_game:
             sounds.fall.play()
             self.end_game = True
 
@@ -193,7 +206,8 @@ class Player(pygame.sprite.Sprite):
             self.y = self.SCREEN_HEIGHT - self.rect.height
             self.velocity_y = 0
             self.on_ground = True
-            
+
+
             if not self.end_game:
                 self.end_game = True
                 sounds.fall.play()
@@ -209,11 +223,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = (self.x, self.y)
     
     def blackhole_check(self):
-        blackhole_location = (self.game.blackhole.rect.centerx, self.game.blackhole.rect.centery)
+        blackhole_location = (self.black_hole_collided_with.rect.centerx, self.black_hole_collided_with.rect.centery)
         if self.blackhole_collision and (self.rect.x, self.rect.y) != blackhole_location:
 
-            dx = self.game.blackhole.rect.centerx - self.rect.centerx
-            dy = self.game.blackhole.rect.centery - self.rect.centery
+            dx = blackhole_location[0] - self.rect.centerx
+            dy = blackhole_location[1] - self.rect.centery
             distance = pygame.math.Vector2(dx, dy).length()
   
             if distance >= 1:
@@ -221,8 +235,8 @@ class Player(pygame.sprite.Sprite):
                 movement_speed = 5
                 self.rect.move_ip(direction * movement_speed)
             else:
-                self.rect.x = self.game.blackhole.rect.centerx
-                self.rect.y = self.game.blackhole.rect.centery
+                self.rect.x = blackhole_location[0]
+                self.rect.y = blackhole_location[1]
                 
             if self.image_scale > 0.02:
                 self.image_scale -= 0.02
@@ -242,32 +256,47 @@ class Player(pygame.sprite.Sprite):
             difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
             self.previous_y_difference = int(self.y - self.CENTER_Y)
             
-            for platform in self.game.platforms.sprites():
+            for platform in self.game.platforms.sprites() + self.game.movable_platforms.sprites():
                 platform.rect.y -= difference
-
-            for platform in self.game.movable_platforms.sprites():
-                platform.rect.y -= difference
+                if platform.power_up:
+                    platform.power_up.rect.y -= difference
             
             for monster in self.game.monsters.sprites():
                 monster.rect.y -= difference
             
-           
-            self.game.blackhole.rect.y -= difference
-        
+            for blackhole in self.game.blackholes.sprites():
+                blackhole.rect.y -= difference
+
             self.rect.y = (self.SCREEN_HEIGHT // 2) - self.rect.height
 
     def draw(self, screen):
-        
-  
-  
         screen.blit(self.image, self.rect)
-        
-        
+
         if self.nose:
             screen.blit(self.nose, self.rect)
         if self.knocked_out:
             screen.blit(self.knocked_out_animation[self.game.frame % 3], (self.rect.x, self.rect.top - 10))
+        
+        if self.using_jetpack:
+                    
+            if self.right :
+                x = self.rect.x - 5
+            else:
+                x = self.rect.x + 35
 
+            frame = self.game.frame
+            if frame < 16:
+                image = Rocket.START_ANIMATION[frame % 3]
+            elif frame < 147: 
+                image = Rocket.MAIN_BLAST[frame % 3]
+            elif frame < 155:
+                image = Rocket.END_ANIMAITON[frame % 3]
+            else:
+                image = Rocket.DEFAULT_ROCKET
+
+            if self.right:
+                image = pygame.transform.flip(image, True, False)
+            screen.blit(image, (x, self.rect.y + 20))
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):

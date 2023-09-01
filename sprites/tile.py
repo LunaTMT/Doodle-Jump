@@ -1,6 +1,15 @@
 import pygame
 import random
+
 import assets.sounds as sounds
+
+from sprites.power_ups.propeller import Propeller
+from sprites.power_ups.rocket import Rocket
+from sprites.power_ups.shield import Shield
+from sprites.power_ups.spring_shoes import SpringShoes
+from sprites.power_ups.spring import Spring
+from sprites.power_ups.trampoline import Trampoline
+
 
 class Tile(pygame.sprite.Sprite):
 
@@ -17,7 +26,7 @@ class Tile(pygame.sprite.Sprite):
     BROKEN_TILE_IMAGE_2  = SPRITE_SHEET.subsurface(pygame.Rect(0, 116, 62, 27)) 
     BROKEN_TILE_IMAGE_3  = SPRITE_SHEET.subsurface(pygame.Rect(0, 148, 62, 32)) 
 
-    def __init__(self, game, x, y, menu=False):
+    def __init__(self, game, x, y):
         super().__init__()
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
@@ -28,14 +37,37 @@ class Tile(pygame.sprite.Sprite):
 
         self.x = x
         self.y = y
-        self.image = self.DEFAULT_IMAGE if not menu else self.LARGE_DEFAULT_IMAGE
+        self.image = self.DEFAULT_IMAGE 
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, self.y)
+        self.power_up = None
+
+        if not isinstance(self, BrokenTile):
+            self.generate_power_up()
+
+        if isinstance(self, MoveableTile):
+            self.game.movable_platforms.add(self)
+        else:
+            self.game.platforms.add(self)
+
+
+    def generate_power_up(self):
+        power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
+        power_ups = [Rocket, Trampoline, Spring, None, None, None, None]
+        power_up = random.choices(population = power_ups, weights=[0.01, 0.04, 0.2, 3/16, 3/16, 3/16, 3/16])[0]
+        if power_up:
+            x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
+            self.power_up = power_up(self.game, x, self.rect.centery)
 
     def update(self):
         self.death_check()
         self.player_collision_check()
+        self.power_up_check()
+
+    def power_up_check(self):
+        if self.power_up:
+            self.power_up.update()
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
@@ -49,6 +81,9 @@ class Tile(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+        if self.power_up:
+            self.power_up.draw(screen)
+        
 
 class BrokenTile(Tile):
     def __init__(self, game, x, y):
@@ -63,6 +98,7 @@ class BrokenTile(Tile):
         self.death_check()
         self.player_collision_check()
         self.fall_check()
+
     
     def fall_check(self):
         if self.fall:
@@ -95,9 +131,13 @@ class MovingTile(Tile):
     def update(self):
         if not self.player.paused:
             self.rect.x += self.velocity * self.speed
+            if self.power_up:
+                self.power_up.rect.x += self.velocity * self.speed
+            
             self.boundary_check()
             self.death_check()
             self.player_collision_check()
+            self.power_up_check()
 
     def boundary_check(self):
         if self.rect.right > self.max_right:
@@ -146,6 +186,8 @@ class ShiftingTile(Tile):
         self.death_check()
         self.player_collision_check()
         self.shift_check()
+        self.power_up_check()
+
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
@@ -163,9 +205,16 @@ class ShiftingTile(Tile):
         if self.shift:
             if self.rect.x < self.target_x:
                 self.rect.x += 5
+
+                if self.power_up:
+                    self.power_up.rect.x += 5
+
             elif self.rect.x > self.target_x:
                 self.rect.x -= 5
             
+                if self.power_up:
+                    self.power_up.rect.x -= 5
+
             if self.target_x - 5 <= self.rect.x <= self.target_x + 5:
                 self.shift = False
              
@@ -175,10 +224,11 @@ class MoveableTile(Tile):
         self.image = self.MOVEABLE_TILE_IMAGE
         self.moving = False
         self.moved = False
+        if self.power_up:
+            self.power_up.rect.x = self.rect.x + 20
+            self.power_up.rect.y += 6
 
     def handle_events(self, event):
-        
-        
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not self.moved:
             if self.rect.collidepoint(event.pos):
                 self.moving = True
@@ -192,6 +242,8 @@ class MoveableTile(Tile):
         self.death_check()
         self.player_collision_check()
         self.check_moving()
+        self.power_up_check()
+
     
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
@@ -208,3 +260,7 @@ class MoveableTile(Tile):
             mouse_x, mouse_y = pygame.mouse.get_pos()
             self.rect.x = mouse_x - self.offset_x
             self.rect.y = mouse_y - self.offset_y
+
+            if self.power_up:
+                self.power_up.rect.x = mouse_x - self.offset_x + 20
+                self.power_up.rect.y = mouse_y - self.offset_y
