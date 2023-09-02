@@ -6,8 +6,8 @@ class ResumeButton(PauseButton):
     
     def __init__(self, game):
         super().__init__(game)
-        self.image = pygame.image.load("Doodle_Jump/assets/images/buttons/resume.png").convert_alpha()
-        self.pause_screen = pygame.image.load("Doodle_Jump/assets/images/backgrounds/pause_screen.png")
+        self.image = pygame.image.load("assets/images/buttons/resume.png").convert_alpha()
+        self.pause_screen = pygame.image.load("assets/images/backgrounds/pause_screen.png")
         self.hide = True
 
     def handle_events(self, event):    
@@ -21,6 +21,7 @@ class ResumeButton(PauseButton):
                 self.game.GRAVITY = self.player.GRAVITY = 0.4
                 self.player.velocity_y = self.player.prior_y_velocity
                 self.player.paused = False
+                self.player.handling_events = True
 
                 for monster in self.monsters:
                     pygame.mixer.unpause()

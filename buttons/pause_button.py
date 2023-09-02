@@ -7,7 +7,7 @@ class PauseButton:
         self.player = game.player
         self.monsters = game.monsters
 
-        self.image = pygame.image.load("Doodle_Jump/assets/images/buttons/pause.png")
+        self.image = pygame.image.load("assets/images/buttons/pause.png")
         self.rect = self.image.get_rect()
         self.rect.x = game.SCREEN_WIDTH - self.rect.width - 10
         self.rect.y = 20
@@ -25,6 +25,7 @@ class PauseButton:
                     self.player.prior_y_velocity = self.player.velocity_y
                     self.player.velocity_y = 0
                     self.player.paused = True
+                    self.player.handling_events = False
 
                     for monster in self.monsters:
                         monster.prior_speed     = monster.speed 

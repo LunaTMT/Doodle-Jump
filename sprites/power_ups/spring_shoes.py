@@ -7,7 +7,7 @@ import assets.sounds as sounds
 class SpringShoes(pygame.sprite.Sprite):
     id = 0 
 
-    SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
     
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(301, 205, 27, 21))  
     DECOMPRESSED_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(301, 237, 27, 21))  
@@ -38,7 +38,7 @@ class SpringShoes(pygame.sprite.Sprite):
     def player_collision_check(self):
         collision = self.rect.colliderect(self.game.player.rect)
         if (collision 
-            and not self.player.paused 
+            and not self.player.knocked_out 
             and not self.player.using_jetpack 
             and not self.player.using_propeller):
             

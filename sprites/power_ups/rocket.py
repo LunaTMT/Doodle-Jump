@@ -7,7 +7,7 @@ import assets.sounds as sounds
 class Rocket(pygame.sprite.Sprite):
     id = 0 
 
-    SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/animations/jetpack.png")
+    SPRITE_SHEET = pygame.image.load("assets/images/animations/jetpack.png")
     
     ROCKET_1 = SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 32, 62))  
     ROCKET_2 = SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 62))  
@@ -53,14 +53,16 @@ class Rocket(pygame.sprite.Sprite):
 
     def player_collision_check(self):
         collision = self.rect.colliderect(self.game.player.rect)
-        if collision and not self.player.paused and not self.player.using_jetpack and not self.player.using_propeller:
+        if (collision 
+            and not self.player.knocked_out 
+            and not self.player.is_flying()):
+
             self.player.JUMP_STRENGTH = -65
             self.player.jump(play_sound=False)
-
             self.player.JUMP_STRENGTH = -23 if self.player.using_spring_shoes else -15
+            self.player.using_jetpack = True
+            
             self.being_used = True
-            self.game.player.using_jetpack = True
-            print("being used")
             sounds.jetpack.play()
 
 

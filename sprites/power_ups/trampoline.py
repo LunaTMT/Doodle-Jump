@@ -4,7 +4,7 @@ import assets.sounds as sounds
 
 class Trampoline(pygame.sprite.Sprite):
 
-    SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
     TRAMPOLINE_1 = SPRITE_SHEET.subsurface(pygame.Rect(188, 98, 36, 14))  # Extract a 32x32 sprite
     TRAMPOLINE_2 = SPRITE_SHEET.subsurface(pygame.Rect(474, 53, 36, 14))
     TRAMPOLINE_3 = SPRITE_SHEET.subsurface(pygame.Rect(149, 94, 36, 18))
@@ -34,7 +34,10 @@ class Trampoline(pygame.sprite.Sprite):
     def player_collision_check(self):
         collision = self.rect.colliderect(self.game.player.rect)
         
-        if collision and self.player.falling and not self.player.paused:
+        if (collision 
+            and self.player.falling 
+            and not self.player.knocked_out):
+            
             self.player.trampoline_collision = True
             
             self.player.JUMP_STRENGTH = -30

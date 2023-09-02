@@ -10,7 +10,7 @@ from random import randint
 class Monster(pygame.sprite.Sprite):
 
 
-    SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
 
     TERRIFIER = SPRITE_SHEET.subsurface(pygame.Rect(3, 421, 58, 86))  # Extract a 32x32 sprite
     FAT_GREEN = SPRITE_SHEET.subsurface(pygame.Rect(0, 359, 84, 53))  # Extract a 32x32 sprite
@@ -84,28 +84,29 @@ class Monster(pygame.sprite.Sprite):
    
         if (self.rect.colliderect(self.game.player.rect) 
             and not self.collision 
-            and not self.player.using_jetpack 
-            and not self.player.using_propeller):
+            and not self.player.is_flying()):
             
             if self.player.using_shield:
-                self.player.using_shield = False
                 self.player.jump(play_sound=False)
                 self.blocked = True
                 self.collision = False
-                sounds.block.play()
             
-            if not self.blocked:
+                if self.player.falling:
+                    self.player.using_shield = True
+                    self.remove()
+                else:
+                    self.player.using_shield = False
+                    sounds.block.play()
+            
+            elif not self.blocked:
                 self.collision = True
 
                 if self.player.falling:
-                    self.player.jump()
-                    self.sound.stop()
-                    self.kill()
-                    self.game.monsters.add(Monster(self.game))
-                    del self
+                    self.player.jump(play_sound=False)                    
+                    self.remove()
 
                 else:
-                    self.game.player.paused = True
+                    self.game.player.handling_events = False
                     self.game.player.knocked_out = True
                     self.game.player.velocity_y = -1
                     sounds.thump.set_volume(4)
@@ -114,6 +115,16 @@ class Monster(pygame.sprite.Sprite):
         else: 
             self.blocked = False
         
+    def remove(self):
+        random.choice((sounds.die_1, sounds.die_2)).play()
+        self.sound.stop()
+        self.kill()
+        self.game.monsters.add(Monster(self.game))
+
+        self.game.play_game = False
+        self.game.end_game = True
+                
+        del self
 
     def killed_check(self):
         if pygame.sprite.spritecollide(self, self.game.bullets, True):

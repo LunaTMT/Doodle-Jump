@@ -26,9 +26,18 @@ class Game:
     FRAME_RATE = 60
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    BACKGROUND_IMAGE = pygame.image.load("Doodle_Jump/assets/images/backgrounds/background.png")
-    TOP_IMAGE =  pygame.image.load("Doodle_Jump/assets/images/backgrounds/top.png").convert_alpha()
-    MAIN_MENU_IMAGE = pygame.image.load("Doodle_Jump/assets/images/backgrounds/main_menu.png").convert_alpha()
+    BACKGROUND_IMAGE = pygame.image.load("assets/images/backgrounds/background.png")
+    TOP_IMAGE =  pygame.image.load("assets/images/backgrounds/top.png").convert_alpha()
+    MAIN_MENU_IMAGE = pygame.image.load("assets/images/backgrounds/main_menu.png").convert_alpha()
+
+    SPRITE_SHEET = pygame.image.load("assets/images/start-end-tiles.png")
+    GAME_OVER_TEXT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 104, 214, 75))
+
+    END_GAME_BOTTOM_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(1, 187, 320, 68))
+    YOUR_SCORE_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(398, 169, 114, 21))
+    YOUR_HIGH_SCORE_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(339, 196, 173, 29))
+
+
 
     pygame.display.set_caption("Doodle Jump")
     clock = pygame.time.Clock()
@@ -45,6 +54,7 @@ class Game:
         self.running = True
         self.main_menu = True
         self.play_game = False
+        self.end_game = False
         pygame.init()
 
         
@@ -61,8 +71,8 @@ class Game:
         self.pause_button = PauseButton(self)
 
         self.platforms.empty()
-        self.monsters.add(Monster(self))
-        self.blackholes.add(Blackhole(self))
+        #self.monsters.add(Monster(self))
+        #self.blackholes.add(Blackhole(self))
         self.generate_tiles(n=5)
         self.generate_tiles(n=2, top=False, tile_type=MovingTile)
         self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
@@ -83,7 +93,10 @@ class Game:
                 self.resume_button.handle_events(event)
                 self.player.handle_events(event)
                 for platform in self.movable_platforms:
-                        platform.handle_events(event)
+                        platform.handle_events(event)#
+            
+            if self.end_game:
+                print("end_game")
             
     
 
@@ -101,6 +114,9 @@ class Game:
             self.player.update()
             self.monsters.update()
             self.blackholes.update()
+        
+        if self.end_game:
+            print("end_game")
 
         
     def draw(self):
@@ -115,22 +131,21 @@ class Game:
 
             self.bullets.draw(self.screen)
             
-            for platform in  self.movable_platforms.sprites():
+            for platform in (self.movable_platforms.sprites() + self.platforms.sprites()):
                 platform.draw(self.screen)
 
-            for platform in  self.platforms.sprites():
-                platform.draw(self.screen)
-
- 
             self.player.draw(self.screen)
             self.monsters.draw(self.screen)
             self.blackholes.draw(self.screen)
-            
             
             self.draw_top()
             self.draw_score()
             self.pause_button.draw(self.screen)
             self.resume_button.draw(self.screen)
+        
+        if self.end_game:
+            print("end_game")
+
 
         pygame.display.flip()
 

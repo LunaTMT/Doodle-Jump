@@ -15,9 +15,10 @@ class Tile(pygame.sprite.Sprite):
 
     ID = 0
 
-    SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 0, 58, 18))  # Extract a 32x32 sprite
-    LARGE_DEFAULT_IMAGE =  pygame.image.load("Doodle_Jump/assets/images/tiles/large_default.png")
+    
+    LARGE_DEFAULT_IMAGE =  pygame.image.load("assets/images/tiles/large_default.png")
     MOVING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 19, 58, 17)) 
     DISAPPEARING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 55, 58, 17)) 
     SHIFTING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 182, 58, 17)) 
@@ -59,7 +60,7 @@ class Tile(pygame.sprite.Sprite):
     def generate_power_up(self):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
         power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
-        power_up = random.choices(population = power_ups, weights=[0.5, 5, 10, 0.8, 10, 2, 80])[0]
+        power_up = random.choices(population = power_ups, weights=[0.5, 5, 10, 0.8, 10, 0, 80])[0]
         #weights=[0.5, 5, 10, 0.8, 10, 10, 80]
         if power_up:
             #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
@@ -79,7 +80,7 @@ class Tile(pygame.sprite.Sprite):
         if (collision 
             and self.player.falling 
             and (self.player.rect.bottom > self.rect.top)
-            and not self.player.paused):
+            and not self.player.knocked_out):
             self.player.jump()
 
     def death_check(self):
@@ -124,7 +125,9 @@ class BrokenTile(Tile):
     def player_collision_check(self):
         if not self.fall:
             collision = pygame.sprite.collide_rect(self.player, self)
-            if collision and self.player.falling and not self.player.paused:
+            if (collision 
+                and self.player.falling 
+                and not self.player.knocked_out):
                 sounds.tile_break.play()
                 self.fall = True
                 
@@ -181,7 +184,9 @@ class DisappearingTile(Tile):
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling and not self.player.paused:
+        if (collision 
+            and self.player.falling 
+            and not self.player.knocked_out):
             sounds.tile_disappear.play()
             self.player.jump()
             self.game.generate_tiles(1, top=True, tile_type = type(self))
@@ -206,7 +211,9 @@ class ShiftingTile(Tile):
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling and not self.player.paused:
+        if (collision 
+            and self.player.falling 
+            and not self.player.knocked_out):
             
             target_x = random.randint(self.lower_bound, self.upper_bound)
             while self.rect.left - 50 < target_x < self.rect.right + 50:
@@ -262,7 +269,9 @@ class MoveableTile(Tile):
     
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling and not self.player.paused:
+        if (collision 
+            and self.player.falling 
+            and not self.player.knocked_out):
             self.player.jump()
            
             if self.moving:

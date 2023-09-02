@@ -3,7 +3,7 @@ import assets.sounds as sounds
 
 class Spring(pygame.sprite.Sprite):
 
-    SPRITE_SHEET = pygame.image.load("Doodle_Jump/assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
     SPRING = SPRITE_SHEET.subsurface(pygame.Rect(404, 99, 17, 12))  # Extract a 32x32 sprite
     SPRING_EXPANDED = SPRITE_SHEET.subsurface(pygame.Rect(404, 115, 17, 28))
 
@@ -37,6 +37,7 @@ class Spring(pygame.sprite.Sprite):
         collision = self.rect.colliderect(self.game.player.rect)
         if (collision 
             and self.player.falling  
+            and not self.player.knocked_out
             and not self.expanded):
 
             self.player.spring_collision = True
