@@ -121,18 +121,21 @@ class Player(pygame.sprite.Sprite):
         self.right = True
         self.left = False
 
-    def using_power_up(self):
+    def is_flying(self):
         return any((self.using_jetpack, self.using_propeller))
 
     def shoot(self):
-        if not self.using_power_up():
+        if not self.is_flying():
             shoot_sound = choice((sounds.shoot_1, sounds.shoot_2))
             shoot_sound.play()
             bullet = Bullet(self.rect.centerx, self.rect.top)
             self.game.bullets.add(bullet)
 
+
+
+
     def jump(self, play_sound=True):
-        if not self.using_power_up():
+        if not self.is_flying():
             self.game.frame = 0
             self.excess_y = self.CENTER_X - (self.y - 273)
             self.velocity_y = self.JUMP_STRENGTH
@@ -145,6 +148,7 @@ class Player(pygame.sprite.Sprite):
             if (self.using_spring_shoes 
                 and not self.spring_collision 
                 and not self.trampoline_collision):
+
                 sounds.spring.play()
                 self.spring_shoe_jump_count += 1
             
@@ -176,7 +180,7 @@ class Player(pygame.sprite.Sprite):
             self.move_left()
         if keys[K_RIGHT]:
             self.move_right()
-        if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.using_power_up():
+        if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.is_flying():
             self.prior_image = self.image = self.shoot_image
             self.prior_nose = self.nose = self.shoot_image_nose
     
@@ -312,7 +316,7 @@ class Player(pygame.sprite.Sprite):
         if self.knocked_out:
             screen.blit(self.knocked_out_animation[self.game.frame % 3], (self.rect.x, self.rect.top - 10))
         
-        if self.using_power_up and self.image == self.shoot_jump_image:
+        if self.is_flying and self.image == self.shoot_jump_image:
             self.image = self.right_image
             self.nose = self.right_image_nose
 
@@ -357,11 +361,11 @@ class Player(pygame.sprite.Sprite):
         if self.using_spring_shoes:
             
             excess_x = 5 if self.right else 0
-        
+            excess_y = 3 if self.jumping else 0
             image = SpringShoes.DECOMPRESSED_IMAGE if self.jumping else SpringShoes.DEFAULT_IMAGE
             if self.right:
                 image = pygame.transform.flip(image, True, False)
-            screen.blit(image, (self.rect.x + 15 + excess_x , self.rect.bottom-5))
+            screen.blit(image, (self.rect.x + 15 + excess_x , self.rect.bottom - 5 + excess_y))
 
 
 

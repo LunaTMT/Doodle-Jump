@@ -1,4 +1,5 @@
 import pygame
+import assets.sounds as sounds
 
 class Shield(pygame.sprite.Sprite):
 
@@ -29,9 +30,13 @@ class Shield(pygame.sprite.Sprite):
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and not self.player.knocked_out:
+        if (collision 
+            and not self.player.knocked_out 
+            and not self.player.using_shield):
             self.player.using_shield = True
             self.being_used = True
+            sounds.activate_shield.play()
+            
 
     def death_check(self):
         if (self.rect.y > self.SCREEN_HEIGHT) or self.being_used:

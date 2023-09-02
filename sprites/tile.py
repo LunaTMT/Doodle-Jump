@@ -45,7 +45,7 @@ class Tile(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.power_up = None
 
-        if not isinstance(self, BrokenTile) and Tile.ID != 0:
+        if not isinstance(self, (BrokenTile, MovingTile)) and Tile.ID != 0:
             self.generate_power_up()
 
         if isinstance(self, MoveableTile):
@@ -59,11 +59,11 @@ class Tile(pygame.sprite.Sprite):
     def generate_power_up(self):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
         power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
-        power_up = random.choices(population = power_ups, weights=[0, 0, 0, 0, 10, 50, 80])[0]
+        power_up = random.choices(population = power_ups, weights=[0.5, 5, 10, 0.8, 10, 2, 80])[0]
         #weights=[0.5, 5, 10, 0.8, 10, 10, 80]
         if power_up:
-            x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
-            self.power_up = power_up(self.game, self, x, self.rect.centery)
+            #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
+            self.power_up = power_up(self.game, self, self.rect.centerx, self.rect.centery)
 
     def update(self):
         self.death_check()
@@ -167,6 +167,12 @@ class MovingTile(Tile):
         
         self.max_left = max_left
         self.max_right = max_right
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+                         
+        if self.power_up:
+            self.power_up.draw(screen)
 
 class DisappearingTile(Tile):
     def __init__(self, game, x, y):

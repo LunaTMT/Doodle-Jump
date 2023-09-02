@@ -43,7 +43,7 @@ class Propeller(pygame.sprite.Sprite):
         if collision and not self.player.paused and not self.player.using_propeller and not self.player.using_jetpack:
             self.player.JUMP_STRENGTH = -55
             self.player.jump(play_sound=False)
-            self.player.JUMP_STRENGTH = -15
+            self.player.JUMP_STRENGTH = -23 if self.player.using_spring_shoes else -15
             self.being_used = True
             self.game.player.using_propeller = True
             sounds.propeller.play()

@@ -56,7 +56,8 @@ class Rocket(pygame.sprite.Sprite):
         if collision and not self.player.paused and not self.player.using_jetpack and not self.player.using_propeller:
             self.player.JUMP_STRENGTH = -65
             self.player.jump(play_sound=False)
-            self.player.JUMP_STRENGTH = -15
+
+            self.player.JUMP_STRENGTH = -23 if self.player.using_spring_shoes else -15
             self.being_used = True
             self.game.player.using_jetpack = True
             print("being used")
