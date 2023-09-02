@@ -28,7 +28,7 @@ class Rocket(pygame.sprite.Sprite):
 
    
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, tile, x, y):
         super().__init__()
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT

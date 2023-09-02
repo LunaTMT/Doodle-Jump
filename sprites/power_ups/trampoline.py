@@ -9,7 +9,7 @@ class Trampoline(pygame.sprite.Sprite):
     TRAMPOLINE_2 = SPRITE_SHEET.subsurface(pygame.Rect(474, 53, 36, 14))
     TRAMPOLINE_3 = SPRITE_SHEET.subsurface(pygame.Rect(149, 94, 36, 18))
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, tile, x, y):
         super().__init__()
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
@@ -33,15 +33,23 @@ class Trampoline(pygame.sprite.Sprite):
 
     def player_collision_check(self):
         collision = self.rect.colliderect(self.game.player.rect)
+        
         if collision and self.player.falling and not self.player.paused:
+            self.player.trampoline_collision = True
+            
             self.player.JUMP_STRENGTH = -30
             self.player.jump(play_sound=False)
-            self.player.JUMP_STRENGTH = -15
+            
+            if not self.player.using_spring_shoes:
+                self.player.JUMP_STRENGTH = -15
+            
             sounds.trampoline.play()
             self.expanded = True
             self.image = self.TRAMPOLINE_2
+        
         elif self.player.falling:
             self.image = self.TRAMPOLINE_1
+        
         elif not collision and self.expanded:
             self.image = self.TRAMPOLINE_3
         

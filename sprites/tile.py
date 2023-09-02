@@ -58,12 +58,12 @@ class Tile(pygame.sprite.Sprite):
 
     def generate_power_up(self):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
-        power_ups = [Rocket, Trampoline, Spring, Propeller, None]
-        power_up = random.choices(population = power_ups, weights=[0.5, 5, 10, 0.8, 70])[0]
-        (10, 20, 30, 40, 50)
+        power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
+        power_up = random.choices(population = power_ups, weights=[0, 0, 0, 0, 10, 50, 80])[0]
+        #weights=[0.5, 5, 10, 0.8, 10, 10, 80]
         if power_up:
             x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
-            self.power_up = power_up(self.game, x, self.rect.centery)
+            self.power_up = power_up(self.game, self, x, self.rect.centery)
 
     def update(self):
         self.death_check()
@@ -76,7 +76,10 @@ class Tile(pygame.sprite.Sprite):
 
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
-        if collision and self.player.falling and not self.player.paused:
+        if (collision 
+            and self.player.falling 
+            and (self.player.rect.bottom > self.rect.top)
+            and not self.player.paused):
             self.player.jump()
 
     def death_check(self):
@@ -86,6 +89,7 @@ class Tile(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+                         
         if self.power_up:
             self.power_up.draw(screen)
         

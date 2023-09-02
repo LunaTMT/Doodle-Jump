@@ -5,6 +5,8 @@ import assets.sounds as sounds
 from random import choice, randint
 from sprites.power_ups.rocket import Rocket
 from sprites.power_ups.propeller import Propeller
+from sprites.power_ups.shield import Shield
+from sprites.power_ups.spring_shoes import SpringShoes
 
 
 
@@ -46,7 +48,7 @@ class Player(pygame.sprite.Sprite):
         self.shoot_jump_image = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump.png").convert_alpha()
         self.shoot_jump_image_nose = pygame.image.load("Doodle_Jump/assets/images/player/shoot_jump_nose.png").convert_alpha()
 
-
+        self.shield = pygame.image.load("Doodle_Jump/assets/images/player/shield.png").convert_alpha()
     
         self.prior_nose = self.nose = self.left_image_nose
         self.prior_image = self.image = self.left_image
@@ -75,21 +77,27 @@ class Player(pygame.sprite.Sprite):
         self.prior_y_velocity = 0
         self.velocity_y = 0
         self.score = 0
+        self.spring_shoe_jump_count = 0
 
-        self.flipped = False
+        self.using_spring_shoes = False
         self.using_jetpack = False
         self.using_propeller = False
-        self.power_ups = (self.using_jetpack, self.using_propeller)
+        self.using_shield = False
+
         self.left = True 
         self.right = False
         self.black_hole_collided_with = None
         self.blackhole_collision = False
+        self.spring_collision = False
+        self.trampoline_collision = False
+
         self.on_ground = False
         self.jumping = False
         self.falling = False
         self.end_game = False
         self.paused = False
         self.knocked_out = False
+        self.collision = False
 
     def handle_events(self, event):
         if not self.paused:
@@ -105,7 +113,6 @@ class Player(pygame.sprite.Sprite):
         self.x -= self.speed
         self.left = True
         self.right = False
-        self.flipped = False
 
     def move_right(self):
         self.prior_image = self.image = self.right_image
@@ -113,7 +120,6 @@ class Player(pygame.sprite.Sprite):
         self.x += self.speed
         self.right = True
         self.left = False
-        self.flipped = False
 
     def using_power_up(self):
         return any((self.using_jetpack, self.using_propeller))
@@ -135,6 +141,15 @@ class Player(pygame.sprite.Sprite):
 
             if play_sound:
                 sounds.jump.play()
+
+            if (self.using_spring_shoes 
+                and not self.spring_collision 
+                and not self.trampoline_collision):
+                sounds.spring.play()
+                self.spring_shoe_jump_count += 1
+            
+            self.spring_collision = False
+            self.trampoline_collision = False
         
 
     def update(self):
@@ -149,6 +164,7 @@ class Player(pygame.sprite.Sprite):
             self.y_boundary_check()
             self.x_boundary_check()
             self.update_other_sprites_based_upon_player_jump_difference()
+            self.spring_shoe_check()
         else:
             self.blackhole_check()
         
@@ -163,19 +179,15 @@ class Player(pygame.sprite.Sprite):
         if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.using_power_up():
             self.prior_image = self.image = self.shoot_image
             self.prior_nose = self.nose = self.shoot_image_nose
-
+    
         
     def update_position_based_on_gravity(self):
         if not self.blackhole_collision:
             self.velocity_y += self.GRAVITY
             self.y += self.velocity_y
 
-            if self.velocity_y == 0:
-                print("falling")
-
             #Gravity update
-            if self.velocity_y > self.GRAVITY:
-                
+            if self.velocity_y > self.GRAVITY:      
                 self.falling = True 
                 self.using_jetpack = False
                 self.using_propeller = False
@@ -210,7 +222,6 @@ class Player(pygame.sprite.Sprite):
     def fall_check(self):
         #print(self.rect.y)
         if self.velocity_y > 30 and not self.end_game:
-            print(True)
             sounds.fall.play()
             self.end_game = True
 
@@ -237,6 +248,12 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.topleft = (self.x, self.y)
     
+    def spring_shoe_check(self):
+        if self.using_spring_shoes and self.spring_shoe_jump_count % 5 == 0:
+            self.JUMP_STRENGTH = self.game.JUMP_STRENGTH
+            self.using_spring_shoes = False
+
+
     def blackhole_check(self):
         blackhole_location = (self.black_hole_collided_with.rect.centerx, self.black_hole_collided_with.rect.centery)
         if self.blackhole_collision and (self.rect.x, self.rect.y) != blackhole_location:
@@ -250,9 +267,11 @@ class Player(pygame.sprite.Sprite):
                 movement_speed = 5
                 self.rect.move_ip(direction * movement_speed)
             else:
+                
                 self.rect.x = blackhole_location[0]
                 self.rect.y = blackhole_location[1]
                 
+
             if self.image_scale > 0.02:
                 self.image_scale -= 0.02
                 self.image = self.resize_image(self.image_scale)
@@ -287,19 +306,20 @@ class Player(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
+
         if self.nose:
             screen.blit(self.nose, self.rect)
         if self.knocked_out:
             screen.blit(self.knocked_out_animation[self.game.frame % 3], (self.rect.x, self.rect.top - 10))
         
-
         if self.using_power_up and self.image == self.shoot_jump_image:
             self.image = self.right_image
             self.nose = self.right_image_nose
-            
+
         self.draw_jetpack(screen)
         self.draw_propeller(screen)
-
+        self.draw_shield(screen)
+        self.draw_spring_shoes(screen)
             
     def draw_jetpack(self, screen):
         if self.using_jetpack:
@@ -327,6 +347,22 @@ class Player(pygame.sprite.Sprite):
         if self.using_propeller:
             frame = self.game.frame
             screen.blit(Propeller.PROPELLERS[frame % 4], (self.rect.centerx - 15, self.rect.top - 3))
+
+    def draw_shield(self, screen):
+        if self.using_shield:
+             excess_x = -8 if self.image in (self.left_image, self.left_jump_image) else 0
+             screen.blit(self.shield, (self.rect.x + excess_x, self.rect.y))
+    
+    def draw_spring_shoes(self, screen):
+        if self.using_spring_shoes:
+            
+            excess_x = 5 if self.right else 0
+        
+            image = SpringShoes.DECOMPRESSED_IMAGE if self.jumping else SpringShoes.DEFAULT_IMAGE
+            if self.right:
+                image = pygame.transform.flip(image, True, False)
+            screen.blit(image, (self.rect.x + 15 + excess_x , self.rect.bottom-5))
+
 
 
 class Bullet(pygame.sprite.Sprite):

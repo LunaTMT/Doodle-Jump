@@ -10,7 +10,7 @@ class Spring(pygame.sprite.Sprite):
     #x = random.randint(self.rect.topleft, self.rect.topright)
     #y = self.rect.top 
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, tile, x, y):
         super().__init__()
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
@@ -35,10 +35,17 @@ class Spring(pygame.sprite.Sprite):
 
     def player_collision_check(self):
         collision = self.rect.colliderect(self.game.player.rect)
-        if collision and self.player.falling and not self.player.paused and not self.expanded:
+        if (collision 
+            and self.player.falling  
+            and not self.expanded):
+
+            self.player.spring_collision = True
             self.player.JUMP_STRENGTH = -23
             self.player.jump(play_sound=False)
-            self.player.JUMP_STRENGTH = -15
+            
+            if not self.player.using_spring_shoes:
+                self.player.JUMP_STRENGTH = -15
+    
             sounds.spring.play()
             self.collision = True
 

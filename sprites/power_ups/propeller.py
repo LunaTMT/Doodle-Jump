@@ -15,7 +15,7 @@ class Propeller(pygame.sprite.Sprite):
     PROPELLER_4 = SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 32))  
     PROPELLERS = [PROPELLER_1, PROPELLER_2, PROPELLER_3, PROPELLER_4]
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, tile, x, y):
         super().__init__()
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT

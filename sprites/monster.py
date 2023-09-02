@@ -70,6 +70,8 @@ class Monster(pygame.sprite.Sprite):
         
         self.sound = sounds.monster
         self.sound.play(-1)
+        
+        self.blocked = False
         self.collision = False
         
     def update(self):
@@ -79,22 +81,38 @@ class Monster(pygame.sprite.Sprite):
         self.player_collision_check()
 
     def player_collision_check(self):
-        
-        if self.rect.colliderect(self.game.player.rect) and not self.collision and not self.player.using_jetpack:
+   
+        if (self.rect.colliderect(self.game.player.rect) 
+            and not self.collision 
+            and not self.player.using_jetpack 
+            and not self.player.using_propeller):
             
-            if self.player.falling:
-                self.player.jump()
-                self.sound.stop()
-                self.kill()
-                self.game.monsters.add(Monster(self.game))
-                del self
-            else:
-                self.game.player.paused = True
-                self.game.player.knocked_out = True
-                self.game.player.velocity_y = -1
+            if self.player.using_shield:
+                self.player.using_shield = False
+                self.player.jump(play_sound=False)
+                self.blocked = True
+                self.collision = False
+                sounds.block.play()
+            
+            if not self.blocked:
                 self.collision = True
-                sounds.thump.set_volume(4)
-                sounds.thump.play()
+
+                if self.player.falling:
+                    self.player.jump()
+                    self.sound.stop()
+                    self.kill()
+                    self.game.monsters.add(Monster(self.game))
+                    del self
+
+                else:
+                    self.game.player.paused = True
+                    self.game.player.knocked_out = True
+                    self.game.player.velocity_y = -1
+                    sounds.thump.set_volume(4)
+                    sounds.thump.play()
+       
+        else: 
+            self.blocked = False
         
 
     def killed_check(self):
