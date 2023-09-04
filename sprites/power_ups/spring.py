@@ -37,7 +37,7 @@ class Spring(pygame.sprite.Sprite):
         collision = self.rect.colliderect(self.game.player.rect)
         if (collision 
             and self.player.falling  
-            and not self.player.knocked_out
+            and not self.player.dead
             and not self.expanded):
 
             self.player.spring_collision = True

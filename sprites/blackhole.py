@@ -46,8 +46,12 @@ class Blackhole(pygame.sprite.Sprite):
                 self.player.black_hole_collided_with = self
                 self.player.paused = True
                 self.player.blackhole_collision = True
+                self.player.dead = True
                 self.collision = True
                 sounds.suck.play()
+
+
+
         else: 
             self.blocked = False
             

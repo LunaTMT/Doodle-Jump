@@ -73,7 +73,8 @@ class Player(pygame.sprite.Sprite):
         self.scale_speed = 0.002
         self.image_scale = 1
 
-  
+        self.update_y = True
+        self.end_game_y = 840
         self.prior_y_velocity = 0
         self.velocity_y = 0
         self.score = 0
@@ -88,9 +89,12 @@ class Player(pygame.sprite.Sprite):
         self.right = False
         self.black_hole_collided_with = None
         self.blackhole_collision = False
+        self.dead = False
+
         self.spring_collision = False
         self.trampoline_collision = False
-
+        
+        self.moved = False
         self.on_ground = False
         self.jumping = False
         self.falling = False
@@ -99,6 +103,7 @@ class Player(pygame.sprite.Sprite):
         self.knocked_out = False
         self.handling_events = True
         self.collision = False
+        self.draw_player = True
 
     def handle_events(self, event):
         if self.handling_events and not self.is_flying():
@@ -106,8 +111,7 @@ class Player(pygame.sprite.Sprite):
                 (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1)):
                 self.shoot()
 
-           
-
+        
     def move_left(self):
         self.prior_image = self.image = self.left_image
         self.prior_nose = self.nose = self.left_image_nose
@@ -153,27 +157,29 @@ class Player(pygame.sprite.Sprite):
             self.spring_collision = False
             self.trampoline_collision = False
         
-
     def update(self):
-
-        
         if not self.blackhole_collision: #if we continue to update movement whilst in blackhole. Movement messes up
             self.update_movement()
             self.update_position_based_on_gravity()
             self.update_directional_image()
             self.update_score()
-
+            
             self.fall_check()
-
             self.y_boundary_check()
             self.x_boundary_check()
-            self.update_other_sprites_based_upon_player_jump_difference()
             self.spring_shoe_check()
+
+            self.update_rect()
+            self.update_other_sprites_based_upon_player_jump_difference()
+            
         else:
             self.blackhole_check()
         
+        
+    """UDATE"""
+    """-------"""
     def update_movement(self):
-        if self.handling_events:
+        if self.handling_events and not self.dead:
             keys = pygame.key.get_pressed()
             mouse_buttons = pygame.mouse.get_pressed()
             
@@ -184,9 +190,8 @@ class Player(pygame.sprite.Sprite):
             if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.is_flying():
                 self.prior_image = self.image = self.shoot_image
                 self.prior_nose = self.nose = self.shoot_image_nose
-    
-        
     def update_position_based_on_gravity(self):
+        print(self.y, self.end_game_y)
         if not self.blackhole_collision:
             self.velocity_y += self.GRAVITY
             self.y += self.velocity_y
@@ -195,7 +200,7 @@ class Player(pygame.sprite.Sprite):
             if (self.velocity_y > self.GRAVITY) and not self.falling:      
                 self.falling = True 
                 self.fall_y = self.y
-                print(self.fall_y)
+                self.end_game_y = self.y + (450 if self.moved else (-self.y + 840))
                 self.using_jetpack = False
                 self.using_propeller = False
                 self.jumping = False
@@ -203,7 +208,6 @@ class Player(pygame.sprite.Sprite):
                 self.falling = False
             else:
                 pass
-
     def update_directional_image(self): 
         #Alter images depending on whether the sprite is jumping, else revert to default
         if self.jumping:
@@ -220,8 +224,6 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = self.prior_image
             self.nose = self.prior_nose
-
-
     def update_score(self):
         if self.y > 0:
             self.score = max(self.score, self.SCREEN_HEIGHT - self.y - self.CENTER_Y)
@@ -229,25 +231,47 @@ class Player(pygame.sprite.Sprite):
             self.score = max(self.score, self.SCREEN_HEIGHT + abs(self.y) - self.CENTER_Y)
     
     def fall_check(self):
-        pass
-        #print(self.rect.y)
-        """if self.velocity_y > 20 and not self.end_game:
-            self.rect.y = self.SCREEN_HEIGHT//2
-            sounds.fall.play()
-            self.end_game = True"""
+
+        if self.y >= self.end_game_y and not self.end_game:
+            
+            if self.y < 390:
+                difference = abs(self.y) - 900
+                self.y = -900
+                for platform in (self.game.platforms.sprites() + self.game.movable_platforms.sprites()):
+                    platform.rect.y += difference
+                    if platform.power_up:
+                        platform.power_up.rect.y += difference
+
+                for sprite in (self.game.monsters.sprites() + self.game.blackholes.sprites()):
+                    sprite.rect.y -= difference
+
+            else:
+                difference = self.y + 900 - 320
+                self.y = -900
+                for platform in (self.game.platforms.sprites() + self.game.movable_platforms.sprites()):
+                    platform.rect.y -= difference
+                    if platform.power_up:
+                        platform.power_up.rect.y -= difference
+
+                for sprite in (self.game.monsters.sprites() + self.game.blackholes.sprites()):
+                    sprite.rect.y -= difference
+                    
+
+                    
+                    self.update_y = False
+                
+            if not self.black_hole_collided_with:
+                sounds.fall.play()
+            self.end_game = True
 
     def y_boundary_check(self):
-        #end game state check
-        
         if self.y >= self.SCREEN_HEIGHT - self.rect.height:
             self.y = self.SCREEN_HEIGHT - self.rect.height
             self.velocity_y = 0
             self.on_ground = True
 
             if not self.end_game:
-                self.end_game = True
-
-                
+                self.end_game = True       
     def x_boundary_check(self):
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side
@@ -255,50 +279,18 @@ class Player(pygame.sprite.Sprite):
             self.x = 0
         elif self.x < 0:
             self.x = self.SCREEN_WIDTH
-
-        self.rect.topleft = (self.x, self.y)
-    
     def spring_shoe_check(self):
         if self.using_spring_shoes and self.spring_shoe_jump_count % 5 == 0:
             self.JUMP_STRENGTH = self.game.JUMP_STRENGTH
             self.using_spring_shoes = False
-
-
-    def blackhole_check(self):
-        blackhole_location = (self.black_hole_collided_with.rect.centerx, self.black_hole_collided_with.rect.centery)
-        if self.blackhole_collision and (self.rect.x, self.rect.y) != blackhole_location:
-
-            dx = blackhole_location[0] - self.rect.centerx
-            dy = blackhole_location[1] - self.rect.centery
-            distance = pygame.math.Vector2(dx, dy).length()
-            print(distance)
-            if distance >= 5:
-                direction = pygame.math.Vector2(dx, dy).normalize()
-                movement_speed = 5
-                self.rect.move_ip(direction * movement_speed)
-            else:
-                self.kill()
-                self.game.play_game = False
-                self.game.end_game = True
-                
-
-            if self.image_scale > 0.02:
-                self.image_scale -= 0.02
-                self.image = self.resize_image(self.image_scale)
-                scaled_rect = self.image.get_rect()
-                scaled_rect.center = self.rect.center 
-                self.rect = scaled_rect
-                self.nose = self.resize_image(self.image_scale)
-
-    def resize_image(self, scale):
-        return pygame.transform.scale(self.image, (int(self.rect.width * scale), int(self.rect.height * scale)))
-
-
+    def update_rect(self):
+        self.rect.topleft = (self.x, (self.y if self.update_y else 840))
     def update_other_sprites_based_upon_player_jump_difference(self):
         if self.y < self.CENTER_Y - self.rect.height:
-            
+            self.moved = True
+
             difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
-            self.previous_y_difference = int(self.y - self.CENTER_Y)
+            self.previous_y_difference = int(self.y - self.CENTER_Y) 
             
             for platform in self.game.platforms.sprites() + self.game.movable_platforms.sprites():
                 platform.rect.y -= difference
@@ -311,26 +303,52 @@ class Player(pygame.sprite.Sprite):
             for blackhole in self.game.blackholes.sprites():
                 blackhole.rect.y -= difference
 
-            self.rect.y = (self.SCREEN_HEIGHT // 2) - self.rect.height
+            self.rect.y = ((self.SCREEN_HEIGHT // 2 - self.rect.height)  if self.update_y else 840)
+   
+    def blackhole_check(self):
+        
+        def resize_image(scale):
+            return pygame.transform.scale(self.image, (int(self.rect.width * scale), int(self.rect.height * scale)))
+
+        blackhole_location = (self.black_hole_collided_with.rect.centerx, self.black_hole_collided_with.rect.centery)
+        if self.blackhole_collision and (self.rect.x, self.rect.y) != blackhole_location:
+
+            dx = blackhole_location[0] - self.rect.centerx
+            dy = blackhole_location[1] - self.rect.centery
+            distance = pygame.math.Vector2(dx, dy).length()
+        
+            if distance >= 5:
+                direction = pygame.math.Vector2(dx, dy).normalize()
+                movement_speed = 5
+                self.rect.move_ip(direction * movement_speed)
+         
+            if self.image_scale > 0.02:
+                self.image_scale -= 0.02
+                self.image = resize_image(self.image_scale)
+                scaled_rect = self.image.get_rect()
+                scaled_rect.center = self.rect.center 
+                self.rect = scaled_rect
+                self.nose = resize_image(self.image_scale)
+    """-------"""
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        if self.draw_player:
+            screen.blit(self.image, self.rect)
 
-
-        if self.nose:
-            screen.blit(self.nose, self.rect)
-        if self.knocked_out:
-            screen.blit(self.knocked_out_animation[self.game.frame % 3] , (self.rect.x, self.rect.top - 10))
-        
-        if self.is_flying and self.image == self.shoot_jump_image:
-            self.image = self.right_image
-            self.nose = self.right_image_nose
-
-        self.draw_jetpack(screen)
-        self.draw_propeller(screen)
-        self.draw_shield(screen)
-        self.draw_spring_shoes(screen)
+            if self.nose:
+                screen.blit(self.nose, self.rect)
+            if self.knocked_out:
+                screen.blit(self.knocked_out_animation[self.game.frame % 3] , (self.rect.x, self.rect.top - 10))
             
+            if self.is_flying and self.image == self.shoot_jump_image:
+                self.image = self.right_image
+                self.nose = self.right_image_nose
+
+            self.draw_jetpack(screen)
+            self.draw_propeller(screen)
+            self.draw_shield(screen)
+            self.draw_spring_shoes(screen)
+                
     def draw_jetpack(self, screen):
         if self.using_jetpack:
             x = self.rect.x

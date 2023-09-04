@@ -54,7 +54,7 @@ class Rocket(pygame.sprite.Sprite):
     def player_collision_check(self):
         collision = self.rect.colliderect(self.game.player.rect)
         if (collision 
-            and not self.player.knocked_out 
+            and not self.player.dead 
             and not self.player.is_flying()):
 
             self.player.JUMP_STRENGTH = -65

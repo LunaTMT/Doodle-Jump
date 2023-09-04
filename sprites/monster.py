@@ -106,9 +106,10 @@ class Monster(pygame.sprite.Sprite):
                     self.remove()
 
                 else:
-                    self.game.player.handling_events = False
-                    self.game.player.knocked_out = True
-                    self.game.player.velocity_y = -1
+                    self.player.handling_events = False
+                    self.player.knocked_out = True
+                    self.player.dead = True
+                    self.player.velocity_y = -1
                     sounds.thump.set_volume(4)
                     sounds.thump.play()
        
@@ -119,11 +120,7 @@ class Monster(pygame.sprite.Sprite):
         random.choice((sounds.die_1, sounds.die_2)).play()
         self.sound.stop()
         self.kill()
-        self.game.monsters.add(Monster(self.game))
-
-        self.game.play_game = False
-        self.game.end_game = True
-                
+        self.game.monsters.add(Monster(self.game))              
         del self
 
     def killed_check(self):

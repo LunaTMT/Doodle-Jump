@@ -31,7 +31,7 @@ class Shield(pygame.sprite.Sprite):
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
-            and not self.player.knocked_out 
+            and not self.player.dead
             and not self.player.using_shield):
             self.player.using_shield = True
             self.being_used = True

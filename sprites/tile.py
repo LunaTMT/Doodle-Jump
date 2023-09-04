@@ -16,15 +16,21 @@ class Tile(pygame.sprite.Sprite):
     ID = 0
 
     SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
-    DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 0, 58, 18))  # Extract a 32x32 sprite
+    DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(1, 1, 57, 15))  # Extract a 32x32 sprite
     
-    LARGE_DEFAULT_IMAGE =  pygame.image.load("assets/images/tiles/large_default.png")
+    #LARGE_DEFAULT_IMAGE =  pygame.image.load("assets/images/tiles/large_default.png")
     MOVING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 19, 58, 17)) 
-    DISAPPEARING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 55, 58, 17)) 
-    SHIFTING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 182, 58, 17)) 
-    MOVEABLE_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(150, 305, 80, 35)) 
+    DISAPPEARING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 55, 57, 15)) 
+    SHIFTING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 184, 57, 15)) 
 
-    BROKEN_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 73, 60, 17)) 
+
+    MOVEABLE_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(150, 305, 80, 35)) 
+    MOVEABLE_TILE_LEFT = SPRITE_SHEET.subsurface(pygame.Rect(423, 472, 11, 8)) 
+    MOVEABLE_TILE_RIGHT = SPRITE_SHEET.subsurface(pygame.Rect(499, 472, 11, 7)) 
+    MOVEABLE_TILE_UP = SPRITE_SHEET.subsurface(pygame.Rect(464, 458, 5, 7)) 
+    MOVEABLE_TILE_DOWN = SPRITE_SHEET.subsurface(pygame.Rect(460, 487, 7, 10)) 
+
+    BROKEN_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 73, 60, 15)) 
     BROKEN_TILE_IMAGE_1  = SPRITE_SHEET.subsurface(pygame.Rect(0, 90, 62, 20)) 
     BROKEN_TILE_IMAGE_2  = SPRITE_SHEET.subsurface(pygame.Rect(0, 116, 62, 27)) 
     BROKEN_TILE_IMAGE_3  = SPRITE_SHEET.subsurface(pygame.Rect(0, 148, 62, 32)) 
@@ -60,13 +66,14 @@ class Tile(pygame.sprite.Sprite):
     def generate_power_up(self):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
         power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
-        power_up = random.choices(population = power_ups, weights=[0.5, 5, 10, 0.8, 10, 0, 80])[0]
+        power_up = random.choices(population = power_ups, weights=[0, 5, 10, 0.8, 10, 0, 80])[0]
         #weights=[0.5, 5, 10, 0.8, 10, 10, 80]
         if power_up:
             #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
             self.power_up = power_up(self.game, self, self.rect.centerx, self.rect.centery)
 
     def update(self):
+        #print(self.y, self.rect.y)
         self.death_check()
         self.player_collision_check()
         self.power_up_check()
@@ -80,7 +87,7 @@ class Tile(pygame.sprite.Sprite):
         if (collision 
             and self.player.falling 
             and (self.player.rect.bottom > self.rect.top)
-            and not self.player.knocked_out):
+            and not self.player.dead):
             self.player.jump()
 
     def death_check(self):
@@ -127,7 +134,7 @@ class BrokenTile(Tile):
             collision = pygame.sprite.collide_rect(self.player, self)
             if (collision 
                 and self.player.falling 
-                and not self.player.knocked_out):
+                and not self.player.dead):
                 sounds.tile_break.play()
                 self.fall = True
                 
@@ -186,7 +193,7 @@ class DisappearingTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling 
-            and not self.player.knocked_out):
+            and not self.player.dead):
             sounds.tile_disappear.play()
             self.player.jump()
             self.game.generate_tiles(1, top=True, tile_type = type(self))
@@ -212,8 +219,8 @@ class ShiftingTile(Tile):
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
-            and self.player.falling 
-            and not self.player.knocked_out):
+            and self.player.falling
+            and not self.player.dead):
             
             target_x = random.randint(self.lower_bound, self.upper_bound)
             while self.rect.left - 50 < target_x < self.rect.right + 50:
@@ -271,7 +278,7 @@ class MoveableTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling 
-            and not self.player.knocked_out):
+            and not self.player.dead):
             self.player.jump()
            
             if self.moving:

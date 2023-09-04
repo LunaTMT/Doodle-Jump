@@ -36,7 +36,7 @@ class Trampoline(pygame.sprite.Sprite):
         
         if (collision 
             and self.player.falling 
-            and not self.player.knocked_out):
+            and not self.player.dead):
             
             self.player.trampoline_collision = True
             

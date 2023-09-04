@@ -64,6 +64,7 @@ class Game:
         
         self.frame = 0
         self.score_font = pygame.font.Font(None, 50)
+
     
         
     def initialise_game_objects(self):
@@ -72,13 +73,13 @@ class Game:
 
         self.platforms.empty()
         #self.monsters.add(Monster(self))
-        #self.blackholes.add(Blackhole(self))
-        self.generate_tiles(n=5)
-        self.generate_tiles(n=2, top=False, tile_type=MovingTile)
-        self.generate_tiles(n=1, top=False, tile_type=ShiftingTile)
-        self.generate_tiles(n=1, top=False, tile_type=MoveableTile)
-        self.generate_tiles(n=3, top=False, tile_type=DisappearingTile)
-        self.generate_tiles(n=1, top=False, tile_type=BrokenTile)
+        self.blackholes.add(Blackhole(self))
+        self.generate_tiles(n=20)
+        #self.generate_tiles(n=2, tile_type=MovingTile)
+        #self.generate_tiles(n=1, tile_type=ShiftingTile)
+        #self.generate_tiles(n=1, tile_type=MoveableTile)
+        #self.generate_tiles(n=3, tile_type=DisappearingTile)
+        #self.generate_tiles(n=1, tile_type=BrokenTile)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -93,7 +94,7 @@ class Game:
                 self.resume_button.handle_events(event)
                 self.player.handle_events(event)
                 for platform in self.movable_platforms:
-                        platform.handle_events(event)#
+                        platform.handle_events(event)
             
             if self.end_game:
                 print("end_game")
@@ -162,17 +163,14 @@ class Game:
         sys.exit()
 
     def generate_tiles(self, n, top=False, tile_type=Tile):
-        
-        """Need to change this function because the collision detections and spawning is working fully"""
         for _ in range(n):
-            
-            x, y = randint(90, self.SCREEN_WIDTH - 90), (randint(-100, 0) if top else randint(100, self.SCREEN_HEIGHT))
-            new_platform_rect = pygame.Rect(x, y, 90, 40)
+            x, y = randint(90, self.SCREEN_WIDTH - 90), (randint(-100, -10) if top else randint(10, self.SCREEN_HEIGHT))
+            new_platform = pygame.Rect(x, y, 90, 40)
 
-            while any(new_platform_rect.colliderect(platform) for platform in  self.movable_platforms.sprites()):
-                x, y = randint(90, self.SCREEN_WIDTH - 90),(randint(-100, 0) if top else randint(100, self.SCREEN_HEIGHT))
-                new_platform_rect = pygame.Rect(x, y, 90, 40)
-
+            while any(new_platform.colliderect(platform) for platform in (self.platforms.sprites() + self.movable_platforms.sprites())):
+                x, y = randint(90, self.SCREEN_WIDTH - 90),(randint(-100, -10) if top else randint(10, self.SCREEN_HEIGHT))
+                new_platform = pygame.Rect(x, y, 90, 40)
+                
             tile_type(self, x, y)
 
 
