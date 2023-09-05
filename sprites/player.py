@@ -235,15 +235,15 @@ class Player(pygame.sprite.Sprite):
         if self.y >= self.end_game_y and not self.end_game:
             
             if self.y < 390:
-                difference = abs(self.y) - 900
-                self.y = -900
+                difference = abs(self.y) - 320
+                self.y = -320
                 for platform in (self.game.platforms.sprites() + self.game.movable_platforms.sprites()):
                     platform.rect.y += difference
                     if platform.power_up:
                         platform.power_up.rect.y += difference
 
                 for sprite in (self.game.monsters.sprites() + self.game.blackholes.sprites()):
-                    sprite.rect.y -= difference
+                    sprite.rect.y += difference
 
             else:
                 difference = self.y + 900 - 320

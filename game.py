@@ -74,7 +74,7 @@ class Game:
         self.platforms.empty()
         #self.monsters.add(Monster(self))
         self.blackholes.add(Blackhole(self))
-        self.generate_tiles(n=20)
+        self.generate_tiles(n=10)
         #self.generate_tiles(n=2, tile_type=MovingTile)
         #self.generate_tiles(n=1, tile_type=ShiftingTile)
         #self.generate_tiles(n=1, tile_type=MoveableTile)
