@@ -34,6 +34,7 @@ class Monster(pygame.sprite.Sprite):
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
         self.GRAVITY = game.GRAVITY
         self.JUMP_STRENGTH = game.JUMP_STRENGTH
+        self.fade_out_alpha = game.fade_out_alpha
 
         self.monsters = (self.TERRIFIER,
                          self.FAT_GREEN,
@@ -44,6 +45,7 @@ class Monster(pygame.sprite.Sprite):
                          self.UGLY,
                          self.SAUSAGE)
         
+        self.alpha = 255
         self.image = random.choice(self.monsters)
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(self.rect.width, self.SCREEN_WIDTH - self.rect.width)
@@ -51,7 +53,6 @@ class Monster(pygame.sprite.Sprite):
 
         self.mask = pygame.mask.from_surface(self.image)
         
-   
         self.angle = 0 
         self.prior_speed = self.speed = random.randint(1,5)
 
@@ -79,12 +80,19 @@ class Monster(pygame.sprite.Sprite):
         self.boundary_check()
         self.killed_check()
         self.player_collision_check()
+        self.fade_check()
+
+    def fade_check(self):
+        if self.game.end_game and self.player.dead_by_blackhole:
+            self.alpha = self.game.fade_out_alpha
+
 
     def player_collision_check(self):
    
         if (self.rect.colliderect(self.game.player.rect) 
             and not self.collision 
-            and not self.player.is_flying()):
+            and not self.player.is_flying()
+            and not self.player.dead):
             
             if self.player.using_shield:
                 self.player.jump(play_sound=False)
@@ -110,6 +118,7 @@ class Monster(pygame.sprite.Sprite):
                     self.player.knocked_out = True
                     self.player.dead = True
                     self.player.velocity_y = -1
+                    self.game.end_game = True
                     sounds.thump.set_volume(4)
                     sounds.thump.play()
        
@@ -161,6 +170,10 @@ class Monster(pygame.sprite.Sprite):
 
 
     def draw(self, screen):
+        if self.alpha < 0: 
+            self.alpha = 0
+        else:
+            self.image.set_alpha(self.alpha)
         screen.blit(self.image, self.rect)
         
         

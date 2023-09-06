@@ -39,9 +39,6 @@ class PlayButton:
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
                 self.clicked = False
                 self.hide = True
-                
-                self.game.player = Player(self.game, self.CENTER_X, self.CENTER_Y)
-                self.game.all_sprites.add(self.player)
                 self.game.main_menu = False
                 self.game.play_game = True
                 self.game.initialise_game_objects()

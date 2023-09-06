@@ -16,6 +16,8 @@ class Shield(pygame.sprite.Sprite):
         self.CENTER_X = game.CENTER_X
         self.player = game.player
 
+
+        self.alpha = 255
         self.x = x
         self.y = y - 30
         self.image = self.DEFAULT_IMAGE 
@@ -45,4 +47,5 @@ class Shield(pygame.sprite.Sprite):
 
     def draw(self, screen):
         if not self.being_used:
+            self.image.set_alpha(self.game.fade_out_alpha)    
             screen.blit(self.image, self.rect)

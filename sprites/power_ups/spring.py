@@ -19,6 +19,8 @@ class Spring(pygame.sprite.Sprite):
         self.CENTER_X = game.CENTER_X
         self.player = game.player
         
+
+        self.alpha = 255
         self.x = x
         self.y = y - 10
         self.image = self.SPRING 
@@ -61,4 +63,6 @@ class Spring(pygame.sprite.Sprite):
             self.image = self.SPRING_EXPANDED
             self.rect.y -= 20
             self.expanded = True
+
+        self.image.set_alpha(self.game.fade_out_alpha)    
         screen.blit(self.image, self.rect)

@@ -37,6 +37,7 @@ class Rocket(pygame.sprite.Sprite):
         self.CENTER_X = game.CENTER_X
         self.player = game.player
 
+
         self.x = x
         self.y = y - 10
         self.image = self.DEFAULT_ROCKET 
@@ -71,5 +72,6 @@ class Rocket(pygame.sprite.Sprite):
             self.kill()
 
     def draw(self, screen):
+        self.image.set_alpha(self.game.fade_out_alpha)    
         screen.blit(self.image, self.rect)
 

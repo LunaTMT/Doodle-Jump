@@ -23,7 +23,6 @@ class Tile(pygame.sprite.Sprite):
     DISAPPEARING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 55, 57, 15)) 
     SHIFTING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 184, 57, 15)) 
 
-
     MOVEABLE_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(150, 305, 80, 35)) 
     MOVEABLE_TILE_LEFT = SPRITE_SHEET.subsurface(pygame.Rect(423, 472, 11, 8)) 
     MOVEABLE_TILE_RIGHT = SPRITE_SHEET.subsurface(pygame.Rect(499, 472, 11, 7)) 
@@ -40,10 +39,12 @@ class Tile(pygame.sprite.Sprite):
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
-        
+        self.fade_out_alpha = game.fade_out_alpha
+
         self.CENTER_X = game.CENTER_X
         self.player = game.player
 
+        self.alpha = 255
         self.x = x
         self.y = y
         self.image = self.DEFAULT_IMAGE 
@@ -52,7 +53,7 @@ class Tile(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.power_up = None
 
-        if not isinstance(self, (BrokenTile, MovingTile)) and Tile.ID != 0:
+        if not isinstance(self, (BrokenTile, MovingTile)) and not self.game.main_menu:
             self.generate_power_up()
 
         if isinstance(self, MoveableTile):
@@ -60,7 +61,6 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.game.platforms.add(self)
 
-        Tile.ID += 1
 
 
     def generate_power_up(self):
@@ -77,6 +77,7 @@ class Tile(pygame.sprite.Sprite):
         self.death_check()
         self.player_collision_check()
         self.power_up_check()
+
 
     def power_up_check(self):
         if self.power_up:
@@ -96,6 +97,8 @@ class Tile(pygame.sprite.Sprite):
             self.kill()
 
     def draw(self, screen):
+ 
+        self.image.set_alpha(self.game.fade_out_alpha)
         screen.blit(self.image, self.rect)
                          
         if self.power_up:
@@ -146,6 +149,8 @@ class MovingTile(Tile):
         self.image = self.MOVING_TILE_IMAGE
         self._generate_boudaries()
         self.paused = False
+  
+        
 
     def update(self):
         if not self.player.paused:
@@ -157,6 +162,10 @@ class MovingTile(Tile):
             self.death_check()
             self.player_collision_check()
             self.power_up_check()
+
+
+
+
 
     def boundary_check(self):
         if self.rect.right > self.max_right:
@@ -179,10 +188,13 @@ class MovingTile(Tile):
         self.max_right = max_right
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+
+        self.image.set_alpha(self.game.fade_out_alpha)    
                          
         if self.power_up:
             self.power_up.draw(screen)
+        
+        screen.blit(self.image, self.rect)
 
 class DisappearingTile(Tile):
     def __init__(self, game, x, y):
@@ -214,6 +226,7 @@ class ShiftingTile(Tile):
         self.player_collision_check()
         self.shift_check()
         self.power_up_check()
+
 
 
     def player_collision_check(self):

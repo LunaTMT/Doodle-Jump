@@ -12,6 +12,8 @@ from sprites.power_ups.spring_shoes import SpringShoes
 
 class Player(pygame.sprite.Sprite):
 
+    high_score = 0
+
     def __init__(self, game, x, y):
         super().__init__()
 
@@ -89,6 +91,7 @@ class Player(pygame.sprite.Sprite):
         self.right = False
         self.black_hole_collided_with = None
         self.blackhole_collision = False
+        self.dead_by_blackhole = False
         self.dead = False
 
         self.spring_collision = False
@@ -106,7 +109,7 @@ class Player(pygame.sprite.Sprite):
         self.draw_player = True
 
     def handle_events(self, event):
-        if self.handling_events and not self.is_flying():
+        if self.handling_events and not self.is_flying() and not self.dead:
             if ((event.type == KEYDOWN and event.key in (K_SPACE, K_UP)) or 
                 (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1)):
                 self.shoot()
@@ -191,7 +194,7 @@ class Player(pygame.sprite.Sprite):
                 self.prior_image = self.image = self.shoot_image
                 self.prior_nose = self.nose = self.shoot_image_nose
     def update_position_based_on_gravity(self):
-        print(self.y, self.end_game_y)
+        
         if not self.blackhole_collision:
             self.velocity_y += self.GRAVITY
             self.y += self.velocity_y
@@ -229,14 +232,16 @@ class Player(pygame.sprite.Sprite):
             self.score = max(self.score, self.SCREEN_HEIGHT - self.y - self.CENTER_Y)
         elif self.y < 0:
             self.score = max(self.score, self.SCREEN_HEIGHT + abs(self.y) - self.CENTER_Y)
-    
+        Player.high_score = max(Player.high_score, self.score)
+
     def fall_check(self):
 
         if self.y >= self.end_game_y and not self.end_game:
+            self.dead = True
             
             if self.y < 390:
-                difference = abs(self.y) - 320
-                self.y = -320
+                difference = abs(self.y) - 900
+                self.y = -900
                 for platform in (self.game.platforms.sprites() + self.game.movable_platforms.sprites()):
                     platform.rect.y += difference
                     if platform.power_up:
