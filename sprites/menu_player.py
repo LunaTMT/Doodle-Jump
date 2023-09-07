@@ -4,6 +4,7 @@ from sprites.player import Player
 class MenuPlayer(Player):
     def __init__(self, game, x, y):
         super().__init__(game, x, y)
+        self.y = 760
         self.velocity_y = self.JUMP_STRENGTH
 
     def handle_events(self, event):

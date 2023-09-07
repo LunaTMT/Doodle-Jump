@@ -66,6 +66,7 @@ class Game:
         self.main_menu = True
         self.play_game = False
         self.end_game = False
+
         pygame.init()
 
         self.fade_out_speed = 4
@@ -102,7 +103,7 @@ class Game:
 
         self.player = Player(self, self.CENTER_X, self.CENTER_Y)
         #self.monsters.add(Monster(self))
-        self.blackholes.add(Blackhole(self))
+        #self.blackholes.add(Blackhole(self))
         self.generate_tiles(n=10)
         self.generate_tiles(n=2, tile_type=MovingTile)
         self.generate_tiles(n=1, tile_type=ShiftingTile)
@@ -134,7 +135,7 @@ class Game:
     
 
     def update(self):
-        print(self.main_menu, self.play_game, self.end_game)
+        #print(self.main_menu, self.play_game, self.end_game)
         if self.main_menu:
             self.player.update()
             self.play_button.update()
@@ -165,10 +166,8 @@ class Game:
 
             self.bullets.draw(self.screen)
             self.player.draw(self.screen)
-            self.pause_button.draw(self.screen)
-            self.resume_button.draw(self.screen)
+            
 
-        
             for platform in (self.movable_platforms.sprites() + self.platforms.sprites()):
                 platform.draw(self.screen)
                 
@@ -177,6 +176,8 @@ class Game:
         
             self.draw_top()
             self.draw_score()
+            self.pause_button.draw(self.screen)
+            self.resume_button.draw(self.screen)
 
         if self.end_game:
 

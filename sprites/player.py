@@ -109,7 +109,7 @@ class Player(pygame.sprite.Sprite):
         self.draw_player = True
 
     def handle_events(self, event):
-        if self.handling_events and not self.is_flying() and not self.dead:
+        if not self.paused and not self.is_flying() and not self.dead:
             if ((event.type == KEYDOWN and event.key in (K_SPACE, K_UP)) or 
                 (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1)):
                 self.shoot()
@@ -161,7 +161,7 @@ class Player(pygame.sprite.Sprite):
             self.trampoline_collision = False
         
     def update(self):
-        if not self.blackhole_collision: #if we continue to update movement whilst in blackhole. Movement messes up
+        if not self.paused: #if we continue to update movement whilst in blackhole. Movement messes up
             self.update_movement()
             self.update_position_based_on_gravity()
             self.update_directional_image()
@@ -174,8 +174,8 @@ class Player(pygame.sprite.Sprite):
 
             self.update_rect()
             self.update_other_sprites_based_upon_player_jump_difference()
-            
-        else:
+        
+        elif self.blackhole_collision:
             self.blackhole_check()
         
         
@@ -194,7 +194,7 @@ class Player(pygame.sprite.Sprite):
                 self.prior_image = self.image = self.shoot_image
                 self.prior_nose = self.nose = self.shoot_image_nose
     def update_position_based_on_gravity(self):
-        
+ 
         if not self.blackhole_collision:
             self.velocity_y += self.GRAVITY
             self.y += self.velocity_y
