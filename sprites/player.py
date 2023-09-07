@@ -27,7 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.JUMP_STRENGTH = game.JUMP_STRENGTH
 
         self.default_x = self.x = x
-        self.default_y = self.y = y
+        self.default_y = self.y = -900
         self.previous_y_difference = int(self.y - self.CENTER_Y)
 
         self.speed = 5 
@@ -56,7 +56,7 @@ class Player(pygame.sprite.Sprite):
         self.prior_image = self.image = self.left_image
         self.original_rect = self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect.center = (self.x, self.y)
+        self.rect.center = (self.x, game.CENTER_Y)
 
 
         
@@ -75,7 +75,7 @@ class Player(pygame.sprite.Sprite):
         self.scale_speed = 0.002
         self.image_scale = 1
 
-        self.update_y = True
+
         self.end_game_y = 840
         self.prior_y_velocity = 0
         self.velocity_y = 0
@@ -228,14 +228,11 @@ class Player(pygame.sprite.Sprite):
             self.image = self.prior_image
             self.nose = self.prior_nose
     def update_score(self):
-        if self.y > 0:
-            self.score = max(self.score, self.SCREEN_HEIGHT - self.y - self.CENTER_Y)
-        elif self.y < 0:
-            self.score = max(self.score, self.SCREEN_HEIGHT + abs(self.y) - self.CENTER_Y)
+        if self.y < -900:
+            self.score = max(self.score, abs(self.y) - 900) 
         Player.high_score = max(Player.high_score, self.score)
 
     def fall_check(self):
-
         if self.y >= self.end_game_y and not self.end_game:
             self.dead = True
             
@@ -250,21 +247,6 @@ class Player(pygame.sprite.Sprite):
                 for sprite in (self.game.monsters.sprites() + self.game.blackholes.sprites()):
                     sprite.rect.y += difference
 
-            else:
-                difference = self.y + 900 - 320
-                self.y = -900
-                for platform in (self.game.platforms.sprites() + self.game.movable_platforms.sprites()):
-                    platform.rect.y -= difference
-                    if platform.power_up:
-                        platform.power_up.rect.y -= difference
-
-                for sprite in (self.game.monsters.sprites() + self.game.blackholes.sprites()):
-                    sprite.rect.y -= difference
-                    
-
-                    
-                    self.update_y = False
-                
             if not self.black_hole_collided_with:
                 sounds.fall.play()
             self.end_game = True
@@ -289,7 +271,7 @@ class Player(pygame.sprite.Sprite):
             self.JUMP_STRENGTH = self.game.JUMP_STRENGTH
             self.using_spring_shoes = False
     def update_rect(self):
-        self.rect.topleft = (self.x, (self.y if self.update_y else 840))
+        self.rect.topleft = (self.x, self.y)
     def update_other_sprites_based_upon_player_jump_difference(self):
         if self.y < self.CENTER_Y - self.rect.height:
             self.moved = True
@@ -308,7 +290,7 @@ class Player(pygame.sprite.Sprite):
             for blackhole in self.game.blackholes.sprites():
                 blackhole.rect.y -= difference
 
-            self.rect.y = ((self.SCREEN_HEIGHT // 2 - self.rect.height)  if self.update_y else 840)
+            self.rect.y = (self.SCREEN_HEIGHT // 2 - self.rect.height)
    
     def blackhole_check(self):
         
