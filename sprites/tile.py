@@ -66,7 +66,7 @@ class Tile(pygame.sprite.Sprite):
     def generate_power_up(self):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
         power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
-        power_up = random.choices(population = power_ups, weights=[0, 5, 10, 0.8, 10, 0, 80])[0]
+        power_up = random.choices(population = power_ups, weights=[10, 5, 10, 0.8, 10, 0, 80])[0]
         #weights=[0.5, 5, 10, 0.8, 10, 10, 80]
         if power_up:
             #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)

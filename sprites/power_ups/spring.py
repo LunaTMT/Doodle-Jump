@@ -42,7 +42,8 @@ class Spring(pygame.sprite.Sprite):
             and not self.player.dead
             and not self.expanded):
 
-            self.player.spring_collision = True
+           
+            self.player.using_spring = True
             self.player.JUMP_STRENGTH = -23
             self.player.jump(play_sound=False)
             

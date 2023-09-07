@@ -39,7 +39,7 @@ class Trampoline(pygame.sprite.Sprite):
             and self.player.falling 
             and not self.player.dead):
             
-            self.player.trampoline_collision = True
+            self.player.using_trampoline = True
             
             self.player.JUMP_STRENGTH = -30
             self.player.jump(play_sound=False)

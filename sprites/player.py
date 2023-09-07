@@ -52,8 +52,9 @@ class Player(pygame.sprite.Sprite):
 
         self.shield = pygame.image.load("assets/images/player/shield.png").convert_alpha()
     
-        self.prior_nose = self.nose = self.left_image_nose
         self.prior_image = self.image = self.left_image
+        self.prior_nose = self.nose = self.left_image_nose
+        
         self.original_rect = self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, game.CENTER_Y)
@@ -86,6 +87,9 @@ class Player(pygame.sprite.Sprite):
         self.using_jetpack = False
         self.using_propeller = False
         self.using_shield = False
+        self.using_trampoline = False
+        self.using_spring = True
+    
 
         self.left = True 
         self.right = False
@@ -118,6 +122,7 @@ class Player(pygame.sprite.Sprite):
     def move_left(self):
         self.prior_image = self.image = self.left_image
         self.prior_nose = self.nose = self.left_image_nose
+
         self.x -= self.speed
         self.left = True
         self.right = False
@@ -125,12 +130,10 @@ class Player(pygame.sprite.Sprite):
     def move_right(self):
         self.prior_image = self.image = self.right_image
         self.prior_nose = self.nose = self.right_image_nose
+
         self.x += self.speed
         self.right = True
         self.left = False
-
-    def is_flying(self):
-        return any((self.using_jetpack, self.using_propeller))
 
     def shoot(self):
         shoot_sound = choice((sounds.shoot_1, sounds.shoot_2))
@@ -151,14 +154,20 @@ class Player(pygame.sprite.Sprite):
                 sounds.jump.play()
 
             if (self.using_spring_shoes 
-                and not self.spring_collision 
-                and not self.trampoline_collision):
+                and not self.is_using_booster):
 
                 sounds.spring.play()
                 self.spring_shoe_jump_count += 1
+
+
+    def is_flying(self):
+        return any((self.using_jetpack, self.using_propeller))
+    def is_using_booster(self):
+        return any(self.using_trampoline, self.using_spring)
+
+
             
-            self.spring_collision = False
-            self.trampoline_collision = False
+           
         
     def update(self):
         if not self.paused: #if we continue to update movement whilst in blackhole. Movement messes up
@@ -193,6 +202,7 @@ class Player(pygame.sprite.Sprite):
             if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.is_flying():
                 self.prior_image = self.image = self.shoot_image
                 self.prior_nose = self.nose = self.shoot_image_nose
+
     def update_position_based_on_gravity(self):
  
         if not self.blackhole_collision:
@@ -200,12 +210,14 @@ class Player(pygame.sprite.Sprite):
             self.y += self.velocity_y
 
             #Gravity update
-            if (self.velocity_y > self.GRAVITY) and not self.falling:      
+            if (self.velocity_y > self.GRAVITY) and not self.falling:  
                 self.falling = True 
                 self.fall_y = self.y
                 self.end_game_y = self.y + (450 if self.moved else (-self.y + 840))
                 self.using_jetpack = False
                 self.using_propeller = False
+                self.using_trampoline = False
+                self.using_spring = False
                 self.jumping = False
             elif (self.velocity_y < self.GRAVITY):
                 self.falling = False
@@ -213,6 +225,7 @@ class Player(pygame.sprite.Sprite):
                 pass
     def update_directional_image(self): 
         #Alter images depending on whether the sprite is jumping, else revert to default
+
         if self.jumping:
             match self.image:
                 case self.left_image:
@@ -227,6 +240,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = self.prior_image
             self.nose = self.prior_nose
+        
     def update_score(self):
         if self.y < -900:
             self.score = max(self.score, abs(self.y) - 900) 
@@ -327,7 +341,7 @@ class Player(pygame.sprite.Sprite):
             if self.knocked_out:
                 screen.blit(self.knocked_out_animation[self.game.frame % 3] , (self.rect.x, self.rect.top - 10))
             
-            if self.is_flying and self.image == self.shoot_jump_image:
+            if self.is_flying() and self.image == self.shoot_jump_image:
                 self.image = self.right_image
                 self.nose = self.right_image_nose
 
@@ -371,10 +385,20 @@ class Player(pygame.sprite.Sprite):
             screen.blit(image, (self.rect.centerx - 15, self.rect.top - 3))
 
     def draw_shield(self, screen):
+
         if self.using_shield:
-             excess_x = -8 if self.image in (self.left_image, self.left_jump_image) else 0
-             screen.blit(self.shield, (self.rect.x + excess_x, self.rect.y))
-    
+            excess_x = 0
+            excess_y = 0
+
+            if self.image in (self.shoot_image, self.shoot_jump_image):
+                excess_y = -5
+                excess_x = -5
+            elif self.image in (self.left_image, self.left_jump_image):
+                excess_x = -10 
+            
+            screen.blit(self.shield, (self.rect.x + excess_x, 
+                                      self.rect.y + excess_y))
+             
     def draw_spring_shoes(self, screen):
         if self.using_spring_shoes:
             
