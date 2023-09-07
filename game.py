@@ -103,7 +103,7 @@ class Game:
 
         self.player = Player(self, self.CENTER_X, self.CENTER_Y)
         self.monsters.add(Monster(self))
-        #self.blackholes.add(Blackhole(self))
+        self.blackholes.add(Blackhole(self))
         self.generate_tiles(n=10)
         self.generate_tiles(n=2, tile_type=MovingTile)
         self.generate_tiles(n=1, tile_type=ShiftingTile)
