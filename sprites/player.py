@@ -102,10 +102,9 @@ class Player(pygame.sprite.Sprite):
         self.trampoline_collision = False
         
         self.moved = False
-        self.on_ground = False
         self.jumping = False
         self.falling = False
-        self.end_game = False
+        self.check_fall = False
         self.paused = False
         self.knocked_out = False
         self.handling_events = True
@@ -147,7 +146,6 @@ class Player(pygame.sprite.Sprite):
             self.game.frame = 0
             self.excess_y = self.CENTER_X - (self.y - 273)
             self.velocity_y = self.JUMP_STRENGTH
-            self.on_ground = False
             self.jumping = True
 
             if play_sound:
@@ -213,7 +211,7 @@ class Player(pygame.sprite.Sprite):
             if (self.velocity_y > self.GRAVITY) and not self.falling:  
                 self.falling = True 
                 self.fall_y = self.y
-                self.end_game_y = self.y + (450 if self.moved else (-self.y + 840))
+                self.end_game_y = self.y + 450 + self.image.get_height() #if self.moved else (-self.rect.bottom + 840))
                 self.using_jetpack = False
                 self.using_propeller = False
                 self.using_trampoline = False
@@ -247,9 +245,8 @@ class Player(pygame.sprite.Sprite):
         Player.high_score = max(Player.high_score, self.score)
 
     def fall_check(self):
-        if self.y >= self.end_game_y and not self.end_game:
-            self.dead = True
-            
+        if self.y >= self.end_game_y and not self.check_fall:
+
             if self.y < 390:
                 difference = abs(self.y) - 900
                 self.y = -900
@@ -263,16 +260,16 @@ class Player(pygame.sprite.Sprite):
 
             if not self.black_hole_collided_with:
                 sounds.fall.play()
-            self.end_game = True
+            self.check_fall = True
+
 
     def y_boundary_check(self):
-        if self.y >= self.SCREEN_HEIGHT - self.rect.height:
-            self.y = self.SCREEN_HEIGHT - self.rect.height
+        if self.rect.top >= 900:
+            self.rect.y = 900
             self.velocity_y = 0
-            self.on_ground = True
 
-            if not self.end_game:
-                self.end_game = True       
+            self.dead = True
+            self.game.end_game = True      
     def x_boundary_check(self):
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side

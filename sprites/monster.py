@@ -118,7 +118,6 @@ class Monster(pygame.sprite.Sprite):
                     self.player.knocked_out = True
                     self.player.dead = True
                     self.player.velocity_y = -1
-                    self.game.end_game = True
                     sounds.thump.set_volume(4)
                     sounds.thump.play()
        

@@ -181,40 +181,40 @@ class Game:
 
         if self.end_game:
 
-            if self.player.dead_by_blackhole:
-                if self.fade_out_alpha == 0:
-                    self.play_game = False
-                    pygame.mixer.stop()     
+            
+            if self.fade_out_alpha == 0:
+                self.play_game = False
+                pygame.mixer.stop()     
+            
+
+            self.fade_out_alpha -= self.fade_out_speed
+            self.fade_in_alpha += self.fade_in_speed
+
+            if self.fade_out_alpha < 0:
+                self.fade_out_alpha = 0
+
                 
+            if self.fade_out_alpha == 0:
 
-                self.fade_out_alpha -= self.fade_out_speed
-                self.fade_in_alpha += self.fade_in_speed
+                score = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
+                score_width, score_height = score.get_size()
+                score_x = (self.SCREEN_WIDTH - score_width) // 2
 
-                if self.fade_out_alpha < 0:
-                    self.fade_out_alpha = 0
+                transparent_surface = pygame.Surface((score_width, score_height), pygame.SRCALPHA)
+                transparent_surface.fill(colours.WHITE)
 
-                    
-                if self.fade_out_alpha == 0:
+                high_score = self.score_font.render(str(int(Player.high_score)), True, colours.BLACK)  
+                high_score_width, _ = score.get_size()
+                high_score_x = (self.SCREEN_WIDTH - high_score_width) // 2
 
-                    score = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
-                    score_width, score_height = score.get_size()
-                    score_x = (self.SCREEN_WIDTH - score_width) // 2
-
-                    transparent_surface = pygame.Surface((score_width, score_height), pygame.SRCALPHA)
-                    transparent_surface.fill(colours.WHITE)
-
-                    high_score = self.score_font.render(str(int(Player.high_score)), True, colours.BLACK)  
-                    high_score_width, _ = score.get_size()
-                    high_score_x = (self.SCREEN_WIDTH - high_score_width) // 2
-
-                    self.screen.blit(score,      (score_x,      (self.CENTER_Y * 0.626)))
-                    self.screen.blit(high_score, (high_score_x, (self.CENTER_Y * 0.93)))
-                    
-                    self.screen.blit(self.YOUR_SCORE_IMAGE,      (self.YOUR_SCORE_IMAGE_x,       self.CENTER_Y * 0.5))
-                    self.screen.blit(self.YOUR_HIGH_SCORE_IMAGE, (self.YOUR_HIGH_SCORE_IMAGE_x, (self.CENTER_Y * 0.75)))
-        
-                    self.play_again_button.draw(self.screen)
-                    self.main_menu_button.draw(self.screen)
+                self.screen.blit(score,      (score_x,      (self.CENTER_Y * 0.626)))
+                self.screen.blit(high_score, (high_score_x, (self.CENTER_Y * 0.93)))
+                
+                self.screen.blit(self.YOUR_SCORE_IMAGE,      (self.YOUR_SCORE_IMAGE_x,       self.CENTER_Y * 0.5))
+                self.screen.blit(self.YOUR_HIGH_SCORE_IMAGE, (self.YOUR_HIGH_SCORE_IMAGE_x, (self.CENTER_Y * 0.75)))
+    
+                self.play_again_button.draw(self.screen)
+                self.main_menu_button.draw(self.screen)
         pygame.display.flip()        
  
 
