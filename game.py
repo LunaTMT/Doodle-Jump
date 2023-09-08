@@ -81,7 +81,7 @@ class Game:
 
         self.frame = 0
         self.score_font = pygame.font.Font(None, 50)
-        self.quadrants = ("Q1", "Q2")# "Q3", "Q4")
+        self.quadrants = ("Q1", "Q2", "Q3", "Q4")
         self.quadrant_idx = 0
 
         self.previous_spawn_x = 0
@@ -105,14 +105,14 @@ class Game:
 
 
         self.player = Player(self, self.CENTER_X, self.CENTER_Y)
-        self.generate_n_tiles(n=20, top=False)
+        self.generate_n_tiles(n=25, top=False)
  
 
     def generate_random_tile(self):
         
         if Tile.total <= self.max_tile_number:
             tiles = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile]
-            tile = random.choices(population = tiles, weights=[50, 10, 10, 2, 10, 20])[0]
+            tile = random.choices(population = tiles, weights=[60, 10, 10, 2, 10, 10])[0]
             self.generate_n_tiles(n=1, top=True, tile_type=tile)
 
     def generate_random_enemy(self):
@@ -251,7 +251,7 @@ class Game:
         
 
         def get_random_quadrant_coordinates():
-            current_quadrant = self.quadrants[self.quadrant_idx % 2]
+            current_quadrant = self.quadrants[self.quadrant_idx % 4]
             x_range, y_range = self.get_quadrant_range(current_quadrant)
             x_lower, x_higher = x_range
             y_lower, y_higher = y_range
@@ -265,22 +265,26 @@ class Game:
                 case "Q1":
                     x_lower_bound = 60
                     y_lower_bound = 20
+                    minus = 450
                 case "Q2":
                     x_upper_bound = -60
                     y_lower_bound = 20
+                    minus = 450
                 case "Q3":
                     x_lower_bound = 60
                     y_upper_bound = -20
+                    minus = 900
                 case "Q4":
                     x_upper_bound = -60
                     y_upper_bound = -20
+                    minus = 900
         
 
             x = randint(x_lower + x_lower_bound, x_higher + x_upper_bound)
 
             if top:
-                y = (randint((y_lower + y_lower_bound) - 320, 
-                             (y_higher + y_upper_bound) - 320))
+                y = (randint((y_lower + y_lower_bound - minus), 
+                             (y_higher + y_upper_bound - minus)))
             else:
                 y = randint(0, 840)
             
