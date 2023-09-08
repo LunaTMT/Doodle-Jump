@@ -14,6 +14,7 @@ from sprites.power_ups.trampoline import Trampoline
 class Tile(pygame.sprite.Sprite):
 
     ID = 0
+    total = 0
 
     SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(1, 1, 57, 15))  # Extract a 32x32 sprite
@@ -36,6 +37,8 @@ class Tile(pygame.sprite.Sprite):
 
     def __init__(self, game, x, y):
         super().__init__()
+        Tile.total += 1
+
         self.game = game
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
@@ -66,7 +69,7 @@ class Tile(pygame.sprite.Sprite):
     def generate_power_up(self):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
         power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
-        power_up = random.choices(population = power_ups, weights=[0, 5, 10, 0.8, 10, 0, 80])[0]
+        power_up = random.choices(population = power_ups, weights=[0.8, 2, 5, 0.8, 5, 1, 80])[0]
         #weights=[0.5, 5, 10, 0.8, 10, 10, 80]
         if power_up:
             #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
@@ -86,14 +89,16 @@ class Tile(pygame.sprite.Sprite):
     def player_collision_check(self):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
-            and self.player.falling 
-            and (self.player.rect.bottom > self.rect.top)
-            and not self.player.dead):
+            and self.player.falling
+            and not self.player.dead
+            and not self.player.is_using_booster()
+            and not self.player.is_flying()):
             self.player.jump()
 
     def death_check(self):
         if self.rect.y > self.SCREEN_HEIGHT:
-            self.game.generate_tiles(1, top=True, tile_type = type(self))
+            #self.game.generate_tiles(1, top=True, tile_type = type(self))
+            Tile.total -= 1
             self.kill()
 
     def draw(self, screen):
@@ -113,6 +118,7 @@ class BrokenTile(Tile):
         self.velocity = [0, 0]  # Initial velocity
         self.gravity = 0.2
         self.fall = False
+        
     
     def update(self):
         self.death_check()
@@ -137,7 +143,9 @@ class BrokenTile(Tile):
             collision = pygame.sprite.collide_rect(self.player, self)
             if (collision 
                 and self.player.falling 
-                and not self.player.dead):
+                and not self.player.dead
+                and not self.player.is_using_booster()
+                and not self.player.is_flying()):
                 sounds.tile_break.play()
                 self.fall = True
                 
@@ -205,10 +213,12 @@ class DisappearingTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling 
-            and not self.player.dead):
+            and not self.player.dead
+            and not self.player.is_using_booster()
+            and not self.player.is_flying()):
             sounds.tile_disappear.play()
             self.player.jump()
-            self.game.generate_tiles(1, top=True, tile_type = type(self))
+            Tile.total -= 1
             self.kill()
 
 class ShiftingTile(Tile):
@@ -233,7 +243,9 @@ class ShiftingTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling
-            and not self.player.dead):
+            and not self.player.dead
+            and not self.player.is_using_booster()
+            and not self.player.is_flying()):
             
             target_x = random.randint(self.lower_bound, self.upper_bound)
             while self.rect.left - 50 < target_x < self.rect.right + 50:
@@ -291,7 +303,9 @@ class MoveableTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling 
-            and not self.player.dead):
+            and not self.player.dead
+            and not self.player.is_using_booster()
+            and not self.player.is_flying()):
             self.player.jump()
            
             if self.moving:

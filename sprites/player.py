@@ -88,7 +88,7 @@ class Player(pygame.sprite.Sprite):
         self.using_propeller = False
         self.using_shield = False
         self.using_trampoline = False
-        self.using_spring = True
+        self.using_spring = False
     
 
         self.left = True 
@@ -152,7 +152,7 @@ class Player(pygame.sprite.Sprite):
                 sounds.jump.play()
 
             if (self.using_spring_shoes 
-                and not self.is_using_booster):
+                and not self.is_using_booster()):
 
                 sounds.spring.play()
                 self.spring_shoe_jump_count += 1
@@ -161,7 +161,7 @@ class Player(pygame.sprite.Sprite):
     def is_flying(self):
         return any((self.using_jetpack, self.using_propeller))
     def is_using_booster(self):
-        return any(self.using_trampoline, self.using_spring)
+        return any((self.using_trampoline, self.using_spring))
 
 
             
@@ -173,6 +173,7 @@ class Player(pygame.sprite.Sprite):
             self.update_position_based_on_gravity()
             self.update_directional_image()
             self.update_score()
+            self.update_maximum_tiles_allowed()
             
             self.fall_check()
             self.y_boundary_check()
@@ -244,6 +245,20 @@ class Player(pygame.sprite.Sprite):
             self.score = max(self.score, abs(self.y) - 900) 
         Player.high_score = max(Player.high_score, self.score)
 
+    def update_maximum_tiles_allowed(self):
+        print(self.game.max_tile_number)
+        self.game.enemy_weight = self.score / 100000
+        if 0 <= self.score < 1000:
+            self.game.max_tile_number = 30
+        elif 1000 < self.score <= 10000:
+            self.game.max_tile_number = 20
+        elif 10000 < self.score <= 30000:
+            self.game.max_tile_number = 15
+        else:
+            self.game.max_tile_number = 10
+
+        
+
     def fall_check(self):
         if self.y >= self.end_game_y and not self.check_fall:
 
@@ -260,6 +275,7 @@ class Player(pygame.sprite.Sprite):
 
             if not self.black_hole_collided_with:
                 sounds.fall.play()
+                self.game.draw_bottom = True
             self.check_fall = True
 
 
@@ -267,7 +283,6 @@ class Player(pygame.sprite.Sprite):
         if self.rect.top >= 900:
             self.rect.y = 900
             self.velocity_y = 0
-
             self.dead = True
             self.game.end_game = True      
     def x_boundary_check(self):
@@ -397,8 +412,8 @@ class Player(pygame.sprite.Sprite):
                                       self.rect.y + excess_y))
              
     def draw_spring_shoes(self, screen):
+
         if self.using_spring_shoes:
-            
             excess_x = 5 if self.right else 0
             excess_y = 3 if self.jumping else 0
             image = SpringShoes.DECOMPRESSED_IMAGE if self.jumping else SpringShoes.DEFAULT_IMAGE

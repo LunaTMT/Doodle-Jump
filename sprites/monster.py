@@ -49,7 +49,7 @@ class Monster(pygame.sprite.Sprite):
         self.image = random.choice(self.monsters)
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(self.rect.width, self.SCREEN_WIDTH - self.rect.width)
-        self.rect.y = 0
+        self.rect.y = -self.rect.height
 
         self.mask = pygame.mask.from_surface(self.image)
         
@@ -127,8 +127,7 @@ class Monster(pygame.sprite.Sprite):
     def remove(self):
         random.choice((sounds.die_1, sounds.die_2)).play()
         self.sound.stop()
-        self.kill()
-        self.game.monsters.add(Monster(self.game))              
+        self.kill()   
         del self
 
     def killed_check(self):
@@ -136,7 +135,6 @@ class Monster(pygame.sprite.Sprite):
             random.choice((sounds.die_1, sounds.die_2)).play()
             self.sound.stop()
             self.kill()
-            self.game.monsters.add(Monster(self.game))
             del self
             
 
@@ -144,7 +142,6 @@ class Monster(pygame.sprite.Sprite):
         if self.rect.y > self.SCREEN_HEIGHT:
             self.sound.stop()
             self.kill()
-            self.game.monsters.add(Monster(self.game))
             
         
         

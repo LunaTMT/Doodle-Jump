@@ -1,6 +1,7 @@
 import pygame
 import assets.sounds as sounds
 from sprites.player import Player
+from sprites.tile import Tile
 
 class PlayAgain:
     SPRITE_SHEET = pygame.image.load("assets/images/start-end-tiles.png")
@@ -58,6 +59,7 @@ class PlayAgain:
                 self.game.end_game = False
                 self.game.initialise_game_objects()
                 self.game.fade_out_alpha = 255
+                Tile.total = 0
                 sounds.button.play()
 
     def draw(self, screen):

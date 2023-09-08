@@ -43,10 +43,9 @@ class SpringShoes(pygame.sprite.Sprite):
             and not self.player.dead 
             and not self.player.is_flying()):
             
-            
             self.being_used = True
-            self.game.player.using_spring_shoes = True
-            self.game.player.spring_shoe_jump_count = 0
+            self.player.using_spring_shoes = True
+            self.player.spring_shoe_jump_count = 0
             self.player.JUMP_STRENGTH = -23
             self.player.jump()
 

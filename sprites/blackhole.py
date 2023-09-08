@@ -1,6 +1,7 @@
 import pygame
 from random import randint
 import assets.sounds as sounds
+import assets.colours as colours
 
 class Blackhole(pygame.sprite.Sprite):
     
@@ -16,7 +17,7 @@ class Blackhole(pygame.sprite.Sprite):
         self.image = pygame.image.load("assets/images/backgrounds/blackhole.png")
         self.rect = self.image.get_rect()
         self.rect.x = randint(self.rect.width, self.SCREEN_WIDTH - self.rect.width)
-        self.rect.y = 0
+        self.rect.y = -self.rect.height
         self.blocked = False
         self.collision = False
      
@@ -32,7 +33,7 @@ class Blackhole(pygame.sprite.Sprite):
     def death_check(self):
         if self.rect.y > self.SCREEN_HEIGHT:
             self.kill()
-            self.game.blackholes.add(Blackhole(self.game))
+            #self.game.blackholes.add(Blackhole(self.game))
             del self
     
     def player_collision_check(self):
