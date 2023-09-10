@@ -6,7 +6,7 @@ from sprites.tile import Tile
 class PlayAgain:
     SPRITE_SHEET = pygame.image.load("assets/images/start-end-tiles.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(231, 99, 222, 80))
-    HOVER_IMAGE = SPRITE_SHEET = pygame.image.load("assets/images/buttons/play_again_hover_button.png")
+    HOVER_IMAGE = SPRITE_SHEET = pygame.image.load("assets/images/Buttons/play_again_hover_button.png")
 
     def __init__(self, game):
         self.game = game

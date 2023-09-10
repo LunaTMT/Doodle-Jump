@@ -1,9 +1,10 @@
 import pygame
 import assets.sounds as sounds
+import texture
 
 class Spring(pygame.sprite.Sprite):
 
-    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load(f"assets/images/Game_tiles/{texture.file_name}.png")
     SPRING = SPRITE_SHEET.subsurface(pygame.Rect(404, 99, 17, 12))  # Extract a 32x32 sprite
     SPRING_EXPANDED = SPRITE_SHEET.subsurface(pygame.Rect(404, 115, 17, 28))
 

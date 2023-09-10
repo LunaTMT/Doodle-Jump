@@ -3,11 +3,11 @@ from pygame.locals import *
 import assets.colours as colours
 import assets.sounds as sounds
 from random import choice, randint
-from sprites.power_ups.rocket import Rocket
+from sprites.power_ups.jetpack import Jetpack
 from sprites.power_ups.propeller import Propeller
 from sprites.power_ups.shield import Shield
 from sprites.power_ups.spring_shoes import SpringShoes
-
+import texture
 
 
 class Player(pygame.sprite.Sprite):
@@ -32,28 +32,22 @@ class Player(pygame.sprite.Sprite):
 
         self.speed = 5 
         
-        self.left_image = pygame.image.load("assets/images/player/left.png").convert_alpha()
-        self.left_image_nose = pygame.image.load("assets/images/player/left_nose.png").convert_alpha()
-
-        self.left_jump_image = pygame.image.load("assets/images/player/left_jump.png").convert_alpha()
-        self.left_jump_image_nose = pygame.image.load("assets/images/player/left_jump_nose.png").convert_alpha()
+        self.left_image = pygame.image.load(f"assets/images/Player/{texture.folder_name}/Body/left.png").convert_alpha()
         
-        self.right_image = pygame.image.load("assets/images/player/right.png").convert_alpha()
-        self.right_image_nose = pygame.image.load("assets/images/player/right_nose.png").convert_alpha()
-
-        self.right_jump_image = pygame.image.load("assets/images/player/right_jump.png").convert_alpha()
-        self.right_jump_image_nose = pygame.image.load("assets/images/player/right_jump_nose.png").convert_alpha()
+        self.left_jump_image = pygame.image.load(f"assets/images/Player/{texture.folder_name}/Body/left_jump.png").convert_alpha()
         
-        self.shoot_image = pygame.image.load("assets/images/player/shoot.png").convert_alpha()
-        self.shoot_image_nose = pygame.image.load("assets/images/player/shoot_nose.png").convert_alpha()
+        self.right_image = pygame.image.load(f"assets/images/Player/{texture.folder_name}/Body/right.png").convert_alpha()
         
-        self.shoot_jump_image = pygame.image.load("assets/images/player/shoot_jump.png").convert_alpha()
-        self.shoot_jump_image_nose = pygame.image.load("assets/images/player/shoot_jump_nose.png").convert_alpha()
-
-        self.shield = pygame.image.load("assets/images/player/shield.png").convert_alpha()
+        self.right_jump_image = pygame.image.load(f"assets/images/Player/{texture.folder_name}/Body/right_jump.png").convert_alpha()
+        
+        self.shoot_image = pygame.image.load(f"assets/images/Player/{texture.folder_name}/Body/shoot.png").convert_alpha()
+        
+        self.shoot_jump_image = pygame.image.load(f"assets/images/Player/{texture.folder_name}/Body/shoot_jump.png").convert_alpha()
+      
+        self.shield = pygame.image.load("assets/images/Player/shield.png").convert_alpha()
     
         self.prior_image = self.image = self.left_image
-        self.prior_nose = self.nose = self.left_image_nose
+       
         
         self.original_rect = self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -61,9 +55,9 @@ class Player(pygame.sprite.Sprite):
 
 
         
-        self.stars_1 = pygame.image.load("assets/images/animations/stars_1.png").convert_alpha()
-        self.stars_2 = pygame.image.load("assets/images/animations/stars_2.png").convert_alpha()
-        self.stars_3 = pygame.image.load("assets/images/animations/stars_3.png").convert_alpha()
+        self.stars_1 = pygame.image.load("assets/images/Animations/Stars/1.png").convert_alpha()
+        self.stars_2 = pygame.image.load("assets/images/Animations/Stars/2.png").convert_alpha()
+        self.stars_3 = pygame.image.load("assets/images/Animations/Stars/3.png").convert_alpha()
         self.stars_location = (self.rect.x, self.rect.top-10)
         self.knocked_out_animation = [self.stars_1,  self.stars_2,  self.stars_3]
         
@@ -120,7 +114,7 @@ class Player(pygame.sprite.Sprite):
         
     def move_left(self):
         self.prior_image = self.image = self.left_image
-        self.prior_nose = self.nose = self.left_image_nose
+
 
         self.x -= self.speed
         self.left = True
@@ -128,7 +122,6 @@ class Player(pygame.sprite.Sprite):
 
     def move_right(self):
         self.prior_image = self.image = self.right_image
-        self.prior_nose = self.nose = self.right_image_nose
 
         self.x += self.speed
         self.right = True
@@ -196,8 +189,7 @@ class Player(pygame.sprite.Sprite):
                 self.move_right()
             if (keys[K_SPACE] or keys[K_UP] or mouse_buttons[0]) and not self.is_flying():
                 self.prior_image = self.image = self.shoot_image
-                self.prior_nose = self.nose = self.shoot_image_nose
-
+        
     def update_position_based_on_gravity(self):
  
         if not self.blackhole_collision:
@@ -225,16 +217,16 @@ class Player(pygame.sprite.Sprite):
             match self.image:
                 case self.left_image:
                     self.image = self.left_jump_image
-                    self.nose  = self.left_jump_image_nose
+                   
                 case self.right_image:
                     self.image = self.right_jump_image
-                    self.nose  = self.right_jump_image_nose
+                  
                 case self.shoot_image:
                     self.image = self.shoot_jump_image
-                    self.nose  = self.shoot_jump_image_nose
+                   
         else:
             self.image = self.prior_image
-            self.nose = self.prior_nose
+          
         
     def update_score(self):
         if self.y < -900:
@@ -334,21 +326,21 @@ class Player(pygame.sprite.Sprite):
                 scaled_rect = self.image.get_rect()
                 scaled_rect.center = self.rect.center 
                 self.rect = scaled_rect
-                self.nose = resize_image(self.image_scale)
+
     """-------"""
 
     def draw(self, screen):
         if self.draw_player:
+            #pygame.draw.rect(screen, (0,0,255), self.rect)
             screen.blit(self.image, self.rect)
+            
 
-            if self.nose:
-                screen.blit(self.nose, self.rect)
             if self.knocked_out:
                 screen.blit(self.knocked_out_animation[self.game.frame % 3] , (self.rect.x, self.rect.top - 10))
             
             if self.is_flying() and self.image == self.shoot_jump_image:
                 self.image = self.right_image
-                self.nose = self.right_image_nose
+   
 
             self.draw_jetpack(screen)
             self.draw_propeller(screen)
@@ -363,16 +355,16 @@ class Player(pygame.sprite.Sprite):
  
             frame = self.game.frame
             if frame < 16:
-                image = Rocket.START_ANIMATION[frame % 3]
+                image = Jetpack.START_ANIMATION[frame % 3]
             elif frame < 147: 
-                image = Rocket.MAIN_BLAST[frame % 3]
+                image = Jetpack.MAIN_BLAST[frame % 3]
             elif frame < 155:
-                image = Rocket.END_ANIMAITON[frame % 3]
+                image = Jetpack.END_ANIMAITON[frame % 3]
             else:
-                image = Rocket.DEFAULT_ROCKET
+                image = Jetpack.DEFAULT_ROCKET
 
             if self.paused:
-                image = Rocket.MAIN_BLAST[2]
+                image = Jetpack.MAIN_BLAST[2]
 
             if self.right:
                 image = pygame.transform.flip(image, True, False)

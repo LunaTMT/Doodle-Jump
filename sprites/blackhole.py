@@ -14,7 +14,7 @@ class Blackhole(pygame.sprite.Sprite):
         self.fade_out_alpha = game.fade_out_alpha
 
         self.alpha = 255
-        self.image = pygame.image.load("assets/images/backgrounds/blackhole.png")
+        self.image = pygame.image.load("assets/images/Backgrounds/blackhole.png")
         self.rect = self.image.get_rect()
         self.rect.x = randint(self.rect.width, self.SCREEN_WIDTH - self.rect.width)
         self.rect.y = -self.rect.height

@@ -1,9 +1,10 @@
 import pygame
 import assets.sounds as sounds
+import texture
 
 class Shield(pygame.sprite.Sprite):
 
-    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load(f"assets/images/Game_tiles/{texture.file_name}.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(235, 306, 34, 34))  # Extract a 32x32 sprite
     
     def __init__(self, game, tile, x, y):

@@ -5,9 +5,9 @@ class PauseButton:
     def __init__(self, game):
         self.game = game
         self.player = game.player
-        self.monsters = game.monsters
+        self.monsters = game.monsters.sprites()
 
-        self.image = pygame.image.load("assets/images/buttons/pause.png")
+        self.image = pygame.image.load("assets/images/Buttons/pause.png")
         self.rect = self.image.get_rect()
         self.rect.x = game.SCREEN_WIDTH - self.rect.width - 10
         self.rect.y = 20
@@ -25,8 +25,10 @@ class PauseButton:
                     self.player.prior_y_velocity = self.player.velocity_y
                     self.player.velocity_y = 0
                     self.game.player.paused = True
-                   
+                  
+                    print(len(self.game.monsters))
                     for monster in self.game.monsters:
+                        
                         monster.prior_speed     = monster.speed 
                         monster.prior_speed_x   = monster.speed_x 
                         monster.prior_speed_y   = monster.speed_y 

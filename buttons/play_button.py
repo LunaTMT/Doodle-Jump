@@ -10,8 +10,8 @@ class PlayButton:
         self.CENTER_X = game.CENTER_X
         self.CENTER_Y = game.CENTER_Y
 
-        self.image = pygame.image.load("assets/images/buttons/play.png")
-        self.hover_image = pygame.image.load("assets/images/buttons/play_highlight.png")
+        self.image = pygame.image.load("assets/images/Buttons/play.png")
+        self.hover_image = pygame.image.load("assets/images/Buttons/play_highlight.png")
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = 200

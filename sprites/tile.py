@@ -4,19 +4,20 @@ import random
 import assets.sounds as sounds
 
 from sprites.power_ups.propeller import Propeller
-from sprites.power_ups.rocket import Rocket
+from sprites.power_ups.jetpack import Jetpack
 from sprites.power_ups.shield import Shield
 from sprites.power_ups.spring_shoes import SpringShoes
 from sprites.power_ups.spring import Spring
 from sprites.power_ups.trampoline import Trampoline
 
+import texture
 
 class Tile(pygame.sprite.Sprite):
 
     ID = 0
     total = 0
 
-    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load(f"assets/images/Game_tiles/{texture.file_name}.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(1, 1, 57, 15))  # Extract a 32x32 sprite
     
     #LARGE_DEFAULT_IMAGE =  pygame.image.load("assets/images/tiles/large_default.png")
@@ -66,9 +67,9 @@ class Tile(pygame.sprite.Sprite):
 
 
     def generate_power_up(self):
-        power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
-        power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
-        power_up = random.choices(population = power_ups, weights=[0.8, 2, 5, 0.8, 5, 1, 80])[0]
+        power_ups = [None, Propeller, Jetpack, Shield, SpringShoes, Spring, Trampoline]
+        power_ups = [Jetpack, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
+        power_up = random.choices(population = power_ups, weights=[0.8, 2, 7, 0.8, 5, 1, 80])[0]
         #weights=[0.8, 2, 5, 0.8, 5, 1, 80]
         if power_up:
             #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
@@ -89,6 +90,7 @@ class Tile(pygame.sprite.Sprite):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling
+            and self.player.rect.bottom >= self.rect.top
             and not self.player.dead
             and not self.player.is_using_booster()
             and not self.player.is_flying()):
@@ -101,7 +103,7 @@ class Tile(pygame.sprite.Sprite):
             self.kill()
 
     def draw(self, screen):
- 
+        #pygame.draw.rect(screen, (0,0,255), self.rect)
         self.image.set_alpha(self.game.fade_out_alpha)
         screen.blit(self.image, self.rect)
         if self.power_up:
@@ -141,6 +143,7 @@ class BrokenTile(Tile):
             collision = pygame.sprite.collide_rect(self.player, self)
             if (collision 
                 and self.player.falling 
+                and self.player.rect.bottom >= self.rect.top
                 and not self.player.dead
                 and not self.player.is_using_booster()
                 and not self.player.is_flying()):
@@ -211,6 +214,7 @@ class DisappearingTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling 
+            and self.player.rect.bottom >= self.rect.top
             and not self.player.dead
             and not self.player.is_using_booster()
             and not self.player.is_flying()):
@@ -241,6 +245,7 @@ class ShiftingTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling
+            and self.player.rect.bottom >= self.rect.top
             and not self.player.dead
             and not self.player.is_using_booster()
             and not self.player.is_flying()):
@@ -301,6 +306,7 @@ class MoveableTile(Tile):
         collision = pygame.sprite.collide_rect(self.player, self)
         if (collision 
             and self.player.falling 
+            and self.player.rect.bottom >= self.rect.top
             and not self.player.dead
             and not self.player.is_using_booster()
             and not self.player.is_flying()):
@@ -319,4 +325,11 @@ class MoveableTile(Tile):
 
             if self.power_up:
                 self.power_up.rect.x = mouse_x - self.offset_x + 20
-                self.power_up.rect.y = mouse_y - self.offset_y
+                self.power_up.rect.y = mouse_y - self.offset_y#
+            
+    def draw(self, screen):
+        pygame.draw.rect(screen, (0,0,255), self.rect)
+        self.image.set_alpha(self.game.fade_out_alpha)
+        screen.blit(self.image, self.rect)
+        if self.power_up:
+            self.power_up.draw(screen)

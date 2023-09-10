@@ -1,10 +1,11 @@
 
 import pygame
 import assets.sounds as sounds
+import texture
 
 class Trampoline(pygame.sprite.Sprite):
 
-    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load(f"assets/images/Game_tiles/{texture.file_name}.png")
     TRAMPOLINE_1 = SPRITE_SHEET.subsurface(pygame.Rect(188, 98, 36, 14))  # Extract a 32x32 sprite
     TRAMPOLINE_2 = SPRITE_SHEET.subsurface(pygame.Rect(474, 53, 36, 14))
     TRAMPOLINE_3 = SPRITE_SHEET.subsurface(pygame.Rect(149, 94, 36, 18))

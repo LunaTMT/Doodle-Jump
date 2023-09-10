@@ -18,6 +18,8 @@ from sprites.menu_player import MenuPlayer
 from sprites.monster import Monster
 from sprites.blackhole import Blackhole
 
+import texture
+
 class Game:
 
     SCREEN_WIDTH = 640
@@ -30,9 +32,9 @@ class Game:
     FRAME_RATE = 60
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    BACKGROUND_IMAGE = pygame.image.load("assets/images/backgrounds/background.png")
-    TOP_IMAGE =  pygame.image.load("assets/images/backgrounds/top.png").convert_alpha()
-    MAIN_MENU_IMAGE = pygame.image.load("assets/images/backgrounds/main_menu.png").convert_alpha()
+    BACKGROUND_IMAGE = pygame.image.load("assets/images/Backgrounds/background.png")
+    TOP_IMAGE =  pygame.image.load("assets/images/Backgrounds/top.png").convert_alpha()
+    MAIN_MENU_IMAGE = pygame.image.load("assets/images/Backgrounds/main_menu.png").convert_alpha()
 
     SPRITE_SHEET = pygame.image.load("assets/images/start-end-tiles.png")
     GAME_OVER_TEXT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 104, 214, 75))
@@ -71,6 +73,15 @@ class Game:
 
         self.draw_bottom = False
         pygame.init()
+
+
+        """
+        Default
+        Bunny
+
+        Frankenstien
+        """
+        texture.image_texture_pack_name = "Frankenstien"
 
         self.fade_out_speed = 4
         self.fade_out_alpha = 255
@@ -120,8 +131,9 @@ class Game:
     def generate_random_enemy(self):
             enemies = [Monster, Blackhole, None]
             enemy = random.choices(population = enemies, weights=[self.enemy_weight, self.enemy_weight, 100])[0]
-            if isinstance(enemy, Monster):
+            if enemy is Monster:
                 self.monsters.add(enemy(self))
+                
             elif enemy:
                 self.blackholes.add(enemy(self))
 
@@ -170,7 +182,8 @@ class Game:
             self.player.update()
             self.monsters.update()
             self.blackholes.update()
-        
+
+
         if self.end_game:
             self.play_again_button.update()
             self.main_menu_button.update()

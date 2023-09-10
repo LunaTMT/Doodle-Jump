@@ -2,15 +2,14 @@ import pygame
 from pygame.locals import *
 import assets.colours as colours
 import assets.sounds as sounds
-
-
 import random
 from random import randint
+import texture
 
 class Monster(pygame.sprite.Sprite):
 
 
-    SPRITE_SHEET = pygame.image.load("assets/images/game-tiles.png")
+    SPRITE_SHEET = pygame.image.load(f"assets/images/Game_tiles/{texture.file_name}.png")
 
     TERRIFIER = SPRITE_SHEET.subsurface(pygame.Rect(3, 421, 58, 86))  # Extract a 32x32 sprite
     FAT_GREEN = SPRITE_SHEET.subsurface(pygame.Rect(0, 359, 84, 53))  # Extract a 32x32 sprite
@@ -74,6 +73,7 @@ class Monster(pygame.sprite.Sprite):
         
         self.blocked = False
         self.collision = False
+        self.paused = False
         
     def update(self):
         self.movement_function()

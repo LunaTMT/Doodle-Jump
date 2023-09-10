@@ -2,12 +2,12 @@ import pygame
 import assets.sounds as sounds
 
 
-
+import texture
 
 class Propeller(pygame.sprite.Sprite):
     id = 0 
 
-    SPRITE_SHEET = pygame.image.load("assets/images/animations/propeller.png")
+    SPRITE_SHEET = pygame.image.load(f"assets/images/Animations/Propeller/{texture.file_name}.png")
     
     PROPELLER_1 = SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 32, 32))  
     PROPELLER_2 = SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 32))  

@@ -5,7 +5,7 @@ from sprites.player import Player
 class MenuButton:
     SPRITE_SHEET = pygame.image.load("assets/images/start-end-tiles.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(3, 99, 222, 80))
-    HOVER_IMAGE = SPRITE_SHEET = pygame.image.load("assets/images/buttons/menu_hover_button.png")
+    HOVER_IMAGE = SPRITE_SHEET = pygame.image.load("assets/images/Buttons/menu_hover_button.png")
 
     def __init__(self, game):
         self.game = game
