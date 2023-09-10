@@ -57,9 +57,10 @@ class PlayAgain:
                 self.game.main_menu = False
                 self.game.play_game = True
                 self.game.end_game = False
+                
                 self.game.initialise_game_objects()
                 self.game.fade_out_alpha = 255
-                Tile.total = 0
+                
                 sounds.button.play()
 
     def draw(self, screen):

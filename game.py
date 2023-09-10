@@ -4,6 +4,7 @@ import random
 import assets.colours as colours
 import assets.sounds as sounds
 from random import choice, randint
+from math import sqrt
 
 from sprites.tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
 from buttons.pause_button import PauseButton
@@ -78,6 +79,7 @@ class Game:
 
         self.enemy_weight = 0.01
         self.max_tile_number = 0
+        self.tile_weights = [20, 5, 5, 1, 5, 5] # Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile]
 
         self.frame = 0
         self.score_font = pygame.font.Font(None, 50)
@@ -90,12 +92,12 @@ class Game:
         self.initialise_main_menu_objects()
         
     def initialise_main_menu_objects(self):
-        print(Tile.ID)
         self.player = MenuPlayer(self, 110, 750)
         self.main_menu_platform = Tile(self, 140, 763)
         self.play_button = PlayButton(self)
 
     def initialise_game_objects(self):
+        Tile.total = 0
         self.clear_all_sprites()
 
         self.resume_button = ResumeButton(self)
@@ -103,17 +105,17 @@ class Game:
         self.play_again_button = PlayAgain(self)
         self.main_menu_button = MenuButton(self)
 
-
         self.player = Player(self, self.CENTER_X, self.CENTER_Y)
         self.generate_n_tiles(n=25, top=False)
  
 
     def generate_random_tile(self):
-        
         if Tile.total <= self.max_tile_number:
             tiles = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile]
-            tile = random.choices(population = tiles, weights=[60, 10, 10, 2, 10, 10])[0]
-            self.generate_n_tiles(n=1, top=True, tile_type=tile)
+            tile = random.choices(population=tiles, weights=self.tile_weights)[0]
+            self.generate_n_tiles(top=True, tile_type=tile)
+
+    
 
     def generate_random_enemy(self):
             enemies = [Monster, Blackhole, None]
@@ -130,6 +132,7 @@ class Game:
         self.bullets.empty()
         self.monsters.empty()
         self.blackholes.empty()
+        
         
 
     def handle_events(self):
@@ -247,7 +250,7 @@ class Game:
         pygame.quit()
         sys.exit()
 
-    def generate_n_tiles(self, n, top=False, tile_type=Tile):
+    def generate_n_tiles(self, n=1, top=False, tile_type=Tile):
         
 
         def get_random_quadrant_coordinates():
@@ -266,43 +269,53 @@ class Game:
                     x_lower_bound = 60
                     y_lower_bound = 20
                     minus = 450
+                 
                 case "Q2":
                     x_upper_bound = -60
                     y_lower_bound = 20
                     minus = 450
+             
                 case "Q3":
                     x_lower_bound = 60
                     y_upper_bound = -20
                     minus = 900
+                   
                 case "Q4":
                     x_upper_bound = -60
                     y_upper_bound = -20
                     minus = 900
+                   
         
-
             x = randint(x_lower + x_lower_bound, x_higher + x_upper_bound)
 
-            if top:
-                y = (randint((y_lower + y_lower_bound - minus), 
-                             (y_higher + y_upper_bound - minus)))
-            else:
-                y = randint(0, 840)
+            
+            y = (randint((y_lower  - y_lower_bound -  minus), 
+                         (y_higher  - y_upper_bound - minus)))
+            
             
             return (x, y)
 
-        sprites_list = (self.platforms.sprites() + self.movable_platforms.sprites() + self.blackholes.sprites())
+        
         
         for _ in range(n):
-            x, y = get_random_quadrant_coordinates()
-            new_platform = pygame.Rect(x, y, 90, 40)
+            valid = False
+            while not valid:
+                valid = True
+                x, y = get_random_quadrant_coordinates() if top else (randint(65, self.SCREEN_WIDTH-65), randint(-450, self.SCREEN_HEIGHT-25)) 
+                new_platform = pygame.Rect(x, y, 60, 20)
+                center1 = new_platform.center
 
-            while (any(new_platform.colliderect(sprite) for sprite in sprites_list)):
-                x, y = get_random_quadrant_coordinates()
-                new_platform = pygame.Rect(x, y, 90, 40)
+                for sprite in (self.platforms.sprites() + self.movable_platforms.sprites() + self.blackholes.sprites()):
+                    center2 = sprite.rect.center
+                    distance = sqrt((center1[0] - center2[0]) ** 2 + (center1[1] - center2[1]) ** 2)
 
+                    if new_platform.colliderect(sprite.rect) or distance < 120:
+                        valid = False
+                        break
 
             tile_type(self, x, y)
             self.quadrant_idx += 1
+        
     def get_quadrant_range(self, quadrant):
         match quadrant:
             case "Q1":

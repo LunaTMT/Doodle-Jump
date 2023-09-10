@@ -26,7 +26,7 @@ class PauseButton:
                     self.player.velocity_y = 0
                     self.game.player.paused = True
                    
-                    for monster in self.monsters:
+                    for monster in self.game.monsters:
                         monster.prior_speed     = monster.speed 
                         monster.prior_speed_x   = monster.speed_x 
                         monster.prior_speed_y   = monster.speed_y 

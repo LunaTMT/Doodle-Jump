@@ -140,7 +140,6 @@ class Player(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx, self.rect.top)
         self.game.bullets.add(bullet)
 
-
     def jump(self, play_sound=True):
         if not self.is_flying():
             self.game.frame = 0
@@ -162,10 +161,7 @@ class Player(pygame.sprite.Sprite):
         return any((self.using_jetpack, self.using_propeller))
     def is_using_booster(self):
         return any((self.using_trampoline, self.using_spring))
-
-
-            
-           
+   
         
     def update(self):
         if not self.paused: #if we continue to update movement whilst in blackhole. Movement messes up
@@ -246,16 +242,13 @@ class Player(pygame.sprite.Sprite):
         Player.high_score = max(Player.high_score, self.score)
 
     def update_maximum_tiles_allowed(self):
-        print(self.game.max_tile_number)
         self.game.enemy_weight = self.score / 100000
         if 0 <= self.score < 1000:
-            self.game.max_tile_number = 30
+            self.game.max_tile_number = 25
         elif 1000 < self.score <= 10000:
             self.game.max_tile_number = 20
-        elif 10000 < self.score <= 30000:
+        elif 10000 < self.score <= 20000:
             self.game.max_tile_number = 15
-        else:
-            self.game.max_tile_number = 10
 
         
 

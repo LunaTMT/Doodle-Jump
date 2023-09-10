@@ -68,7 +68,7 @@ class Monster(pygame.sprite.Sprite):
                           self.up_down_movement,
                           self.side_to_side_movement)
         self.movement_function = random.choice(self.movements)
-        
+        self.make_updates = True
         self.sound = sounds.monster
         self.sound.play(-1)
         

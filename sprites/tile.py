@@ -52,7 +52,6 @@ class Tile(pygame.sprite.Sprite):
         self.y = y
         self.image = self.DEFAULT_IMAGE 
         self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, self.y)
         self.power_up = None
 
@@ -70,7 +69,7 @@ class Tile(pygame.sprite.Sprite):
         power_ups = [None, Propeller, Rocket, Shield, SpringShoes, Spring, Trampoline]
         power_ups = [Rocket, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
         power_up = random.choices(population = power_ups, weights=[0.8, 2, 5, 0.8, 5, 1, 80])[0]
-        #weights=[0.5, 5, 10, 0.8, 10, 10, 80]
+        #weights=[0.8, 2, 5, 0.8, 5, 1, 80]
         if power_up:
             #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
             self.power_up = power_up(self.game, self, self.rect.centerx, self.rect.centery)
@@ -105,7 +104,6 @@ class Tile(pygame.sprite.Sprite):
  
         self.image.set_alpha(self.game.fade_out_alpha)
         screen.blit(self.image, self.rect)
-                         
         if self.power_up:
             self.power_up.draw(screen)
         
