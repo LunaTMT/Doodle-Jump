@@ -63,7 +63,7 @@ class OptionButton:
                 self.game.play_button.hide = True
                 self.hide = True
         else:
-            for checkbox in self.checkboxes:
+            for checkbox in Checkbox.checkboxes:
     
                 checkbox.handle_events(event)
                 
@@ -78,7 +78,7 @@ class OptionButton:
         else:
             pygame.draw.rect(screen, colours.BLACK, (self.CENTER_X, self.large_box_y, 200, 600))
 
-            for checkbox in self.checkboxes:
+            for checkbox in Checkbox.checkboxes:
                 checkbox.draw(screen)
 
             
@@ -125,7 +125,7 @@ class Checkbox:
                     sounds.button.play()
 
     def untick_others(self):
-        for checkbox in Checkbox.checkboxes:
+        for checkbox in self.checkboxes:
             if checkbox.checked:
                 checkbox.toggle()
 
