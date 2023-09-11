@@ -1,22 +1,23 @@
 import pygame
 import sys
 import random
-import assets.colours as colours
-import assets.sounds as sounds
+import Assets.colours as colours
+import Assets.sounds as sounds
 from random import choice, randint
 from math import sqrt
 
-from sprites.tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
-from buttons.pause_button import PauseButton
-from buttons.resume_button import ResumeButton
-from buttons.play_button import PlayButton
-from buttons.play_again_button import PlayAgain
-from buttons.menu_button import MenuButton
+from Sprites.tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
+from Buttons.pause import PauseButton
+from Buttons.resume import ResumeButton
+from Buttons.play import PlayButton
+from Buttons.options import OptionButton
+from Buttons.play_again import PlayAgain
+from Buttons.menu import MenuButton
 
-from sprites.player import Player
-from sprites.menu_player import MenuPlayer
-from sprites.monster import Monster
-from sprites.blackhole import Blackhole
+from Sprites.player import Player
+from Sprites.menu_player import MenuPlayer
+from Sprites.monster import Monster
+from Sprites.blackhole import Blackhole
 
 import texture
 
@@ -32,11 +33,13 @@ class Game:
     FRAME_RATE = 60
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    BACKGROUND_IMAGE = pygame.image.load("assets/images/Backgrounds/background.png")
-    TOP_IMAGE =  pygame.image.load("assets/images/Backgrounds/top.png").convert_alpha()
-    MAIN_MENU_IMAGE = pygame.image.load("assets/images/Backgrounds/main_menu.png").convert_alpha()
+    BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
+    
+    TOP_SHEET = pygame.image.load(f"Assets/Images/Backgrounds/Tops/{texture.file_name}.png")
+    TOP_IMAGE =  TOP_SHEET.subsurface(pygame.Rect(0, 0, 640, 92))
+    MAIN_MENU_IMAGE = pygame.image.load("Assets/Images/Backgrounds/main_menu.png").convert_alpha()
 
-    SPRITE_SHEET = pygame.image.load("assets/images/start-end-tiles.png")
+    SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")
     GAME_OVER_TEXT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 104, 214, 75))
 
     END_GAME_BOTTOM_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 374, 640, 137))
@@ -75,14 +78,6 @@ class Game:
         pygame.init()
 
 
-        """
-        Default
-        Bunny
-
-        Frankenstien
-        """
-        texture.image_texture_pack_name = "Frankenstien"
-
         self.fade_out_speed = 4
         self.fade_out_alpha = 255
         self.fade_in_speed = 1
@@ -103,9 +98,11 @@ class Game:
         self.initialise_main_menu_objects()
         
     def initialise_main_menu_objects(self):
+        
         self.player = MenuPlayer(self, 110, 750)
         self.main_menu_platform = Tile(self, 140, 763)
         self.play_button = PlayButton(self)
+        self.options_button = OptionButton(self)
 
     def initialise_game_objects(self):
         Tile.total = 0
@@ -134,6 +131,7 @@ class Game:
             if enemy is Monster:
                 self.monsters.add(enemy(self))
                 
+                
             elif enemy:
                 self.blackholes.add(enemy(self))
 
@@ -145,8 +143,7 @@ class Game:
         self.monsters.empty()
         self.blackholes.empty()
         
-        
-
+    
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -154,6 +151,7 @@ class Game:
             
             if self.main_menu:
                 self.play_button.handle_events(event)
+                self.options_button.handle_events(event)
 
             if self.play_game:
                 self.pause_button.handle_events(event)
@@ -170,8 +168,10 @@ class Game:
     def update(self):
         if self.main_menu:
             self.player.update()
+            self.monsters.update()
             self.play_button.update()
             self.main_menu_platform.update()
+            self.options_button.update()
         
         if self.play_game:
             self.generate_random_tile()
@@ -183,7 +183,6 @@ class Game:
             self.monsters.update()
             self.blackholes.update()
 
-
         if self.end_game:
             self.play_again_button.update()
             self.main_menu_button.update()
@@ -191,8 +190,10 @@ class Game:
     def draw(self):
         if self.main_menu:
             self.draw_main_menu()
-            self.play_button.draw(self.screen)
             self.player.draw(self.screen)
+            self.monsters.draw(self.screen)
+            self.play_button.draw(self.screen)
+            self.options_button.draw(self.screen)
 
         if self.play_game:
             self.screen.blit(self.BACKGROUND_IMAGE, (0, 0))
@@ -352,5 +353,5 @@ class Game:
 
     def draw_score(self):
         score_text = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
-        self.screen.blit(score_text, (20, 20))
+        self.screen.blit(score_text, (30, 18))
 
