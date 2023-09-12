@@ -11,14 +11,11 @@ class Monster(pygame.sprite.Sprite):
 
     SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
 
-    TERRIFIER = SPRITE_SHEET.subsurface(pygame.Rect(0, 421, 62, 91))  # Extract a 32x32 sprite
-    FAT_GREEN = SPRITE_SHEET.subsurface(pygame.Rect(0, 357, 84, 61))  # Extract a 32x32 sprite
+    TERRIFIER = SPRITE_SHEET.subsurface(pygame.Rect(0, 421, 62, 91))  
+    FAT_GREEN = SPRITE_SHEET.subsurface(pygame.Rect(0, 357, 84, 61))  
     BAT = SPRITE_SHEET.subsurface(pygame.Rect(148, 0, 77, 45))
     DOUBLE = SPRITE_SHEET.subsurface(pygame.Rect(63, 183, 80, 53))
-    #CUCUMBER = SPRITE_SHEET.subsurface(pygame.Rect(512, 425, 65, 85))
     BALL = SPRITE_SHEET.subsurface(pygame.Rect(149, 263, 46, 39))
-    #UGLY = SPRITE_SHEET.subsurface(pygame.Rect(514, 70, 87, 54))
-    #SAUSAGE = SPRITE_SHEET.subsurface(pygame.Rect(512, 3, 92, 31))
 
     
 
@@ -74,7 +71,17 @@ class Monster(pygame.sprite.Sprite):
         self.blocked = False
         self.collision = False
         self.paused = False
-        
+    
+    @classmethod
+    def update_images(cls):
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
+
+        cls.TERRIFIER = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 421, 62, 91))  
+        cls.FAT_GREEN = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 357, 84, 61))  
+        cls.BAT = cls.SPRITE_SHEET.subsurface(pygame.Rect(148, 0, 77, 45))
+        cls.DOUBLE = cls.SPRITE_SHEET.subsurface(pygame.Rect(63, 183, 80, 53))
+        cls.BALL = cls.SPRITE_SHEET.subsurface(pygame.Rect(149, 263, 46, 39))
+    
     def update(self):
         self.movement_function()
         self.boundary_check()

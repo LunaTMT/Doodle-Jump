@@ -11,5 +11,5 @@ Soccer
 Space
 Underwater
 """
-folder_name = "Space"
+folder_name = "Default"
 file_name = folder_name.lower()

@@ -25,11 +25,9 @@ class Tile(pygame.sprite.Sprite):
     DISAPPEARING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 55, 57, 15)) 
     SHIFTING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 184, 57, 15)) 
 
-    MOVEABLE_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(150, 305, 80, 35)) 
-    MOVEABLE_TILE_LEFT = SPRITE_SHEET.subsurface(pygame.Rect(423, 472, 11, 8)) 
-    MOVEABLE_TILE_RIGHT = SPRITE_SHEET.subsurface(pygame.Rect(499, 472, 11, 7)) 
-    MOVEABLE_TILE_UP = SPRITE_SHEET.subsurface(pygame.Rect(464, 458, 5, 7)) 
-    MOVEABLE_TILE_DOWN = SPRITE_SHEET.subsurface(pygame.Rect(460, 487, 7, 10)) 
+    
+    POWER_UPS = [Jetpack, Trampoline, Spring, Propeller, Shield, SpringShoes]
+
 
     BROKEN_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 73, 60, 15)) 
     BROKEN_TILE_IMAGE_1  = SPRITE_SHEET.subsurface(pygame.Rect(0, 90, 62, 20)) 
@@ -64,12 +62,33 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.game.platforms.add(self)
 
+    @classmethod
+    def update_images(cls):
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
+        cls.DEFAULT_IMAGE = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 1, 57, 15))  # Extract a 32x32 sprite
+        
+        #LARGE_DEFAULT_IMAGE =  pygame.image.load("assets/images/tiles/large_default.png")
+        cls.MOVING_TILE_IMAGE  = cls.SPRITE_SHEET.subsurface(pygame.Rect(2, 19, 58, 17)) 
+        cls.DISAPPEARING_TILE_IMAGE  = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 55, 57, 15)) 
+        cls.SHIFTING_TILE_IMAGE  = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 184, 57, 15)) 
+
+        cls.MOVEABLE_TILE_IMAGE  = cls.SPRITE_SHEET.subsurface(pygame.Rect(150, 305, 80, 35)) 
+
+        cls.BROKEN_TILE_IMAGE  = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 73, 60, 15)) 
+        cls.BROKEN_TILE_IMAGE_1  = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 90, 62, 20)) 
+        cls.BROKEN_TILE_IMAGE_2  = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 116, 62, 27)) 
+        cls.BROKEN_TILE_IMAGE_3  = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 148, 62, 32)) 
+        
+    def update_current_image(self):
+        self.image = self.DEFAULT_IMAGE
+
+        
+   
+        
 
 
     def generate_power_up(self):
-        power_ups = [None, Propeller, Jetpack, Shield, SpringShoes, Spring, Trampoline]
-        power_ups = [Jetpack, Trampoline, Spring, Propeller, Shield, SpringShoes, None]
-        power_up = random.choices(population = power_ups, weights=[0.8, 2, 7, 10, 5, 1, 80])[0]
+        power_up = random.choices(population =  self.POWER_UPS+[None], weights=[0.8, 2, 7, 0.8, 5, 1, 80])[0]
         #weights=[0.8, 2, 5, 0.8, 5, 1, 80]
         if power_up:
             #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
@@ -276,6 +295,10 @@ class ShiftingTile(Tile):
                 self.shift = False
              
 class MoveableTile(Tile):
+    SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/default.png")
+    MOVEABLE_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(150, 305, 80, 35)) 
+
+
     def __init__(self, game, x, y):
         super().__init__(game, x, y)
         self.image = self.MOVEABLE_TILE_IMAGE
@@ -328,7 +351,7 @@ class MoveableTile(Tile):
                 self.power_up.rect.y = mouse_y - self.offset_y#
             
     def draw(self, screen):
-        pygame.draw.rect(screen, (0,0,255), self.rect)
+        #pygame.draw.rect(screen, (0,0,255), self.rect)
         self.image.set_alpha(self.game.fade_out_alpha)
         screen.blit(self.image, self.rect)
         if self.power_up:

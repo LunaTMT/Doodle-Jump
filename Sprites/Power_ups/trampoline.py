@@ -28,6 +28,12 @@ class Trampoline(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.expanded = False
 
+    @classmethod
+    def update_images(cls):
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
+        cls.TRAMPOLINE_1 = cls.SPRITE_SHEET.subsurface(pygame.Rect(188, 98, 36, 14))  # Extract a 32x32 sprite
+        cls.TRAMPOLINE_2 = cls.SPRITE_SHEET.subsurface(pygame.Rect(474, 53, 36, 14))
+        cls.TRAMPOLINE_3 = cls.SPRITE_SHEET.subsurface(pygame.Rect(149, 94, 36, 18))
 
     def update(self):
         self.death_check()

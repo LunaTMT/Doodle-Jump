@@ -37,7 +37,9 @@ class Game:
     
     TOP_SHEET = pygame.image.load(f"Assets/Images/Backgrounds/Tops/{texture.file_name}.png")
     TOP_IMAGE =  TOP_SHEET.subsurface(pygame.Rect(0, 0, 640, 92))
-    MAIN_MENU_IMAGE = pygame.image.load("Assets/Images/Backgrounds/main_menu.png").convert_alpha()
+
+    DEFAULT_MAIN_MENU_IMAGE = MAIN_MENU_IMAGE = pygame.image.load("Assets/Images/Backgrounds/main_menu.png").convert_alpha()
+    OPTIONS_IMAGE = pygame.image.load("Assets/Images/Backgrounds/options.png").convert_alpha()
 
     SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")
     GAME_OVER_TEXT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 104, 214, 75))
@@ -71,6 +73,7 @@ class Game:
     def __init__(self):
         self.running = True
         self.main_menu = True
+        self.options_menu = False
         self.play_game = False
         self.end_game = False
 
@@ -98,11 +101,11 @@ class Game:
         self.initialise_main_menu_objects()
         
     def initialise_main_menu_objects(self):
-        
         self.player = MenuPlayer(self, 110, 750)
         self.main_menu_platform = Tile(self, 140, 763)
         self.play_button = PlayButton(self)
         self.options_button = OptionButton(self)
+        self.main_menu_button = MenuButton(self, x=None, y=200)
 
     def initialise_game_objects(self):
         Tile.total = 0
@@ -111,7 +114,7 @@ class Game:
         self.resume_button = ResumeButton(self)
         self.pause_button = PauseButton(self)
         self.play_again_button = PlayAgain(self)
-        self.main_menu_button = MenuButton(self)
+        self.main_menu_button = MenuButton(self, x_multiplier=1.75, y_multiplier=1.5)
 
         self.player = Player(self, self.CENTER_X, self.CENTER_Y)
         self.generate_n_tiles(n=25, top=False)
@@ -152,6 +155,9 @@ class Game:
             if self.main_menu:
                 self.play_button.handle_events(event)
                 self.options_button.handle_events(event)
+                
+                if self.options_menu:
+                    self.main_menu_button.handle_events(event)
 
             if self.play_game:
                 self.pause_button.handle_events(event)
@@ -167,12 +173,16 @@ class Game:
     
     def update(self):
         if self.main_menu:
+
             self.player.update()
-            self.monsters.update()
             self.play_button.update()
+
             self.main_menu_platform.update()
             self.options_button.update()
-        
+
+            if self.options_menu:
+                self.main_menu_button.update()
+
         if self.play_game:
             self.generate_random_tile()
             self.generate_random_enemy()
@@ -189,12 +199,19 @@ class Game:
         
     def draw(self):
         if self.main_menu:
-            self.draw_main_menu()
-            self.player.draw(self.screen)
-            self.monsters.draw(self.screen)
-            self.play_button.draw(self.screen)
-            self.options_button.draw(self.screen)
 
+            if not self.options_menu:
+                self.draw_main_menu()
+                self.play_button.draw(self.screen)
+
+            
+            self.options_button.draw(self.screen)
+            self.player.draw(self.screen)
+            self.main_menu_platform.draw(self.screen)
+
+            if self.options_menu:
+                self.main_menu_button.draw(self.screen)
+           
         if self.play_game:
             self.screen.blit(self.BACKGROUND_IMAGE, (0, 0))
 
@@ -209,7 +226,6 @@ class Game:
         
             self.draw_top()
   
-
         if self.end_game:
             
             if self.fade_out_alpha == 0:

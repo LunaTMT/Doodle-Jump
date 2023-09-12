@@ -32,6 +32,12 @@ class Spring(pygame.sprite.Sprite):
         self.expanded = False
         self.collision = False
 
+    @classmethod
+    def update_images(cls):
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
+        cls.SPRING = cls.SPRITE_SHEET.subsurface(pygame.Rect(404, 99, 17, 12))  # Extract a 32x32 sprite
+        cls.SPRING_EXPANDED = cls.SPRITE_SHEET.subsurface(pygame.Rect(404, 115, 17, 28))
+
     def update(self):
         self.death_check()
         self.player_collision_check()

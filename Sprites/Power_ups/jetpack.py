@@ -45,7 +45,27 @@ class Jetpack(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, self.y)
         self.being_used = False
+    
+    @classmethod
+    def update_images(cls):
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Animations/Jetpack/{texture.file_name}.png")
 
+        cls.ROCKET_1 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 32, 62))  
+        cls.ROCKET_2 = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 62))  
+        cls.ROCKET_3 = cls.SPRITE_SHEET.subsurface(pygame.Rect(64, 0, 32, 62))  
+        cls.ROCKET_4 = cls.SPRITE_SHEET.subsurface(pygame.Rect(96, 0, 32, 62))  
+        
+        cls.ROCKET_5 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 64, 32, 62))  
+        cls.ROCKET_6 = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 64, 32, 62)) 
+        cls.ROCKET_7 = cls.SPRITE_SHEET.subsurface(pygame.Rect(64, 64, 32, 62))  
+        cls.ROCKET_8 = cls.SPRITE_SHEET.subsurface(pygame.Rect(96, 64, 32, 62)) 
+        
+        cls.ROCKET_9 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 128, 32, 62))  
+        cls.DEFAULT_ROCKET = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 128, 32, 62))  
+
+        cls.START_ANIMATION = [cls.ROCKET_1, cls.ROCKET_2, cls.ROCKET_3]                #  0  -  16 frames
+        cls.MAIN_BLAST = [cls.ROCKET_4, cls.ROCKET_5, cls.ROCKET_6]                     # 16  - 147 frames
+        cls.END_ANIMAITON = [cls.ROCKET_7, cls.ROCKET_8, cls.ROCKET_9]  # 147 - 163 frames
 
     def update(self):
         self.death_check()

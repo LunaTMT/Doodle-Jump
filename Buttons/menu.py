@@ -7,7 +7,7 @@ class MenuButton:
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(3, 99, 222, 80))
     HOVER_IMAGE = SPRITE_SHEET = pygame.image.load("Assets/Images/Buttons/menu_hover.png")
 
-    def __init__(self, game):
+    def __init__(self, game, x=None, y=None, x_multiplier=1, y_multiplier=1):
         self.game = game
         self.player = game.player
         self.CENTER_X = game.CENTER_X
@@ -24,12 +24,13 @@ class MenuButton:
         # Get the dimensions of the image
         image_width, image_height = self.DEFAULT_IMAGE.get_size()
 
- 
-        x = (self.SCREEN_WIDTH - image_width) // 2
-        y = (self.SCREEN_HEIGHT - image_height) // 2
-        
-        self.rect.x = x * 1.75
-        self.rect.y = y * 1.5
+        if x == None:
+            x = ((self.SCREEN_WIDTH - image_width) // 2 ) 
+        if y == None:
+            y = ((self.SCREEN_HEIGHT - image_height) // 2 ) 
+            
+        self.rect.x = x * x_multiplier
+        self.rect.y = y * y_multiplier
 
         self.hovering = False
         self.clicked = False
@@ -53,7 +54,9 @@ class MenuButton:
                 self.hide = True
         
                 self.game.player = Player(self.game, self.CENTER_X, self.CENTER_Y)
+                self.game.MAIN_MENU_IMAGE = self.game.DEFAULT_MAIN_MENU_IMAGE
                 self.game.main_menu = True
+                self.game.options_menu = False
                 self.game.play_game = False
                 self.game.end_game = False
                 self.game.fade_out_alpha = 255

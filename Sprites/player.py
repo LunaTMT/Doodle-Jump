@@ -33,20 +33,17 @@ class Player(pygame.sprite.Sprite):
         self.speed = 5 
         
         self.left_image = pygame.image.load(f"Assets/Images/Player/{texture.folder_name}/Body/left.png").convert_alpha()
-        
         self.left_jump_image = pygame.image.load(f"Assets/Images/Player/{texture.folder_name}/Body/left_jump.png").convert_alpha()
         
         self.right_image = pygame.image.load(f"Assets/Images/Player/{texture.folder_name}/Body/right.png").convert_alpha()
-        
         self.right_jump_image = pygame.image.load(f"Assets/Images/Player/{texture.folder_name}/Body/right_jump.png").convert_alpha()
         
         self.shoot_image = pygame.image.load(f"Assets/Images/Player/{texture.folder_name}/Body/shoot.png").convert_alpha()
-        
         self.shoot_jump_image = pygame.image.load(f"Assets/Images/Player/{texture.folder_name}/Body/shoot_jump.png").convert_alpha()
       
         self.shield = pygame.image.load(f"Assets/Images/Player/shield.png").convert_alpha()
     
-        self.prior_image = self.image = self.left_image
+        self.prior_image = self.image = self.right_image
        
         
         self.original_rect = self.rect = self.image.get_rect()
@@ -85,8 +82,8 @@ class Player(pygame.sprite.Sprite):
         self.using_spring = False
     
 
-        self.left = True 
-        self.right = False
+        self.left = False
+        self.right = True
         self.black_hole_collided_with = None
         self.blackhole_collision = False
         self.dead_by_blackhole = False
@@ -104,6 +101,9 @@ class Player(pygame.sprite.Sprite):
         self.handling_events = True
         self.collision = False
         self.draw_player = True
+
+    def update_image(self):
+        self.image = pygame.image.load(f"Assets/Images/Player/{texture.folder_name}/Body/right.png")
 
     def handle_events(self, event):
         if not self.paused and not self.is_flying() and not self.dead:

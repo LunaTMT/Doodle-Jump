@@ -24,7 +24,13 @@ class Blackhole(pygame.sprite.Sprite):
         self.rect.y = -self.rect.height
         self.blocked = False
         self.collision = False
-     
+
+    @classmethod
+    def update_images(cls):
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
+        cls.DEFAULT = cls.SPRITE_SHEET.subsurface(pygame.Rect(233, 51, 67, 65))  # Extract a 32x32 sprite
+
+    
     def update(self):
         self.player_collision_check()
         self.death_check()

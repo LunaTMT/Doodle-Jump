@@ -33,6 +33,16 @@ class Propeller(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.being_used = False
 
+    @classmethod
+    def update_images(cls):
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Animations/Propeller/{texture.file_name}.png")
+    
+        cls.PROPELLER_1 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 32, 32))  
+        cls.PROPELLER_2 = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 32))  
+        cls.PROPELLER_3 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 32, 32, 32))  
+        cls.PROPELLER_4 = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 32))  
+        cls.PROPELLERS = [cls.PROPELLER_1, cls.PROPELLER_2, cls.PROPELLER_3, cls.PROPELLER_4]
+
 
     def update(self):
         self.death_check()

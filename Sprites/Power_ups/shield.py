@@ -27,6 +27,10 @@ class Shield(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.being_used = False
 
+    @classmethod
+    def update_images(_):
+        pass
+
     def update(self):
         self.death_check()
         self.player_collision_check()
