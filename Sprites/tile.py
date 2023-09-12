@@ -24,15 +24,24 @@ class Tile(pygame.sprite.Sprite):
     MOVING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(2, 19, 58, 17)) 
     DISAPPEARING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 55, 57, 15)) 
     SHIFTING_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 184, 57, 15)) 
-
     
     POWER_UPS = [Jetpack, Trampoline, Spring, Propeller, Shield, SpringShoes]
-
 
     BROKEN_TILE_IMAGE  = SPRITE_SHEET.subsurface(pygame.Rect(1, 73, 60, 15)) 
     BROKEN_TILE_IMAGE_1  = SPRITE_SHEET.subsurface(pygame.Rect(0, 90, 62, 20)) 
     BROKEN_TILE_IMAGE_2  = SPRITE_SHEET.subsurface(pygame.Rect(0, 116, 62, 27)) 
     BROKEN_TILE_IMAGE_3  = SPRITE_SHEET.subsurface(pygame.Rect(0, 148, 62, 32)) 
+
+    EXPLODING_TILE_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(1, 184, 57, 15)) 
+    EXPLODING_TILE_IMAGE_1 = SPRITE_SHEET.subsurface(pygame.Rect(1, 202, 57, 15)) 
+    EXPLODING_TILE_IMAGE_2 = SPRITE_SHEET.subsurface(pygame.Rect(1, 220, 57, 15)) 
+    EXPLODING_TILE_IMAGE_3 = SPRITE_SHEET.subsurface(pygame.Rect(1, 238, 57, 15)) 
+    EXPLODING_TILE_IMAGE_4 = SPRITE_SHEET.subsurface(pygame.Rect(1, 256, 57, 15)) 
+    EXPLODING_TILE_IMAGE_5 = SPRITE_SHEET.subsurface(pygame.Rect(1, 274, 58, 18)) 
+    EXPLODING_TILE_IMAGE_6 = SPRITE_SHEET.subsurface(pygame.Rect(1, 293, 61, 27)) 
+    EXPLODING_TILE_IMAGE_7 = SPRITE_SHEET.subsurface(pygame.Rect(1, 321, 61, 28)) 
+
+
 
     def __init__(self, game, x, y):
         super().__init__()
@@ -46,13 +55,17 @@ class Tile(pygame.sprite.Sprite):
         self.CENTER_X = game.CENTER_X
         self.player = game.player
 
+      
         self.alpha = 255
         self.x = x
         self.y = y
         self.image = self.DEFAULT_IMAGE 
         self.rect = self.image.get_rect()
-        self.rect.center = (self.x, self.y)
+        self.rect.x = self.x
+        self.rect.y = self.y
         self.power_up = None
+
+        self.y_pos = self.player.y + (self.rect.y - 390)
 
         if not isinstance(self, (BrokenTile, MovingTile)) and not self.game.main_menu:
             self.generate_power_up()
@@ -78,24 +91,26 @@ class Tile(pygame.sprite.Sprite):
         cls.BROKEN_TILE_IMAGE_1  = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 90, 62, 20)) 
         cls.BROKEN_TILE_IMAGE_2  = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 116, 62, 27)) 
         cls.BROKEN_TILE_IMAGE_3  = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 148, 62, 32)) 
+
+        cls.EXPLODING_TILE_IMAGE = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 184, 57, 15)) 
+        cls.EXPLODING_TILE_IMAGE_1 = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 202, 57, 15)) 
+        cls.EXPLODING_TILE_IMAGE_2 = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 220, 57, 15)) 
+        cls.EXPLODING_TILE_IMAGE_3 = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 238, 57, 15)) 
+        cls.EXPLODING_TILE_IMAGE_4 = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 256, 57, 15)) 
+        cls.EXPLODING_TILE_IMAGE_5 = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 274, 58, 18)) 
+        cls.EXPLODING_TILE_IMAGE_6 = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 293, 61, 27)) 
+        cls.EXPLODING_TILE_IMAGE_7 = cls.SPRITE_SHEET.subsurface(pygame.Rect(1, 321, 61, 28)) 
         
     def update_current_image(self):
         self.image = self.DEFAULT_IMAGE
 
-        
-   
-        
-
 
     def generate_power_up(self):
-        power_up = random.choices(population =  self.POWER_UPS+[None], weights=[0.8, 2, 7, 0.8, 5, 1, 80])[0]
-        #weights=[0.8, 2, 5, 0.8, 5, 1, 80]
+        power_up = random.choices(population =  self.POWER_UPS+[None], weights=[0.3, 2, 7, 0.8, 5, 1, 80])[0]
         if power_up:
-            #x = random.randint(self.rect.topleft[0] + 20 , self.rect.topright[0] - 20)
             self.power_up = power_up(self.game, self, self.rect.centerx, self.rect.centery)
 
     def update(self):
-        #print(self.y, self.rect.y)
         self.death_check()
         self.player_collision_check()
         self.power_up_check()
@@ -106,14 +121,12 @@ class Tile(pygame.sprite.Sprite):
             self.power_up.update()
 
     def player_collision_check(self):
-        collision = pygame.sprite.collide_rect(self.player, self)
-        if (collision 
-            and self.player.falling
-            and self.player.rect.bottom >= self.rect.top
-            and not self.player.dead
-            and not self.player.is_using_booster()
-            and not self.player.is_flying()):
-            self.player.jump()
+        if self.rect.colliderect(self.player.rect):
+            if (self.player.falling and not
+                self.player.dead and not 
+                self.player.is_using_booster() and not 
+                self.player.is_flying()):
+                self.player.jump()
 
     def death_check(self):
         if self.rect.y > self.SCREEN_HEIGHT:
@@ -122,7 +135,7 @@ class Tile(pygame.sprite.Sprite):
             self.kill()
 
     def draw(self, screen):
-        #pygame.draw.rect(screen, (0,0,255), self.rect)
+        
         self.image.set_alpha(self.game.fade_out_alpha)
         screen.blit(self.image, self.rect)
         if self.power_up:
@@ -356,3 +369,55 @@ class MoveableTile(Tile):
         screen.blit(self.image, self.rect)
         if self.power_up:
             self.power_up.draw(screen)
+
+
+class ExplodingTile(Tile):
+    def __init__(self, game, x, y):
+        super().__init__(game, x, y)
+        self.image = self.EXPLODING_TILE_IMAGE
+        self.start = self.y
+        self.velocity = [0, 0]  # Initial velocity
+        self.gravity = 0.2
+        self.frame = game.frame
+        self.collision = False
+    
+    def update(self):
+        self.death_check()
+        self.player_collision_check()
+        self.explode_check()
+
+    def explode_check(self):
+        if self.collision:
+            if self.game.frame < 10:
+                self.image = self.EXPLODING_TILE_IMAGE
+            elif self.game.frame  < 20:
+                self.image = self.EXPLODING_TILE_IMAGE_1
+            elif self.game.frame  < 30:
+                self.image = self.EXPLODING_TILE_IMAGE_2
+            elif self.game.frame  < 40:
+                self.image = self.EXPLODING_TILE_IMAGE_3
+            elif self.game.frame  < 50:
+                self.image = self.EXPLODING_TILE_IMAGE_4
+            elif self.game.frame < 60:
+                self.image = self.EXPLODING_TILE_IMAGE_5
+            elif self.game.frame < 70:
+                self.image = self.EXPLODING_TILE_IMAGE_6
+            else:
+                self.image = self.EXPLODING_TILE_IMAGE_7
+                sounds.explosion.play()
+                self.kill()
+                #explode
+
+    def player_collision_check(self):
+        if not self.collision:
+            self.collision = pygame.sprite.collide_rect(self.player, self)
+            if (self.collision 
+                and self.player.falling 
+                and self.player.rect.bottom >= self.rect.top
+                and not self.player.dead
+                and not self.player.is_using_booster()
+                and not self.player.is_flying()):
+                self.player.jump()
+                sounds.tile_break.play()
+                
+                

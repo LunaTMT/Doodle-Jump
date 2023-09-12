@@ -6,7 +6,7 @@ import Assets.sounds as sounds
 from random import choice, randint
 from math import sqrt
 
-from Sprites.tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile
+from Sprites.tile import Tile, MovingTile, BrokenTile, DisappearingTile, ShiftingTile, MoveableTile, ExplodingTile
 from Buttons.pause import PauseButton
 from Buttons.resume import ResumeButton
 from Buttons.play import PlayButton
@@ -44,7 +44,8 @@ class Game:
     SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")
     GAME_OVER_TEXT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 104, 214, 75))
 
-    END_GAME_BOTTOM_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 374, 640, 137))
+    END_GAME_BOTTOM_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Bottoms/{texture.file_name}.png")
+    END_GAME_BOTTOM_IMAGE_Y = SCREEN_HEIGHT - END_GAME_BOTTOM_IMAGE.get_height()
 
     YOUR_SCORE_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(795, 339, 218, 40))
     YOUR_SCORE_IMAGE_width, YOUR_SCORE_IMAGE_height = YOUR_SCORE_IMAGE.get_size()
@@ -80,7 +81,6 @@ class Game:
         self.draw_bottom = False
         pygame.init()
 
-
         self.fade_out_speed = 4
         self.fade_out_alpha = 255
         self.fade_in_speed = 1
@@ -88,7 +88,7 @@ class Game:
 
         self.enemy_weight = 0.01
         self.max_tile_number = 0
-        self.tile_weights = [20, 5, 5, 1, 5, 5] # Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile]
+        self.tile_weights = [300, 5, 5, 1, 5, 5, 5] # Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
 
         self.frame = 0
         self.score_font = pygame.font.Font(None, 50)
@@ -102,7 +102,7 @@ class Game:
         
     def initialise_main_menu_objects(self):
         self.player = MenuPlayer(self, 110, 750)
-        self.main_menu_platform = Tile(self, 140, 763)
+        self.main_menu_platform = Tile(self, 115, 763)
         self.play_button = PlayButton(self)
         self.options_button = OptionButton(self)
         self.main_menu_button = MenuButton(self, x=None, y=200)
@@ -122,7 +122,7 @@ class Game:
 
     def generate_random_tile(self):
         if Tile.total <= self.max_tile_number:
-            tiles = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile]
+            tiles = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
             tile = random.choices(population=tiles, weights=self.tile_weights)[0]
             self.generate_n_tiles(top=True, tile_type=tile)
 
@@ -133,8 +133,7 @@ class Game:
             enemy = random.choices(population = enemies, weights=[self.enemy_weight, self.enemy_weight, 100])[0]
             if enemy is Monster:
                 self.monsters.add(enemy(self))
-                
-                
+            
             elif enemy:
                 self.blackholes.add(enemy(self))
 
@@ -263,7 +262,7 @@ class Game:
                 self.main_menu_button.draw(self.screen)
 
             if self.draw_bottom and not self.player.dead_by_blackhole:
-                self.screen.blit(self.END_GAME_BOTTOM_IMAGE, (0, 763))
+                self.screen.blit(self.END_GAME_BOTTOM_IMAGE, (0, self.END_GAME_BOTTOM_IMAGE_Y))
 
         pygame.display.flip()        
  
@@ -371,3 +370,11 @@ class Game:
         score_text = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
         self.screen.blit(score_text, (30, 18))
 
+
+    def update_top_images(self):
+        self.TOP_SHEET = pygame.image.load(f"Assets/Images/Backgrounds/Tops/{texture.file_name}.png")
+        self.TOP_IMAGE =  self.TOP_SHEET.subsurface(pygame.Rect(0, 0, 640, 92))
+
+    def update_bottom_images(self):
+        self.END_GAME_BOTTOM_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Bottoms/{texture.file_name}.png")
+        self.END_GAME_BOTTOM_IMAGE_Y = self.SCREEN_HEIGHT - self.END_GAME_BOTTOM_IMAGE.get_height()

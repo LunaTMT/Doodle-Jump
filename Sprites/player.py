@@ -44,7 +44,7 @@ class Player(pygame.sprite.Sprite):
         self.shield = pygame.image.load(f"Assets/Images/Player/shield.png").convert_alpha()
     
         self.prior_image = self.image = self.right_image
-       
+        
         
         self.original_rect = self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -157,6 +157,7 @@ class Player(pygame.sprite.Sprite):
    
         
     def update(self):
+        #print(int(self.y), self.rect.bottom)
         if not self.paused: #if we continue to update movement whilst in blackhole. Movement messes up
             self.update_movement()
             self.update_position_based_on_gravity()
@@ -330,6 +331,7 @@ class Player(pygame.sprite.Sprite):
     """-------"""
 
     def draw(self, screen):
+ 
         if self.draw_player:
             screen.blit(self.image, self.rect)
             
@@ -349,6 +351,7 @@ class Player(pygame.sprite.Sprite):
             x = self.rect.x
 
             x = x-5 if self.right else x+35
+            excess_y = 13 if texture.file_name == "ooga" else 0
  
             frame = self.game.frame
             if frame < 16:
@@ -366,7 +369,7 @@ class Player(pygame.sprite.Sprite):
             if self.right:
                 image = pygame.transform.flip(image, True, False)
 
-            screen.blit(image, (x, self.rect.y + 20))
+            screen.blit(image, (x, self.rect.y + 20 + excess_y))
     
     def draw_propeller(self, screen):
         if self.using_propeller:
@@ -386,12 +389,18 @@ class Player(pygame.sprite.Sprite):
             excess_x = 0
             excess_y = 0
 
-            if self.image in (self.shoot_image, self.shoot_jump_image):
+            
+            if texture.file_name == "ooga": 
+                if self.image in (self.right_image, self.right_jump_image):
+                    excess_x = -5
+                if self.image in (self.shoot_image, self.shoot_jump_image):
+                    excess_x = -5
+                excess_y = 2
+            elif self.image in (self.shoot_image, self.shoot_jump_image):
                 excess_y = -5
                 excess_x = -5
             elif self.image in (self.left_image, self.left_jump_image):
                 excess_x = -10 
-            
             screen.blit(self.shield, (self.rect.x + excess_x, 
                                       self.rect.y + excess_y))
              
@@ -415,13 +424,12 @@ class Player(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((10, 10), pygame.SRCALPHA)  # Creating a transparent surface
-        pygame.draw.circle(self.image, colours.BLACK, (5, 5), 6)
-        pygame.draw.circle(self.image, colours.BULLET, (5, 5), 4)
+        self.image = pygame.image.load(f"Assets/Images/Projectiles/{texture.file_name}.png")
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-
+        
     def update(self):
         self.rect.y -= 15
         if self.rect.bottom < 0:
             self.kill()
+    

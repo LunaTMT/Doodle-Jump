@@ -66,7 +66,7 @@ class OptionButton:
                 self.clicked = False
                 self.hide = True
                 self.game.play_button.hide = True
-                self.hide = True
+        
         else:
             for checkbox in Checkbox.checkboxes:
                 checkbox.handle_events(event)
@@ -141,8 +141,12 @@ class Checkbox:
                     texture.folder_name = self.name.title()   
                     
                     self.game.player.update_image()                    
+                    self.game.update_top_images()
+                    self.game.update_bottom_images()
+                    self.game.BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
+
                     Tile.update_images() 
-                    self.game.main_menu_platform.update_current_image()
+                    self.game.main_menu_platform.image = Tile.DEFAULT_IMAGE
                     for power_up in Tile.POWER_UPS:
                         power_up.update_images()
 
@@ -150,8 +154,6 @@ class Checkbox:
                     Blackhole.update_images()
 
                     
-                   
-                    self.game.BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
 
 
 
