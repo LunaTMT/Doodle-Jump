@@ -162,7 +162,7 @@ class Player(pygame.sprite.Sprite):
    
         
     def update(self):
-        #print(int(self.y), self.rect.bottom)
+       
         if not self.paused: #if we continue to update movement whilst in blackhole. Movement messes up
             self.update_movement()
             self.update_position_based_on_gravity()
@@ -293,7 +293,7 @@ class Player(pygame.sprite.Sprite):
             self.dead = True
             self.game.end_game = True    
             self.game.draw_bottom = True  
-            print("end")
+    
     def x_boundary_check(self):
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side

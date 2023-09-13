@@ -180,7 +180,7 @@ class Game:
                 self.main_menu_button.handle_events(event)
     
     def update(self):
-        print(Tile.total)
+
         if self.main_menu:
 
             self.player.update()
