@@ -23,7 +23,7 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/ba9288d0-e459-4a17-b563-5
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/7a1833ea-8bbe-4c4d-acc4-53cee800f91e
 
 #### Broken
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/96ff8d1d-9128-4e85-9ad6-b65cf324a8ba
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/2de3ddef-c15e-4bed-9df1-ed5bd6b42037
 
 #### Moving
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/d730202a-3d51-4581-859f-7ede9985f888
