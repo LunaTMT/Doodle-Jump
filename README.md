@@ -1,6 +1,10 @@
-# Doodlejump
+# Doodle Jump
 
 ## Demonstration and Features
+
+### Textures
+
+
 
 ### Menu
 

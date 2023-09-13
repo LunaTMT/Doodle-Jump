@@ -1,3 +1,3 @@
 # Table of contents
 
-* [Doodlejump](README.md)
+* [Doodle Jump](README.md)
