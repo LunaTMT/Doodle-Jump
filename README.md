@@ -30,8 +30,14 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/d730202a-3d51-4581-859f-7
 #### Disappearing
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5dceb57c-7ab7-4ec7-a4ab-6e9261e0b3c6
 
+#### Exploding
+
+#### Moveable
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/541c07e3-23fe-4668-931a-3a8accb6fa7d
 
 #### Shifting
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8917b09a68ee
+
 
 
 #### Moveable
