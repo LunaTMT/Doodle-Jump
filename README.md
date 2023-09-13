@@ -52,8 +52,13 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/e1b3a5f6-b757-45bf-b9de-03d5eea6b7de
 
 #### Play again
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/3562393d-1056-4726-a63d-ca6d4b53bb1c
 
 #### Menu
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/44cdd7a8-9fa6-408c-b3de-0c48cecfaa8f
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/190860de-becb-4c4a-93a6-79242262599e
+
+
 
 
 
