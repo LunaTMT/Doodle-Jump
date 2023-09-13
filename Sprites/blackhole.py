@@ -8,6 +8,8 @@ class Blackhole(pygame.sprite.Sprite):
     
     SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
     DEFAULT = SPRITE_SHEET.subsurface(pygame.Rect(233, 51, 67, 65))  # Extract a 32x32 sprite
+    SUCK_SOUND = sounds.suck
+    
 
     def __init__(self, game):
         super().__init__()
@@ -25,6 +27,8 @@ class Blackhole(pygame.sprite.Sprite):
         self.blocked = False
         self.collision = False
 
+        
+    
     @classmethod
     def update_images(cls):
         cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
@@ -43,7 +47,6 @@ class Blackhole(pygame.sprite.Sprite):
     def death_check(self):
         if self.rect.y > self.SCREEN_HEIGHT:
             self.kill()
-            #self.game.blackholes.add(Blackhole(self.game))
             del self
     
     def player_collision_check(self):

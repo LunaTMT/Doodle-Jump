@@ -6,6 +6,7 @@ from Sprites.player import Player
 from Sprites.tile import Tile
 from Sprites.blackhole import Blackhole
 from Sprites.monster import Monster
+from Sprites.ufo import UFO
 
 class OptionButton:
 
@@ -152,6 +153,7 @@ class Checkbox:
 
                     Monster.update_images()
                     Blackhole.update_images()
+                    UFO.update_images()
 
                     
 

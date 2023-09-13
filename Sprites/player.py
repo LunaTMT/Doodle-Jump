@@ -25,6 +25,8 @@ class Player(pygame.sprite.Sprite):
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
         self.GRAVITY = game.GRAVITY
         self.JUMP_STRENGTH = game.JUMP_STRENGTH
+        self.all_platforms = game.all_platforms
+        self.enemies = game.enemies
 
         self.default_x = self.x = x
         self.default_y = self.y = -900
@@ -243,21 +245,22 @@ class Player(pygame.sprite.Sprite):
         elif 10000 < self.score <= 20000:
             self.game.max_tile_number = 15
 
-        
-
+    
     def fall_check(self):
         if self.y >= self.end_game_y and not self.check_fall:
 
             if self.y < 390:
                 difference = abs(self.y) - 900
                 self.y = -900
-                for platform in (self.game.platforms.sprites() + self.game.movable_platforms.sprites()):
-                    platform.rect.y += difference
-                    if platform.power_up:
-                        platform.power_up.rect.y += difference
+                for group in self.all_platforms:
+                    for platform in group.sprites():
+                        platform.rect.y += difference
+                        if platform.power_up:
+                            platform.power_up.rect.y += difference
 
-                for sprite in (self.game.monsters.sprites() + self.game.blackholes.sprites()):
-                    sprite.rect.y += difference
+                for group in self.enemies:
+                    for enemy in group.sprites():
+                        enemy.rect.y += difference
 
             if not self.black_hole_collided_with:
                 sounds.fall.play()
@@ -291,16 +294,15 @@ class Player(pygame.sprite.Sprite):
             difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
             self.previous_y_difference = int(self.y - self.CENTER_Y) 
             
-            for platform in self.game.platforms.sprites() + self.game.movable_platforms.sprites():
-                platform.rect.y -= difference
-                if platform.power_up:
-                    platform.power_up.rect.y -= difference
+            for group in self.all_platforms:
+                for platform in group.sprites():
+                    platform.rect.y -= difference
+                    if platform.power_up:
+                        platform.power_up.rect.y -= difference
             
-            for monster in self.game.monsters.sprites():
-                monster.rect.y -= difference
-            
-            for blackhole in self.game.blackholes.sprites():
-                blackhole.rect.y -= difference
+            for group in self.enemies:
+                for enemy in group.sprites():
+                    enemy.rect.y -= difference
 
             self.rect.y = (self.SCREEN_HEIGHT // 2 - self.rect.height)
    

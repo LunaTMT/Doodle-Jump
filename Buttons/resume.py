@@ -31,6 +31,8 @@ class ResumeButton(PauseButton):
                     monster.speed_x = monster.prior_speed_x 
                     monster.speed_y = monster.prior_speed_y 
 
+                for ufo in self.game.UFOs:
+                    ufo.paused = False
 
                 self.hide = True
                 self.clicked = False

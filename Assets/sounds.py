@@ -18,3 +18,8 @@ jetpack = pygame.mixer.Sound("Assets/Sounds/jetpack.mp3")
 propeller = pygame.mixer.Sound("Assets/Sounds/propeller.mp3")
 block = pygame.mixer.Sound("Assets/Sounds/block.mp3")
 activate_shield = pygame.mixer.Sound("Assets/Sounds/activate_shield.wav")
+explosion = pygame.mixer.Sound("Assets/Sounds/explode.wav")
+
+ufo = pygame.mixer.Sound("Assets/Sounds/ufo.wav")
+ufo_suck = pygame.mixer.Sound("Assets/Sounds/ufo_suck.mp3")
+

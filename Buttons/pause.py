@@ -36,6 +36,9 @@ class PauseButton:
                         monster.speed = 0
                         monster.speed_x = 0
                         monster.speed_y = 0
+
+                    for ufo in self.game.UFOs:
+                        ufo.paused = True
                     
                     pygame.mixer.pause()
                     self.clicked = True

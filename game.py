@@ -18,6 +18,7 @@ from Sprites.player import Player
 from Sprites.menu_player import MenuPlayer
 from Sprites.monster import Monster
 from Sprites.blackhole import Blackhole
+from Sprites.ufo import UFO
 
 import texture
 
@@ -41,6 +42,8 @@ class Game:
     DEFAULT_MAIN_MENU_IMAGE = MAIN_MENU_IMAGE = pygame.image.load("Assets/Images/Backgrounds/main_menu.png").convert_alpha()
     OPTIONS_IMAGE = pygame.image.load("Assets/Images/Backgrounds/options.png").convert_alpha()
 
+    
+
     SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")
     GAME_OVER_TEXT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(2, 104, 214, 75))
 
@@ -60,7 +63,7 @@ class Game:
 
     END_GAME_IMAGES = (YOUR_SCORE_IMAGE, YOUR_HIGH_SCORE_IMAGE)
 
-
+ 
     pygame.display.set_caption("Doodle Jump")
     clock = pygame.time.Clock()
 
@@ -69,7 +72,10 @@ class Game:
     bullets = pygame.sprite.Group()
     monsters = pygame.sprite.Group()
     blackholes = pygame.sprite.Group()
- 
+    UFOs = pygame.sprite.Group()
+    
+    enemies = [monsters, blackholes, UFOs]
+    all_platforms = [movable_platforms, platforms]
 
     def __init__(self):
         self.running = True
@@ -81,9 +87,9 @@ class Game:
         self.draw_bottom = False
         pygame.init()
 
-        self.fade_out_speed = 4
+        self.fade_out_speed = 2
         self.fade_out_alpha = 255
-        self.fade_in_speed = 1
+        self.fade_in_speed = 2
         self.fade_in_alpha = 0
 
         self.enemy_weight = 0.01
@@ -126,16 +132,17 @@ class Game:
             tile = random.choices(population=tiles, weights=self.tile_weights)[0]
             self.generate_n_tiles(top=True, tile_type=tile)
 
-    
-
     def generate_random_enemy(self):
-            enemies = [Monster, Blackhole, None]
-            enemy = random.choices(population = enemies, weights=[self.enemy_weight, self.enemy_weight, 100])[0]
+            enemies = [Monster, Blackhole, UFO, None]
+            enemy = random.choices(population = enemies, weights=[self.enemy_weight, self.enemy_weight, 0.5, 100])[0]
             if enemy is Monster:
                 self.monsters.add(enemy(self))
-            
-            elif enemy:
-                self.blackholes.add(enemy(self))
+            elif enemy is Blackhole:
+                self.blackholes.add(enemy(self))   
+            elif enemy is UFO:
+                self.UFOs.add(enemy(self))
+            else:
+                pass
 
 
     def clear_all_sprites(self):
@@ -144,6 +151,7 @@ class Game:
         self.bullets.empty()
         self.monsters.empty()
         self.blackholes.empty()
+        self.UFOs.empty()
         
     
     def handle_events(self):
@@ -189,8 +197,11 @@ class Game:
             self.movable_platforms.update()
             self.platforms.update()
             self.player.update()
+
+
             self.monsters.update()
             self.blackholes.update()
+            self.UFOs.update()
 
         if self.end_game:
             self.play_again_button.update()
@@ -202,8 +213,7 @@ class Game:
             if not self.options_menu:
                 self.draw_main_menu()
                 self.play_button.draw(self.screen)
-
-            
+          
             self.options_button.draw(self.screen)
             self.player.draw(self.screen)
             self.main_menu_platform.draw(self.screen)
@@ -217,13 +227,20 @@ class Game:
             self.bullets.draw(self.screen)
             self.player.draw(self.screen)
             
-            for platform in (self.movable_platforms.sprites() + self.platforms.sprites()):
-                platform.draw(self.screen)
+            for group in self.all_platforms:
+                for platform in group.sprites():
+                    platform.draw(self.screen)
                 
-            for sprite in (self.monsters.sprites() + self.blackholes.sprites()):
-                sprite.draw(self.screen)
+            for group in self.enemies:
+                for enemy in group.sprites():
+                    enemy.draw(self.screen)
+
+            #for sprite in self.UFOs.sprites():
+            #    sprite.draw(self.screen)
         
+   
             self.draw_top()
+            
   
         if self.end_game:
             
@@ -261,7 +278,7 @@ class Game:
                 self.play_again_button.draw(self.screen)
                 self.main_menu_button.draw(self.screen)
 
-            if self.draw_bottom and not self.player.dead_by_blackhole:
+            if self.draw_bottom and not self.player.dead_by_suction:
                 self.screen.blit(self.END_GAME_BOTTOM_IMAGE, (0, self.END_GAME_BOTTOM_IMAGE_Y))
 
         pygame.display.flip()        
@@ -324,8 +341,6 @@ class Game:
             
             return (x, y)
 
-        
-        
         for _ in range(n):
             valid = False
             while not valid:
