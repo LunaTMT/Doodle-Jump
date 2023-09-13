@@ -87,14 +87,14 @@ class Game:
         self.draw_bottom = False
         pygame.init()
 
-        self.fade_out_speed = 2
+        self.fade_out_speed = 3
         self.fade_out_alpha = 255
         self.fade_in_speed = 2
         self.fade_in_alpha = 0
 
-        self.enemy_weight = 0.01
-        self.max_tile_number = 0
-        self.tile_weights = [300, 5, 5, 1, 5, 5, 5] # Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
+        self.enemy_weight = 0.001
+        self.max_tile_number = 25
+        self.tile_weights = [500, 5, 5, 1, 5, 10, 5] # Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
 
         self.frame = 0
         self.score_font = pygame.font.Font(None, 50)
@@ -133,16 +133,17 @@ class Game:
             self.generate_n_tiles(top=True, tile_type=tile)
 
     def generate_random_enemy(self):
-            enemies = [Monster, Blackhole, UFO, None]
-            enemy = random.choices(population = enemies, weights=[self.enemy_weight, self.enemy_weight, 0.5, 100])[0]
-            if enemy is Monster:
-                self.monsters.add(enemy(self))
-            elif enemy is Blackhole:
-                self.blackholes.add(enemy(self))   
-            elif enemy is UFO:
-                self.UFOs.add(enemy(self))
-            else:
-                pass
+            if not self.player.paused:
+                enemies = [Monster, Blackhole, UFO, None]
+                enemy = random.choices(population = enemies, weights=[self.enemy_weight, self.enemy_weight, self.enemy_weight, 100])[0]
+                if enemy is Monster:
+                    self.monsters.add(enemy(self))
+                elif enemy is Blackhole:
+                    self.blackholes.add(enemy(self))   
+                elif enemy is UFO:
+                    self.UFOs.add(enemy(self))
+                else:
+                    pass
 
 
     def clear_all_sprites(self):
@@ -179,6 +180,7 @@ class Game:
                 self.main_menu_button.handle_events(event)
     
     def update(self):
+        print(Tile.total)
         if self.main_menu:
 
             self.player.update()
@@ -244,6 +246,7 @@ class Game:
   
         if self.end_game:
             
+           
             if self.fade_out_alpha == 0:
                 self.play_game = False
                 self.screen.blit(self.BACKGROUND_IMAGE, (0, 0))
@@ -255,7 +258,7 @@ class Game:
 
             if self.fade_out_alpha < 0:
                 self.fade_out_alpha = 0
-              
+            
             if self.fade_out_alpha == 0:
 
                 score = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
@@ -267,7 +270,7 @@ class Game:
 
                 high_score = self.score_font.render(str(int(Player.high_score)), True, colours.BLACK)  
                 high_score_width, _ = score.get_size()
-                high_score_x = (self.SCREEN_WIDTH - high_score_width) // 2
+                high_score_x = self.CENTER_X - (high_score_width // 2)
 
                 self.screen.blit(score,      (score_x,      (self.CENTER_Y * 0.626)))
                 self.screen.blit(high_score, (high_score_x, (self.CENTER_Y * 0.93)))

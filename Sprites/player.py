@@ -7,6 +7,9 @@ from Sprites.Power_ups.jetpack import Jetpack
 from Sprites.Power_ups.propeller import Propeller
 from Sprites.Power_ups.shield import Shield
 from Sprites.Power_ups.spring_shoes import SpringShoes
+from Sprites.blackhole import Blackhole
+from Sprites.ufo import UFO
+
 import texture
 
 
@@ -86,9 +89,9 @@ class Player(pygame.sprite.Sprite):
 
         self.left = False
         self.right = True
-        self.black_hole_collided_with = None
-        self.blackhole_collision = False
-        self.dead_by_blackhole = False
+        self.suction_object_collided_with = None
+        self.suction_object_collision = False
+        self.dead_by_suction = False
         self.dead = False
 
         self.spring_collision = False
@@ -165,7 +168,7 @@ class Player(pygame.sprite.Sprite):
             self.update_position_based_on_gravity()
             self.update_directional_image()
             self.update_score()
-            self.update_maximum_tiles_allowed()
+            self.update_spawning_properties()
             
             self.fall_check()
             self.y_boundary_check()
@@ -175,8 +178,8 @@ class Player(pygame.sprite.Sprite):
             self.update_rect()
             self.update_other_sprites_based_upon_player_jump_difference()
         
-        elif self.blackhole_collision:
-            self.blackhole_check()
+        elif self.suction_object_collision:
+            self.suck_player_to_center_of_object()
         
         
     """UDATE"""
@@ -195,7 +198,7 @@ class Player(pygame.sprite.Sprite):
         
     def update_position_based_on_gravity(self):
  
-        if not self.blackhole_collision:
+        if not self.suction_object_collision:
             self.velocity_y += self.GRAVITY
             self.y += self.velocity_y
 
@@ -236,14 +239,29 @@ class Player(pygame.sprite.Sprite):
             self.score = max(self.score, abs(self.y) - 900) 
         Player.high_score = max(Player.high_score, self.score)
 
-    def update_maximum_tiles_allowed(self):
+    def update_spawning_properties(self):
         self.game.enemy_weight = self.score / 100000
-        if 0 <= self.score < 1000:
-            self.game.max_tile_number = 25
-        elif 1000 < self.score <= 10000:
-            self.game.max_tile_number = 20
+       
+ 
+        if 1000 < self.score <= 10000:
+            self.game.tile_weights[0] = 250
+            
+      
         elif 10000 < self.score <= 20000:
-            self.game.max_tile_number = 15
+            self.game.tile_weights[0] = 100
+            self.game.max_tile_number = 20
+            
+
+        elif 20000 < self.score <= 30000:
+            self.game.tile_weights[0] = 50
+            self.game.max_tile_number = 17
+            
+
+        else:
+            self.game.tile_weights[0] = 5
+           
+        
+
 
     
     def fall_check(self):
@@ -262,9 +280,9 @@ class Player(pygame.sprite.Sprite):
                     for enemy in group.sprites():
                         enemy.rect.y += difference
 
-            if not self.black_hole_collided_with:
+            if not self.suction_object_collided_with:
                 sounds.fall.play()
-                self.game.draw_bottom = True
+                
             self.check_fall = True
 
 
@@ -273,7 +291,9 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = 900
             self.velocity_y = 0
             self.dead = True
-            self.game.end_game = True      
+            self.game.end_game = True    
+            self.game.draw_bottom = True  
+            print("end")
     def x_boundary_check(self):
         #Ensures the sprite does not disappear when they go outside the bounds.
         #If they do they reappear on the opposite side
@@ -306,16 +326,22 @@ class Player(pygame.sprite.Sprite):
 
             self.rect.y = (self.SCREEN_HEIGHT // 2 - self.rect.height)
    
-    def blackhole_check(self):
+    def suck_player_to_center_of_object(self):
         
         def resize_image(scale):
             return pygame.transform.scale(self.image, (int(self.rect.width * scale), int(self.rect.height * scale)))
 
-        blackhole_location = (self.black_hole_collided_with.rect.centerx, self.black_hole_collided_with.rect.centery)
-        if self.blackhole_collision and (self.rect.x, self.rect.y) != blackhole_location:
+        if isinstance(self.suction_object_collided_with, Blackhole):
+            suction_location = (self.suction_object_collided_with.rect.centerx, 
+                                self.suction_object_collided_with.rect.centery)
+        elif isinstance(self.suction_object_collided_with, UFO):
+            suction_location = (self.suction_object_collided_with.rect.centerx, 
+                                self.suction_object_collided_with.rect.top)
 
-            dx = blackhole_location[0] - self.rect.centerx
-            dy = blackhole_location[1] - self.rect.centery
+        
+        if self.suction_object_collision and (self.rect.x, self.rect.y) != suction_location:
+            dx = suction_location[0] - self.rect.centerx
+            dy = suction_location[1] - self.rect.centery
             distance = pygame.math.Vector2(dx, dy).length()
         
             if distance >= 5:

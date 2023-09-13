@@ -51,7 +51,7 @@ class UFO(pygame.sprite.Sprite):
         self.fade_check()
 
     def fade_check(self):
-        if self.game.end_game and self.player.dead_by_blackhole:
+        if self.game.end_game and self.player.dead_by_suction:
             self.alpha = self.game.fade_out_alpha
 
     def death_check(self):
@@ -66,31 +66,28 @@ class UFO(pygame.sprite.Sprite):
             and not self.player.is_flying()
             and not self.player.dead):
             
-            if self.player.using_shield:
+            if self.player.falling:
+                self.player.jump(play_sound=False)                    
+                self.remove()
+
+            elif self.player.using_shield:
                 self.player.jump(play_sound=False)
                 self.player.using_shield = False
                 self.blocked = True
                 self.collision = False
                 sounds.block.play()
             
-            
             elif not self.blocked:
-                
-                if self.player.falling:
-                    self.player.jump(play_sound=False)                    
-                    self.remove()
-                else:
-            
-                    self.player.using_spring_shoes = False #When sucked into black whole they stick out of edge without being removed
-                    self.player.black_hole_collided_with = self
-                    self.player.blackhole_collision = True
-                    self.player.dead_by_blackhole = True
-                    self.player.paused = True
-                    self.player.dead = True
-                    self.collision = True
-                    self.game.end_game = True
-
-                    sounds.ufo_suck.play()
+                self.player.using_spring_shoes = False #When sucked into black whole they stick out of edge without being removed
+                self.player.suction_object_collided_with = self
+                self.player.suction_object_collision = True
+                self.player.dead_by_suction = True
+                self.player.paused = True
+                self.player.dead = True
+                self.collision = True
+                self.game.end_game = True
+                self.image = self.COLLISION_IMAGE
+                sounds.ufo_suck.play()
 
         else: 
             self.blocked = False

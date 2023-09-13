@@ -90,7 +90,7 @@ class Monster(pygame.sprite.Sprite):
         self.fade_check()
 
     def fade_check(self):
-        if self.game.end_game and self.player.dead_by_blackhole:
+        if self.game.end_game and self.player.dead_by_suction:
             self.alpha = self.game.fade_out_alpha
 
 

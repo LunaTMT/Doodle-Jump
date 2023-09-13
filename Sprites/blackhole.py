@@ -41,7 +41,7 @@ class Blackhole(pygame.sprite.Sprite):
         self.fade_check()
 
     def fade_check(self):
-        if self.game.end_game and self.player.dead_by_blackhole:
+        if self.game.end_game and self.player.dead_by_suction:
             self.alpha = self.game.fade_out_alpha
 
     def death_check(self):
@@ -65,14 +65,16 @@ class Blackhole(pygame.sprite.Sprite):
                 
             elif not self.blocked:
                 self.player.using_spring_shoes = False #When sucked into black whole they stick out of edge without being removed
-                self.player.black_hole_collided_with = self
-                self.player.blackhole_collision = True
-                self.player.dead_by_blackhole = True
+                self.player.suction_object_collided_with = self
+                self.player.suction_object_collision = True
+                self.player.dead_by_suction = True
                 self.player.paused = True
                 self.player.dead = True
                 self.collision = True
                 self.game.end_game = True
                 sounds.suck.play()
+
+         
 
         else: 
             self.blocked = False
