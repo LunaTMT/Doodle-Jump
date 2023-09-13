@@ -44,6 +44,9 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8
 
 #### Blackhole
 
+
+
+
 #### UFO
 
 ### Buttons
@@ -55,8 +58,10 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/e1b3a5f6-b757-45bf-b9de-0
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/3562393d-1056-4726-a63d-ca6d4b53bb1c
 
 #### Menu
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/44cdd7a8-9fa6-408c-b3de-0c48cecfaa8f
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/190860de-becb-4c4a-93a6-79242262599e
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a1fff1e1-e69a-40c9-b641-2d5952f897dc
+
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/fc6a083a-ee91-46bc-991f-db1cb6d49bbc
+
 
 
 
