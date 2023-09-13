@@ -5,6 +5,10 @@
 ### Textures
 
 
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/cfca33bf-e8ba-485b-97bb-2030552846ce
+
+
+
 
 ### Menu
 
@@ -15,8 +19,11 @@
 ### Tiles
 
 #### Default
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/7a1833ea-8bbe-4c4d-acc4-53cee800f91e
 
 #### Broken
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/96ff8d1d-9128-4e85-9ad6-b65cf324a8ba
+
 
 #### Moving
 
