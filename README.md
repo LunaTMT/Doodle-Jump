@@ -28,8 +28,11 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/96ff8d1d-9128-4e85-9ad6-b
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/d730202a-3d51-4581-859f-7ede9985f888
 
 #### Disappearing
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5dceb57c-7ab7-4ec7-a4ab-6e9261e0b3c6
+
 
 #### Shifting
+
 
 #### Moveable
 
@@ -38,6 +41,8 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/d730202a-3d51-4581-859f-7
 #### Monsters
 
 #### Blackhole
+
+#### UFO
 
 ### Buttons
 
