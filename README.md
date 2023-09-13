@@ -60,7 +60,7 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/3562393d-1056-4726-a63d-c
 #### Menu
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a1fff1e1-e69a-40c9-b641-2d5952f897dc
 
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/fc6a083a-ee91-46bc-991f-db1cb6d49bbc
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/af99696a-3343-4500-9602-3742b352ccb7
 
 
 
