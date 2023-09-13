@@ -11,13 +11,14 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/cfca33bf-e8ba-485b-97bb-2
 
 
 ### Menu
-
 #### Play
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/69088888-584f-41d9-bfd9-4cab82fe4912
 
 #### Options
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/ba9288d0-e459-4a17-b563-5969ba5b9692
+
 
 ### Tiles
-
 #### Default
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/7a1833ea-8bbe-4c4d-acc4-53cee800f91e
 
@@ -38,12 +39,7 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/541c07e3-23fe-4668-931a-3
 #### Shifting
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8917b09a68ee
 
-
-
-#### Moveable
-
 ### Enemies
-
 #### Monsters
 
 #### Blackhole
