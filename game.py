@@ -244,16 +244,19 @@ class Game:
                 self.play_button.draw(self.screen)
           
             self.options_button.draw(self.screen)
+            
             self.player.draw(self.screen)
-            self.platforms.draw(self.screen)
             self.UFOs.draw(self.screen)
+            for platform in self.all_platforms:
+                platform.draw(self.screen)
+
+            
            
             if self.options_menu:
                 self.main_menu_button.draw(self.screen)
             
 
         if self.play_game:
-
 
             self.bullets.draw(self.screen)
             self.player.draw(self.screen)

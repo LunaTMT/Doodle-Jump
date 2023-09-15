@@ -2,6 +2,7 @@ import pygame
 import Assets.sounds as sounds
 from Sprites.player import Player
 
+
 class MenuButton:
     SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")
     DEFAULT_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(3, 99, 222, 80))
@@ -53,7 +54,6 @@ class MenuButton:
                 self.clicked = False
                 self.hide = True
         
-                self.game.player = Player(self.game, self.CENTER_X, self.CENTER_Y)
                 self.game.BACKGROUND_IMAGE = self.game.MAIN_MENU_IMAGE
                 self.game.main_menu = True
                 self.game.options_menu = False
