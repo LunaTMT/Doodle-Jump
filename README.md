@@ -45,11 +45,11 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8
 ![enemies](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a3d2d224-35c8-4cb1-8e5a-374647f45f2c)
 
 #### Blackhole
-
-
-
+![blackhole](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/f97a6fc6-edee-4eec-90a2-45ff49690d64)
 
 #### UFO
+![UFO](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5d8c024f-c73d-4cf9-9f68-ca5e2c5c26ef)
+
 
 ### Buttons
 
