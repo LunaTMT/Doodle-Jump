@@ -54,7 +54,7 @@ class MenuButton:
                 self.hide = True
         
                 self.game.player = Player(self.game, self.CENTER_X, self.CENTER_Y)
-                self.game.MAIN_MENU_IMAGE = self.game.DEFAULT_MAIN_MENU_IMAGE
+                self.game.BACKGROUND_IMAGE = self.game.MAIN_MENU_IMAGE
                 self.game.main_menu = True
                 self.game.options_menu = False
                 self.game.play_game = False

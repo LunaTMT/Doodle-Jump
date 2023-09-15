@@ -62,7 +62,7 @@ class OptionButton:
                     self.clicked = True
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
-                self.game.MAIN_MENU_IMAGE = self.game.OPTIONS_IMAGE
+                self.game.BACKGROUND_IMAGE = self.game.OPTIONS_IMAGE
                 self.game.options_menu = True
                 self.clicked = False
                 self.hide = True
@@ -147,13 +147,17 @@ class Checkbox:
                     self.game.BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
 
                     Tile.update_images() 
-                    self.game.main_menu_platform.image = Tile.DEFAULT_IMAGE
-                    for power_up in Tile.POWER_UPS:
-                        power_up.update_images()
-
                     Monster.update_images()
                     Blackhole.update_images()
                     UFO.update_images()
+
+                    self.game.all_platforms[0].update_current_image()
+                    self.game.all_enemies[0].update_current_image()
+
+                    for power_up in Tile.POWER_UPS:
+                        power_up.update_images()
+
+                    
 
                     
 

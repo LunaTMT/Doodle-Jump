@@ -291,8 +291,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = 900
             self.velocity_y = 0
             self.dead = True
-            self.game.end_game = True    
-            self.game.draw_bottom = True  
+            self.game.end_game = True   
+
     
     def x_boundary_check(self):
         #Ensures the sprite does not disappear when they go outside the bounds.

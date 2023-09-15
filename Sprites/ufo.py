@@ -55,6 +55,9 @@ class UFO(pygame.sprite.Sprite):
         cls.DEFAULT = cls.SPRITE_SHEET.subsurface(pygame.Rect(428, 208, 84, 122))  # Extract a 32x32 sprite
         cls.COLLISION_IMAGE = cls.SPRITE_SHEET.subsurface(pygame.Rect(428, 83, 84, 122))  # Extract a 32x32 sprite
     
+    def update_current_image(self):
+        self.image = self.DEFAULT
+
     def update(self):
         self.movement_update()
         self.player_collision_check()

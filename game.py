@@ -34,13 +34,16 @@ class Game:
     FRAME_RATE = 60
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
     
+    MAIN_MENU_IMAGE = BACKGROUND_IMAGE = pygame.image.load("Assets/Images/Backgrounds/main_menu.png").convert_alpha()
+    OPTIONS_IMAGE = pygame.image.load("Assets/Images/Backgrounds/options.png").convert_alpha()
+    PLAY_GAME_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
+
     TOP_SHEET = pygame.image.load(f"Assets/Images/Backgrounds/Tops/{texture.file_name}.png")
     TOP_IMAGE =  TOP_SHEET.subsurface(pygame.Rect(0, 0, 640, 92))
 
-    DEFAULT_MAIN_MENU_IMAGE = MAIN_MENU_IMAGE = pygame.image.load("Assets/Images/Backgrounds/main_menu.png").convert_alpha()
-    OPTIONS_IMAGE = pygame.image.load("Assets/Images/Backgrounds/options.png").convert_alpha()
+    
+    
 
     
 
@@ -74,7 +77,7 @@ class Game:
         self.play_game = False
         self.end_game = False
 
-        self.draw_bottom = False
+
         pygame.init()
 
         self.movable_platforms = pygame.sprite.Group()
@@ -89,8 +92,7 @@ class Game:
 
         self.fade_out_speed = 3
         self.fade_out_alpha = 255
-        self.fade_in_speed = 2
-        self.fade_in_alpha = 0
+
 
         self.enemy_weight = 0.001
         self.max_tile_number = 25
@@ -124,8 +126,6 @@ class Game:
     def all_platforms(self):
         return [platform for group in self._all_platforms for platform in group.sprites()]
     
-
-
 
     @all_platforms.setter
     def all_platforms(self, value):
@@ -195,7 +195,7 @@ class Game:
                 if self.options_menu:
                     self.main_menu_button.handle_events(event)
 
-            if self.play_game:
+            elif self.play_game:
                 self.pause_button.handle_events(event)
                 self.resume_button.handle_events(event)
                 self.player.handle_events(event)
@@ -203,7 +203,7 @@ class Game:
                 for platform in self.movable_platforms:
                         platform.handle_events(event)
             
-            if self.end_game:
+            elif self.end_game:
                 self.play_again_button.handle_events(event)
                 self.main_menu_button.handle_events(event)
     
@@ -218,8 +218,8 @@ class Game:
             self.options_button.update()
             if self.options_menu: self.main_menu_button.update()
 
-        if self.play_game:
-         
+        elif self.play_game:
+ 
             self.generate_random_tile()
             self.generate_random_enemy()
 
@@ -231,15 +231,16 @@ class Game:
             self.blackholes.update()
             self.UFOs.update()
 
-        if self.end_game:
+        elif self.end_game:
             self.play_again_button.update()
             self.main_menu_button.update()
         
     def draw(self):
+        self.screen.blit(self.BACKGROUND_IMAGE, (0, 0))
+
         if self.main_menu:
 
-            if not self.options_menu:
-                self.screen.blit(self.MAIN_MENU_IMAGE, (0, 0))
+            if not self.options_menu:        
                 self.play_button.draw(self.screen)
           
             self.options_button.draw(self.screen)
@@ -247,72 +248,46 @@ class Game:
             self.platforms.draw(self.screen)
             self.UFOs.draw(self.screen)
            
-
             if self.options_menu:
                 self.main_menu_button.draw(self.screen)
-           
+            
+
         if self.play_game:
-            self.screen.blit(self.BACKGROUND_IMAGE, (0, 0))
+
 
             self.bullets.draw(self.screen)
             self.player.draw(self.screen)
             
             for platform in self.all_platforms:
                 platform.draw(self.screen)
-                
+
             for enemy in self.all_enemies:
                 enemy.draw(self.screen)
 
-            #for sprite in self.UFOs.sprites():
-            #    sprite.draw(self.screen)
-        
-   
             self.draw_top()
             
         if self.end_game:
             
-           
+            """
+            Only once all the sprites have faded do we end the 'play_game' state 
+            This line of code saves having to redraw every sprite in the 'end_game' condition
+            Instead we simply end the play_game state when their alpha is at 0, i.e. are inivisible.
+            """
             if self.fade_out_alpha == 0:
                 self.play_game = False
-                self.screen.blit(self.BACKGROUND_IMAGE, (0, 0))
-                self.draw_top()
+                self.draw_end_game_screen()
                 pygame.mixer.stop()     
             
-            self.fade_out_alpha -= self.fade_out_speed
-            self.fade_in_alpha += self.fade_in_speed
+            if self.fade_out_alpha != 0:
+                self.fade_out_alpha -= self.fade_out_speed
 
-            if self.fade_out_alpha < 0:
-                self.fade_out_alpha = 0
-            
-            if self.fade_out_alpha == 0:
-
-                score = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
-                score_width, score_height = score.get_size()
-                score_x = (self.SCREEN_WIDTH - score_width) // 2
-
-                transparent_surface = pygame.Surface((score_width, score_height), pygame.SRCALPHA)
-                transparent_surface.fill(colours.WHITE)
-
-                high_score = self.score_font.render(str(int(Player.high_score)), True, colours.BLACK)  
-                high_score_width, _ = score.get_size()
-                high_score_x = self.CENTER_X - (high_score_width // 2)
-
-                self.screen.blit(score,      (score_x,      (self.CENTER_Y * 0.626)))
-                self.screen.blit(high_score, (high_score_x, (self.CENTER_Y * 0.93)))
-                
-                self.screen.blit(self.YOUR_SCORE_IMAGE,      (self.YOUR_SCORE_IMAGE_x,       self.CENTER_Y * 0.5))
-                self.screen.blit(self.YOUR_HIGH_SCORE_IMAGE, (self.YOUR_HIGH_SCORE_IMAGE_x, (self.CENTER_Y * 0.75)))
-    
-                self.play_again_button.draw(self.screen)
-                self.main_menu_button.draw(self.screen)
-
-            if self.draw_bottom and not self.player.dead_by_suction:
+            #If the player falls to the bottom we want to draw the bottom image to demonstrate falling into the abyss
+            if not self.player.dead_by_suction:
                 self.screen.blit(self.END_GAME_BOTTOM_IMAGE, (0, self.END_GAME_BOTTOM_IMAGE_Y))
 
         pygame.display.flip()        
  
 
-        
     def run(self):
         while self.running:
             self.handle_events()
@@ -320,16 +295,24 @@ class Game:
             self.draw()
             self.frame += 1
             self.clock.tick(60)
-
         pygame.quit()
         sys.exit()
 
     def generate_n_tiles(self, n=1, top=False, tile_type=Tile):
         
-
+        def get_quadrant_range(quadrant):
+            match quadrant:
+                case "Q1":
+                    return ((0, 320),   (0, 450))
+                case "Q2":
+                    return ((320, 640), (0, 450))
+                case "Q3":
+                    return ((0, 320),   (450, 900))
+                case "Q4":
+                    return ((320, 640), (450, 900))
         def get_random_quadrant_coordinates():
             current_quadrant = self.quadrants[self.quadrant_idx % 4]
-            x_range, y_range = self.get_quadrant_range(current_quadrant)
+            x_range, y_range = get_quadrant_range(current_quadrant)
             x_lower, x_higher = x_range
             y_lower, y_higher = y_range
             
@@ -377,7 +360,7 @@ class Game:
                 new_platform = pygame.Rect(x, y, 60, 20)
                 center1 = new_platform.center
 
-                for sprite in (self.platforms.sprites() + self.movable_platforms.sprites() + self.blackholes.sprites()):
+                for sprite in (self.all_platforms + self.all_enemies):
                     center2 = sprite.rect.center
                     distance = sqrt((center1[0] - center2[0]) ** 2 + (center1[1] - center2[1]) ** 2)
 
@@ -388,28 +371,33 @@ class Game:
             tile_type(self, x, y)
             self.quadrant_idx += 1
         
-    def get_quadrant_range(self, quadrant):
-        match quadrant:
-            case "Q1":
-                return ((0, 320),   (0, 450))
-            case "Q2":
-                return ((320, 640), (0, 450))
-            case "Q3":
-                return ((0, 320),   (450, 900))
-            case "Q4":
-                return ((320, 640), (450, 900))
 
     def draw_top(self):
         self.screen.blit(self.TOP_IMAGE, (0, 0))
-        self.draw_score()
+
+        score_text = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
+        self.screen.blit(score_text, (30, 18))
+
         self.pause_button.draw(self.screen)
         self.resume_button.draw(self.screen)
         
+    def draw_end_game_screen(self):
+        self.draw_top()
+        
+        score = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
+        score_x = (self.SCREEN_WIDTH - score.get_width()) // 2
 
+        high_score = self.score_font.render(str(int(Player.high_score)), True, colours.BLACK)  
+        high_score_x = self.CENTER_X - (high_score.get_width() // 2)
 
-    def draw_score(self):
-        score_text = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)
-        self.screen.blit(score_text, (30, 18))
+        self.screen.blit(score,      (score_x,      (self.CENTER_Y * 0.626)))
+        self.screen.blit(high_score, (high_score_x, (self.CENTER_Y * 0.93)))
+        
+        self.screen.blit(self.YOUR_SCORE_IMAGE,      (self.YOUR_SCORE_IMAGE_x,       self.CENTER_Y * 0.5))
+        self.screen.blit(self.YOUR_HIGH_SCORE_IMAGE, (self.YOUR_HIGH_SCORE_IMAGE_x, (self.CENTER_Y * 0.75)))
+
+        self.play_again_button.draw(self.screen)
+        self.main_menu_button.draw(self.screen)
 
 
     def update_top_images(self):

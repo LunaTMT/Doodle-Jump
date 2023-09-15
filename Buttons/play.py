@@ -1,6 +1,6 @@
 import pygame
 import Assets.sounds as sounds
-
+import texture
 from Sprites.player import Player
 
 class PlayButton:
@@ -41,6 +41,7 @@ class PlayButton:
                 self.hide = True
                 self.game.main_menu = False
                 self.game.play_game = True
+                self.game.BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
                 self.game.initialise_game_objects()
 
                 sounds.button.play()
