@@ -206,7 +206,7 @@ class Player(pygame.sprite.Sprite):
             if (self.velocity_y > self.GRAVITY) and not self.falling:  
                 self.falling = True 
                 self.fall_y = self.y
-                self.end_game_y = self.y + 450 + self.image.get_height() + 10
+                self.end_game_y = self.y + 450 + self.image.get_height() + 40
                 self.using_jetpack = False
                 self.using_propeller = False
                 self.using_trampoline = False
@@ -242,23 +242,21 @@ class Player(pygame.sprite.Sprite):
     def update_spawning_properties(self):
         self.game.enemy_weight = self.score / 100000
 
- 
-        if 1000 < self.score <= 10000:
+        if 5000 < self.score <= 10000:
             self.game.tile_weights[0] = 250
-            
-      
-        elif 10000 < self.score <= 20000:
+
+        if 10000 < self.score <= 20000:
             self.game.tile_weights[0] = 100
             self.game.max_tile_number = 20
             self.game.max_enemy_number = 1
 
         elif 20000 < self.score <= 30000:
             self.game.tile_weights[0] = 50
-            self.game.max_tile_number = 17
+            self.game.max_enemy_number = 2
+
+        elif self.score > 30000:
+            self.game.tile_weights[0] = 25
             self.game.max_enemy_number = 3
-        else:
-            self.game.tile_weights[0] = 5
-            self.game.max_enemy_number = 5
            
         
 

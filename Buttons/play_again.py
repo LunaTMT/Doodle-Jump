@@ -58,6 +58,7 @@ class PlayAgain:
                 self.game.play_game = True
                 self.game.end_game = False
                 
+                self.game.initialise_game_weights()
                 self.game.initialise_game_objects()
                 self.game.fade_out_alpha = 255
                 
