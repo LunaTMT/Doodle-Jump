@@ -1,7 +1,5 @@
 # Doodle Jump
 
-
-
 ## Installation & Setup
 
 To run this program please make sure you have [python](https://www.python.org/downloads/) installed on your system.
@@ -14,8 +12,6 @@ To run this program please make sure you have [python](https://www.python.org/do
 
 Download the ZIP folder from the GitHub repository.
 
-
-
 <div align="center">
 
 <figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
@@ -24,19 +20,18 @@ Download the ZIP folder from the GitHub repository.
 
 As shown in the following video:
 
-* Extract the contents of the zip folder into to your desktop.&#x20;
+
+
+* Extract the contents of the zip folder into to your desktop.
 * Open the extracted folder, open main.py and run the module.
 
-
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/193fe049-f1e5-410d-8282-3b7f56eba107
-
-
-
-
 
 ## Demonstration and Features
 
 ### Textures
+
+Please note that all following sprites have different textures depending on the texture package chosen. This includes all monsters, blackholes, UFOs, tiles and power ups.
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/cfca33bf-e8ba-485b-97bb-2030552846ce
 
@@ -50,7 +45,7 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/69088888-584f-41d9-bfd9-4
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/ba9288d0-e459-4a17-b563-5969ba5b9692
 
-Please note that all following sprites have different textures depending on the texture package chosen.
+
 
 ### Tiles
 
