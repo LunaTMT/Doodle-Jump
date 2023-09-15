@@ -1,6 +1,6 @@
 # Doodle Jump
 
-### Please note that I am still currently in the process of optimisation/refactoring. Therefore, this is not the final product.Thanks, enjoy :P
+### Please note that I am still currently in the process of optimisation/refactoring. Therefore, this is not the final product. Thanks, enjoy :P
 
 ## Installation & Setup
 
