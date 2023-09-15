@@ -17,6 +17,7 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/69088888-584f-41d9-bfd9-4
 #### Options
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/ba9288d0-e459-4a17-b563-5969ba5b9692
 
+Please note that all following sprites have different textures depending on the texture package chosen.
 
 ### Tiles
 #### Default
@@ -41,6 +42,7 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8
 
 ### Enemies
 #### Monsters
+![enemies](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a3d2d224-35c8-4cb1-8e5a-374647f45f2c)
 
 #### Blackhole
 
