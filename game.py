@@ -67,16 +67,6 @@ class Game:
     pygame.display.set_caption("Doodle Jump")
     clock = pygame.time.Clock()
 
-    movable_platforms = pygame.sprite.Group()
-    platforms = pygame.sprite.Group()
-    bullets = pygame.sprite.Group()
-    monsters = pygame.sprite.Group()
-    blackholes = pygame.sprite.Group()
-    UFOs = pygame.sprite.Group()
-    
-    enemies = [monsters, blackholes, UFOs]
-    all_platforms = [movable_platforms, platforms]
-
     def __init__(self):
         self.running = True
         self.main_menu = True
@@ -87,6 +77,16 @@ class Game:
         self.draw_bottom = False
         pygame.init()
 
+        self.movable_platforms = pygame.sprite.Group()
+        self.platforms = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
+        self.monsters = pygame.sprite.Group()
+        self.blackholes = pygame.sprite.Group()
+        self.UFOs = pygame.sprite.Group()
+        
+        self.all_enemies = [self.monsters, self.blackholes, self.UFOs]
+        self.all_platforms = [self.movable_platforms, self.platforms]
+
         self.fade_out_speed = 3
         self.fade_out_alpha = 255
         self.fade_in_speed = 2
@@ -94,6 +94,7 @@ class Game:
 
         self.enemy_weight = 0.001
         self.max_tile_number = 25
+        self.max_enemy_number = 1
         self.tile_weights = [500, 5, 5, 1, 5, 10, 5] # Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
 
         self.frame = 0
@@ -104,11 +105,39 @@ class Game:
         self.previous_spawn_x = 0
         self.previous_spawn_y = 0
 
+        self.tile_objects = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
+        self.enemy_objects = [Monster, Blackhole, UFO]
+
         self.initialise_main_menu_objects()
         
+     # getter method
+    
+    @property
+    def all_enemies(self):
+        return [enemy for group in self._all_enemies for enemy in group.sprites()]
+    
+    @all_enemies.setter
+    def all_enemies(self, value):
+        self._all_enemies = value
+    
+    @property
+    def all_platforms(self):
+        return [platform for group in self._all_platforms for platform in group.sprites()]
+    
+
+
+
+    @all_platforms.setter
+    def all_platforms(self, value):
+        self._all_platforms = value
+            
+    
     def initialise_main_menu_objects(self):
         self.player = MenuPlayer(self, 110, 750)
-        self.main_menu_platform = Tile(self, 115, 763)
+
+        self.platforms.add(Tile(self, 115, 763))
+        self.UFOs.add(UFO(self, x=450, y=200))
+        
         self.play_button = PlayButton(self)
         self.options_button = OptionButton(self)
         self.main_menu_button = MenuButton(self, x=None, y=200)
@@ -128,14 +157,13 @@ class Game:
 
     def generate_random_tile(self):
         if Tile.total <= self.max_tile_number:
-            tiles = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
-            tile = random.choices(population=tiles, weights=self.tile_weights)[0]
+            tile = random.choices(population=self.tile_objects, weights=self.tile_weights)[0]
             self.generate_n_tiles(top=True, tile_type=tile)
 
     def generate_random_enemy(self):
+        if len(self.all_enemies) < self.max_enemy_number:
             if not self.player.paused:
-                enemies = [Monster, Blackhole, UFO, None]
-                enemy = random.choices(population = enemies, weights=[self.enemy_weight, self.enemy_weight, self.enemy_weight, 100])[0]
+                enemy = random.choices(population=self.enemy_objects + [None], weights=[self.enemy_weight, self.enemy_weight, self.enemy_weight, 100])[0]
                 if enemy is Monster:
                     self.monsters.add(enemy(self))
                 elif enemy is Blackhole:
@@ -182,25 +210,23 @@ class Game:
     def update(self):
 
         if self.main_menu:
-
             self.player.update()
+            self.platforms.update()
+            self.UFOs.update()
+            
             self.play_button.update()
-
-            self.main_menu_platform.update()
             self.options_button.update()
-
-            if self.options_menu:
-                self.main_menu_button.update()
+            if self.options_menu: self.main_menu_button.update()
 
         if self.play_game:
+            print(self.frame)
             self.generate_random_tile()
             self.generate_random_enemy()
+
             self.bullets.update()
             self.movable_platforms.update()
             self.platforms.update()
             self.player.update()
-
-
             self.monsters.update()
             self.blackholes.update()
             self.UFOs.update()
@@ -213,12 +239,14 @@ class Game:
         if self.main_menu:
 
             if not self.options_menu:
-                self.draw_main_menu()
+                self.screen.blit(self.MAIN_MENU_IMAGE, (0, 0))
                 self.play_button.draw(self.screen)
           
             self.options_button.draw(self.screen)
             self.player.draw(self.screen)
-            self.main_menu_platform.draw(self.screen)
+            self.platforms.draw(self.screen)
+            self.UFOs.draw(self.screen)
+           
 
             if self.options_menu:
                 self.main_menu_button.draw(self.screen)
@@ -229,13 +257,11 @@ class Game:
             self.bullets.draw(self.screen)
             self.player.draw(self.screen)
             
-            for group in self.all_platforms:
-                for platform in group.sprites():
-                    platform.draw(self.screen)
+            for platform in self.all_platforms:
+                platform.draw(self.screen)
                 
-            for group in self.enemies:
-                for enemy in group.sprites():
-                    enemy.draw(self.screen)
+            for enemy in self.all_enemies:
+                enemy.draw(self.screen)
 
             #for sprite in self.UFOs.sprites():
             #    sprite.draw(self.screen)
@@ -243,7 +269,6 @@ class Game:
    
             self.draw_top()
             
-  
         if self.end_game:
             
            
@@ -380,9 +405,7 @@ class Game:
         self.pause_button.draw(self.screen)
         self.resume_button.draw(self.screen)
         
-    def draw_main_menu(self):
-        self.screen.blit(self.MAIN_MENU_IMAGE, (0, 0))
-        self.main_menu_platform.draw(self.screen)
+
 
     def draw_score(self):
         score_text = self.score_font.render(str(int(self.player.score)), True, colours.BLACK)

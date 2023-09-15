@@ -7,14 +7,14 @@ from math import sin, radians
 
 
 class UFO(pygame.sprite.Sprite):
-    
+    ID = 0
     SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
 
     DEFAULT = SPRITE_SHEET.subsurface(pygame.Rect(428, 208, 84, 122))  # Extract a 32x32 sprite
     COLLISION_IMAGE = SPRITE_SHEET.subsurface(pygame.Rect(428, 83, 84, 122))  # Extract a 32x32 sprite
     
 
-    def __init__(self, game):
+    def __init__(self, game, x=None, y=None):
         super().__init__()
         self.game = game
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
@@ -27,14 +27,26 @@ class UFO(pygame.sprite.Sprite):
         self.alpha = 255
         self.image = self.DEFAULT
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(self.rect.width, self.SCREEN_WIDTH - self.rect.width)
-        self.rect.y = -self.rect.height
+
+        self.x = x
+        self.y = y
+        if x == None:
+            self.x = self.rect.x = random.randint(self.rect.width, self.SCREEN_WIDTH - self.rect.width)
+        else:
+            self.rect.x = x
+
+        if x == None:  
+            self.y = self.rect.y = -self.rect.height
+        else:
+            self.rect.y = y
+        
         self.blocked = False
         self.collision = False
         self.angle = 0
         self.sound = sounds.ufo
         self.sound.set_volume(2)
         self.sound.play(-1)
+        self.ID += 1
         
         
     @classmethod
@@ -116,6 +128,9 @@ class UFO(pygame.sprite.Sprite):
     def movement_update(self):
         if not self.paused:
             # Update the sprite's x-coordinate based on the figure 8 motion
-            self.angle += 1  # Adjust this value to control the speed of the motion
-            x = self.SCREEN_WIDTH // 2 + 100 * sin(radians(self.angle))
-            self.rect.centerx = x
+            self.angle += 0.09 # Adjust this value to control the speed of the motion
+
+            self.x += int(5 * sin(self.angle))
+            self.y += int(2.5 * sin(2*self.angle))
+
+            self.rect.center = (self.x, self.y)

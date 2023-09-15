@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.GRAVITY = game.GRAVITY
         self.JUMP_STRENGTH = game.JUMP_STRENGTH
         self.all_platforms = game.all_platforms
-        self.enemies = game.enemies
+        self.enemies = game.all_enemies
 
         self.default_x = self.x = x
         self.default_y = self.y = -900
@@ -241,7 +241,7 @@ class Player(pygame.sprite.Sprite):
 
     def update_spawning_properties(self):
         self.game.enemy_weight = self.score / 100000
-       
+
  
         if 1000 < self.score <= 10000:
             self.game.tile_weights[0] = 250
@@ -250,15 +250,15 @@ class Player(pygame.sprite.Sprite):
         elif 10000 < self.score <= 20000:
             self.game.tile_weights[0] = 100
             self.game.max_tile_number = 20
-            
+            self.game.max_enemy_number = 1
 
         elif 20000 < self.score <= 30000:
             self.game.tile_weights[0] = 50
             self.game.max_tile_number = 17
-            
-
+            self.game.max_enemy_number = 3
         else:
             self.game.tile_weights[0] = 5
+            self.game.max_enemy_number = 5
            
         
 
@@ -270,15 +270,15 @@ class Player(pygame.sprite.Sprite):
             if self.y < 390:
                 difference = abs(self.y) - 900
                 self.y = -900
-                for group in self.all_platforms:
-                    for platform in group.sprites():
-                        platform.rect.y += difference
-                        if platform.power_up:
-                            platform.power_up.rect.y += difference
+                
+                for platform in self.game.all_platforms:
+                    platform.rect.y += difference
+                    if platform.power_up:
+                        platform.power_up.rect.y += difference
 
-                for group in self.enemies:
-                    for enemy in group.sprites():
-                        enemy.rect.y += difference
+                
+                for enemy in self.game.all_enemies:
+                    enemy.rect.y += difference
 
             if not self.suction_object_collided_with:
                 sounds.fall.play()
@@ -314,15 +314,13 @@ class Player(pygame.sprite.Sprite):
             difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
             self.previous_y_difference = int(self.y - self.CENTER_Y) 
             
-            for group in self.all_platforms:
-                for platform in group.sprites():
-                    platform.rect.y -= difference
-                    if platform.power_up:
-                        platform.power_up.rect.y -= difference
+            for platform in self.game.all_platforms:
+                platform.rect.y -= difference
+                if platform.power_up:
+                    platform.power_up.rect.y -= difference
             
-            for group in self.enemies:
-                for enemy in group.sprites():
-                    enemy.rect.y -= difference
+            for enemy in self.game.all_enemies:
+                enemy.rect.y -= difference
 
             self.rect.y = (self.SCREEN_HEIGHT // 2 - self.rect.height)
    
