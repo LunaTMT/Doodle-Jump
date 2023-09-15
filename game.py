@@ -219,7 +219,7 @@ class Game:
             if self.options_menu: self.main_menu_button.update()
 
         if self.play_game:
-            print(self.frame)
+         
             self.generate_random_tile()
             self.generate_random_enemy()
 
