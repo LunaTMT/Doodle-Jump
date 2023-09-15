@@ -55,6 +55,8 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/027b5ef1-8458-409a-a378-5
 
 #### UFO
 ![UFO](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5d8c024f-c73d-4cf9-9f68-ca5e2c5c26ef)
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/1f85eff4-4467-4937-95b3-2779927de996
+
 
 
 ### Buttons
