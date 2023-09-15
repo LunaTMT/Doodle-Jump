@@ -158,7 +158,7 @@ class Game:
     """Generator Functions """
     def generate_random_tile(self):
         if Tile.total <= self.max_tile_number:
-            print(self.tile_weights)
+            #print(self.tile_weights)
             tile = random.choices(population=self.tile_objects, weights=self.tile_weights)[0]
             self.generate_n_tiles(top=True, tile_type=tile)
 
