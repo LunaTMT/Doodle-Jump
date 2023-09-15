@@ -43,18 +43,21 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8
 ### Enemies
 #### Monsters
 ![enemies](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a3d2d224-35c8-4cb1-8e5a-374647f45f2c)
+
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/795bf0a4-d6a1-41a8-8b26-b11cd094e1e6
 
 
 
 #### Blackhole
 ![blackhole](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/f97a6fc6-edee-4eec-90a2-45ff49690d64)
+
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/027b5ef1-8458-409a-a378-56c8d8777da9
 
 
 
 #### UFO
 ![UFO](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5d8c024f-c73d-4cf9-9f68-ca5e2c5c26ef)
+
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/1f85eff4-4467-4937-95b3-2779927de996
 
 
