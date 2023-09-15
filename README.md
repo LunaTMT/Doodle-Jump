@@ -28,6 +28,9 @@ As shown in the following video:
 * Open the extracted folder, open main.py and run the module.
 
 
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/193fe049-f1e5-410d-8282-3b7f56eba107
+
+
 
 
 
