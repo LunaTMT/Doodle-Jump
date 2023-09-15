@@ -1,5 +1,7 @@
 # Doodle Jump
 
+### Please note that I am still currently in the process of optimisation/refactoring. Therefore, this is not the final product.Thanks, enjoy :P
+
 ## Installation & Setup
 
 To run this program please make sure you have [python](https://www.python.org/downloads/) installed on your system.
