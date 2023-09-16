@@ -33,16 +33,24 @@ class Game:
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     
-    #BACKGROUND IMAGES
+    # ----------------------------
+    #  IMAGES
+    # ----------------------------
     MAIN_MENU_IMAGE = BACKGROUND_IMAGE = pygame.image.load("Assets/Images/Backgrounds/main_menu.png").convert_alpha()
     OPTIONS_IMAGE = pygame.image.load("Assets/Images/Backgrounds/options.png").convert_alpha()
     PLAY_GAME_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
+    
 
-    #TOP IMAGES
+    # ----------------------------
+    # TOP IMAGES
+    # ----------------------------
     TOP_SHEET = pygame.image.load(f"Assets/Images/Backgrounds/Tops/{texture.file_name}.png")
     TOP_IMAGE =  TOP_SHEET.subsurface(pygame.Rect(0, 0, 640, 92))
+    
 
-    #END GAME IMAGES
+    # ----------------------------
+    # END GAME IMAGES
+    # ----------------------------
     END_GAME_SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")
  
     GAME_OVER_TEXT_IMAGE = END_GAME_SPRITE_SHEET.subsurface(pygame.Rect(2, 209, 433, 157))
@@ -64,20 +72,20 @@ class Game:
     
     END_GAME_IMAGES = (YOUR_SCORE_IMAGE, YOUR_HIGH_SCORE_IMAGE)
 
- 
     pygame.display.set_caption("Doodle Jump")
     clock = pygame.time.Clock()
 
     def __init__(self):
+        #Game States
         self.running = True
         self.main_menu = True
         self.options_menu = False
         self.play_game = False
         self.end_game = False
 
-
         pygame.init()
 
+        #Sprite Groups
         self.movable_platforms = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
@@ -85,30 +93,34 @@ class Game:
         self.blackholes = pygame.sprite.Group()
         self.UFOs = pygame.sprite.Group()
         
+        #Sprite groups in joined list form
         self.all_enemies = [self.monsters, self.blackholes, self.UFOs]
         self.all_platforms = [self.movable_platforms, self.platforms]
 
-        self.fade_out_speed = 3
-        self.fade_out_alpha = 255
+        #List of objects that are used in generation/spawning
+        self.tile_objects = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
+        self.enemy_objects = [Monster, Blackhole, UFO]
 
-        self.frame = 0
-        self.score_font = pygame.font.Font(None, 50)
+        #Quadrant variables to ensure spawning is done evenly such that the player always has a tile to jump to.
         self.quadrants = ("Q1", "Q2", "Q3", "Q4")
         self.quadrant_idx = 0
 
-        self.previous_spawn_x = 0
-        self.previous_spawn_y = 0
+        #self explanatory
+        self.fade_out_speed = 3
+        self.fade_out_alpha = 255
 
-  
-        self.tile_objects = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
-        self.enemy_objects = [Monster, Blackhole, UFO]
+        self.score_font = pygame.font.Font(None, 50)
+
+        self.frame = 0
         
-       
-
+    
         self.initialise_main_menu_objects()
 
     """Initialise/Reinitialise Functions"""
     def initialise_main_menu_objects(self):
+        """
+        This function generates all the objects associated with the main menu
+        """
         self.player = MenuPlayer(self, 110, 750)
 
         self.platforms.add(Tile(self, 115, 763))
@@ -119,6 +131,9 @@ class Game:
         self.main_menu_button = MenuButton(self, x=None, y=200)
 
     def initialise_game_objects(self):
+        """
+        This function generates all the objects associated with playing the game itself
+        """
         Tile.total = 0
         self.clear_all_sprites()
 
@@ -131,6 +146,10 @@ class Game:
         self.generate_n_tiles(n=25, top=False)
     
     def initialise_game_weights(self):
+        """
+        This function initialises the game weights for enemy and tile spawning. 
+        It must be reset for every game instance.
+        """
         self.max_tile_number = 25
         self.tile_weights = [9999999, 5, 5, 1, 5, 5, 5] 
 
@@ -139,22 +158,31 @@ class Game:
 
     """Generator Functions """
     def generate_random_tile(self):
-        if Tile.total <= self.max_tile_number:
+        """
+        This function ensures there are always n_max random tiles on the screen
+        if two are destroyed and max_tile_number = 25
+        Tile.total = 23
+        this function will generate two random tiles depending on the set weights.
+        """
+        while Tile.total <= self.max_tile_number:
             tile = random.choices(population=self.tile_objects, weights=self.tile_weights)[0]
             self.generate_n_tiles(top=True, tile_type=tile)
 
     def generate_random_enemy(self):
-        if len(self.all_enemies) < self.max_enemy_number:
-            if not self.player.paused:
-                enemy = random.choices(population=self.enemy_objects + [None], weights=[self.enemy_weight, self.enemy_weight, self.enemy_weight, 100])[0]
-                if enemy is Monster:
-                    self.monsters.add(enemy(self))
-                elif enemy is Blackhole:
-                    self.blackholes.add(enemy(self))   
-                elif enemy is UFO:
-                    self.UFOs.add(enemy(self))
-                else:
-                    pass
+        """
+        This function will attempt to generate an enemy based on the probability weight insofar as 
+        the total number of enemies is less than the maximum boundary set (max_enemy_number)"""
+        if len(self.all_enemies) < self.max_enemy_number and not self.player.paused:
+            enemy = random.choices(population=self.enemy_objects + [None], weights=[self.enemy_weight, self.enemy_weight, self.enemy_weight, 100])[0]
+            if enemy is None:
+                pass
+            elif enemy is Monster:
+                self.monsters.add(enemy(self))
+            elif enemy is Blackhole:
+                self.blackholes.add(enemy(self))   
+            elif enemy is UFO:
+                self.UFOs.add(enemy(self))
+            
 
     def generate_n_tiles(self, n=1, top=False, tile_type=Tile):
         
@@ -259,15 +287,6 @@ class Game:
         self.play_again_button.draw(self.screen)
         self.main_menu_button.draw(self.screen)
 
-    @classmethod
-    def update_top_images(cls):
-        cls.TOP_SHEET = pygame.image.load(f"Assets/Images/Backgrounds/Tops/{texture.file_name}.png")
-        cls.TOP_IMAGE =  cls.TOP_SHEET.subsurface(pygame.Rect(0, 0, 640, 92))
-
-    @classmethod
-    def update_bottom_images(cls):
-        cls.END_GAME_BOTTOM_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Bottoms/{texture.file_name}.png")
-        cls.END_GAME_BOTTOM_IMAGE_Y = cls.SCREEN_HEIGHT - cls.END_GAME_BOTTOM_IMAGE.get_height()
 
     
     """Main game loop functions
@@ -409,6 +428,31 @@ class Game:
 
 
 
+    """
+    These two class methods are specifically used to update images based on the current texture pack selected
+    """
+    @classmethod
+    def update_top_images(cls):
+        cls.TOP_SHEET = pygame.image.load(f"Assets/Images/Backgrounds/Tops/{texture.file_name}.png")
+        cls.TOP_IMAGE =  cls.TOP_SHEET.subsurface(pygame.Rect(0, 0, 640, 92))
+
+    @classmethod
+    def update_bottom_images(cls):
+        cls.END_GAME_BOTTOM_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Bottoms/{texture.file_name}.png")
+        cls.END_GAME_BOTTOM_IMAGE_Y = cls.SCREEN_HEIGHT - cls.END_GAME_BOTTOM_IMAGE.get_height()
+
+
+
+    """"
+    Properties getter/setters to access all the sprite groups for either platforms or enemies
+    This really just saves having to write 
+    for group in self.all_x:
+        for x in group.sprites():
+            ...
+    instead we can just write 
+    for x in all_x:
+        ...
+    """
     @property
     def all_enemies(self):
         return [enemy for group in self._all_enemies for enemy in group.sprites()]
