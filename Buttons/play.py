@@ -1,7 +1,6 @@
 import pygame
 import Assets.sounds as sounds
 import texture
-from Sprites.player import Player
 
 class PlayButton:
     def __init__(self, game):
@@ -19,15 +18,7 @@ class PlayButton:
         self.hovering = False
         self.clicked = False
         self.hide = False
-
-    def update(self):
-        mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
-            self.hovering = True
-        else:
-            self.hovering = False
         
-
     def handle_events(self, event):
         if not self.hide:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
@@ -39,26 +30,32 @@ class PlayButton:
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
                 self.clicked = False
                 self.hide = True
+
+                #Game State change
                 self.game.main_menu = False
                 self.game.play_game = True
+
+                #Background changed
                 self.game.BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
+                #Remove the main menu UFO    
                 self.game.UFOs.sprites()[0].remove()
-                
+            
+                #Game initialisation
                 self.game.initialise_game_weights()
                 self.game.initialise_game_objects()
 
-
                 sounds.button.play()
+
+    def update(self):
+        mouse_pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(mouse_pos):
+            self.hovering = True
+        else:
+            self.hovering = False
 
     def draw(self, screen):
         if not self.hide:
-
             if self.hovering:
                 screen.blit(self.hover_image, (self.rect.x, self.rect.y))
             else:
                 screen.blit(self.image, (self.rect.x, self.rect.y))
-            
-        
-
-
-"""When clicked, set player gravity to 0, set self.player.paused = True"""

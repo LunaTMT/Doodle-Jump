@@ -185,7 +185,25 @@ class Game:
             
 
     def generate_n_tiles(self, n=1, top=False, tile_type=Tile):
-        
+        """
+        This rather beefy function ensures that the spawning of n tiles:
+        - does not overlap with other sprites
+        - does not spawn such that its sides go off screen
+        - the player always has a tile to jump on (spawning in quadrants) 
+
+        To ensure the tiles are evenly spaced and that the player has something to jump on
+        the tiles are spawned in quadrants of the square screen:
+        I ---- I ---- I
+        I      I      I
+        I  Q1  I  Q2  I
+        I      I      I
+        I ---- I ---- I
+        I      I      I
+        I  Q3  I  Q4  I
+        I      I      I
+        I ---- I ---- I
+        By doing this we ensure the tiles are not just interspersed randomly everywhere over the screen but in segments (quadrants)
+        """
         def get_quadrant_range(quadrant):
             match quadrant:
                 case "Q1":
@@ -258,7 +276,9 @@ class Game:
         self.UFOs.empty()
         
 
-
+    """
+    Drawing functions
+    """
     def draw_top(self):
         self.screen.blit(self.TOP_IMAGE, (0, 0))
 
@@ -381,7 +401,6 @@ class Game:
             if self.options_menu:
                 self.main_menu_button.draw(self.screen)
             
-
         if self.play_game:
 
             self.bullets.draw(self.screen)

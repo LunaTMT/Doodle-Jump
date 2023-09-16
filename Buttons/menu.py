@@ -1,6 +1,5 @@
 import pygame
 import Assets.sounds as sounds
-from Sprites.player import Player
 
 
 class MenuButton:
@@ -21,8 +20,6 @@ class MenuButton:
         self.hover_image = self.HOVER_IMAGE
         
         self.rect = self.image.get_rect()
-        
-        # Get the dimensions of the image
         image_width, image_height = self.DEFAULT_IMAGE.get_size()
 
         if x == None:
@@ -37,28 +34,25 @@ class MenuButton:
         self.clicked = False
         self.hide = False
 
-    def update(self):
-        mouse_pos = pygame.mouse.get_pos()
-        self.hovering = True if self.rect.collidepoint(mouse_pos) else False
-
-        
     def handle_events(self, event):
         if not self.hide:
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  #On the player left clicking
                 mouse_pos = pygame.mouse.get_pos()
-                if self.rect.collidepoint(mouse_pos):
+                if self.rect.collidepoint(mouse_pos): #if collision button state clicked
                     self.clicked = True
-
             
-            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked: #Ensures following code is only run once
                 self.clicked = False
                 self.hide = True
         
                 self.game.BACKGROUND_IMAGE = self.game.MAIN_MENU_IMAGE
+                #Game State changes
                 self.game.main_menu = True
                 self.game.options_menu = False
                 self.game.play_game = False
                 self.game.end_game = False
+                
+                #Reset the fade out alpha
                 self.game.fade_out_alpha = 255
                 
                 self.game.clear_all_sprites()
@@ -66,15 +60,15 @@ class MenuButton:
 
                 sounds.button.play()
 
+    def update(self):
+        #Hover state updated when cursor on button
+        mouse_pos = pygame.mouse.get_pos()
+        self.hovering = True if self.rect.collidepoint(mouse_pos) else False
+   
     def draw(self, screen):
         if not self.hide:
             if self.hovering:
-                screen.blit(self.hover_image, (self.rect.x, self.rect.y))
+                screen.blit(self.hover_image, (self.rect.x, self.rect.y)) #blit hover image when hovering 
             else:
                 screen.blit(self.image, (self.rect.x, self.rect.y))
             
-
-        
-
-
-"""When clicked, set player gravity to 0, set self.player.paused = True"""

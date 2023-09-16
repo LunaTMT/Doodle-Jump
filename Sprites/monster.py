@@ -93,6 +93,21 @@ class Monster(pygame.sprite.Sprite):
         if self.game.end_game and self.player.dead_by_suction:
             self.alpha = self.game.fade_out_alpha
 
+    def pause(self):
+        self.prior_speed     = self.speed 
+        self.prior_speed_x   = self.speed_x 
+        self.prior_speed_y   = self.speed_y 
+
+        self.speed = 0
+        self.speed_x = 0
+        self.speed_y = 0
+
+    def unpause(self):
+        self.speed   = self.prior_speed
+        self.speed_x = self.prior_speed_x 
+        self.speed_y = self.prior_speed_y 
+
+
 
     def player_collision_check(self):
    

@@ -21,40 +21,30 @@ class PauseButton:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.rect.collidepoint(mouse_pos):
                     
-                    self.player.GRAVITY = 0
                     self.player.prior_y_velocity = self.player.velocity_y
                     self.player.velocity_y = 0
                     self.game.player.paused = True
 
-                    print(len(self.game.monsters))
+                    #We must store the monster's speed so upon resuming the monster continues at the same rate prior to pausing 
                     for monster in self.game.monsters:
-                        
-                        monster.prior_speed     = monster.speed 
-                        monster.prior_speed_x   = monster.speed_x 
-                        monster.prior_speed_y   = monster.speed_y 
+                        monster.pause()
 
-                        monster.speed = 0
-                        monster.speed_x = 0
-                        monster.speed_y = 0
-
+                    #simply pausing ufo
                     for ufo in self.game.UFOs:
                         ufo.paused = True
                     
-                    pygame.mixer.set_volume(0)
                     pygame.mixer.pause()
                     self.clicked = True
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
                 self.hide = True
-                self.game.resume_button.hide = False
                 self.clicked = False
+
+                self.game.resume_button.hide = False #When clicking pause we want to show the resume button option
                 sounds.button.play()
 
     def draw(self, screen):
         if not self.hide:
             screen.blit(self.image, (self.rect.x, self.rect.y))
             
-        
-
-
-"""When clicked, set player gravity to 0, set self.player.paused = True"""
+  

@@ -1,7 +1,5 @@
 import pygame
 import Assets.sounds as sounds
-from Sprites.player import Player
-from Sprites.tile import Tile
 
 class PlayAgain:
     SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")
@@ -16,13 +14,10 @@ class PlayAgain:
         self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
         self.SCREEN_WIDTH = game.SCREEN_WIDTH
 
-        self.alpha = 0
         self.image = self.DEFAULT_IMAGE
         self.hover_image = self.HOVER_IMAGE
         
         self.rect = self.image.get_rect()
-        
-        # Get the dimensions of the image
         image_width, image_height = self.DEFAULT_IMAGE.get_size()
 
         # Calculate the position to blit the image in the center of the screen
@@ -35,11 +30,6 @@ class PlayAgain:
         self.hovering = False
         self.clicked = False
         self.hide = False
-
-    def update(self):
-        mouse_pos = pygame.mouse.get_pos()
-        self.hovering = True if self.rect.collidepoint(mouse_pos) else False
-
         
     def handle_events(self, event):
         if not self.hide:
@@ -48,21 +38,25 @@ class PlayAgain:
                 if self.rect.collidepoint(mouse_pos):
                     self.clicked = True
 
-            
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
                 self.clicked = False
                 self.hide = True
-        
-                self.game.player = Player(self.game, self.CENTER_X, self.CENTER_Y)
+
+                #Game State change
                 self.game.main_menu = False
                 self.game.play_game = True
                 self.game.end_game = False
                 
+                #Initialise objects and weights and reset alpha
                 self.game.initialise_game_weights()
                 self.game.initialise_game_objects()
                 self.game.fade_out_alpha = 255
                 
                 sounds.button.play()
+
+    def update(self):
+        mouse_pos = pygame.mouse.get_pos()
+        self.hovering = True if self.rect.collidepoint(mouse_pos) else False
 
     def draw(self, screen):
         if not self.hide:

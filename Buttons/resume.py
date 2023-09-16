@@ -12,33 +12,36 @@ class ResumeButton(PauseButton):
 
     def handle_events(self, event):    
         if not self.hide and not self.game.end_game:
+            
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
                 mouse_pos = pygame.mouse.get_pos()
                 if self.rect.collidepoint(mouse_pos):
                     self.clicked = True
                     
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
-                self.game.GRAVITY = self.player.GRAVITY = 0.4
+                """
+                When resume the game we want to set all velocities for all sprites back to what they used to be
+                """
                 self.game.player.velocity_y = self.player.prior_y_velocity
                 self.game.player.paused = False
-                
                 self.game.player.handling_events = True
 
                 for monster in self.game.monsters:
-         
-                    pygame.mixer.unpause()
-                    monster.speed   = monster.prior_speed
-                    monster.speed_x = monster.prior_speed_x 
-                    monster.speed_y = monster.prior_speed_y 
+                    monster.unpause()
 
                 for ufo in self.game.UFOs:
                     ufo.paused = False
 
                 self.hide = True
                 self.clicked = False
+
+                #Now we want to show the pause button
                 self.game.pause_button.hide = False
+                
+                pygame.mixer.unpause()
                 sounds.button.play()
-                pygame.mixer.set_volume(1)
+                
+
 
     def draw(self, screen):
         if not self.hide and not self.game.end_game:
