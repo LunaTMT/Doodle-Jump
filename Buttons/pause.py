@@ -25,7 +25,7 @@ class PauseButton:
                     self.player.prior_y_velocity = self.player.velocity_y
                     self.player.velocity_y = 0
                     self.game.player.paused = True
-                  
+
                     print(len(self.game.monsters))
                     for monster in self.game.monsters:
                         
@@ -40,6 +40,7 @@ class PauseButton:
                     for ufo in self.game.UFOs:
                         ufo.paused = True
                     
+                    pygame.mixer.set_volume(0)
                     pygame.mixer.pause()
                     self.clicked = True
 

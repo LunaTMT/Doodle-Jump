@@ -105,8 +105,8 @@ class Tile(pygame.sprite.Sprite):
         self.image = self.DEFAULT_IMAGE
 
 
-    def generate_power_up(self):
-        power_up = random.choices(population =  self.POWER_UPS+[None], weights=[0.3, 2, 7, 0.8, 5, 1, 80])[0]
+    def generate_power_up(self): 
+        power_up = random.choices(population =  self.POWER_UPS+[None], weights=[0.1, 2, 7, 0.8, 5, 1, 80])[0]
         if power_up:
             self.power_up = power_up(self.game, self, self.rect.centerx, self.rect.centery)
 
@@ -378,7 +378,7 @@ class ExplodingTile(Tile):
         self.start = self.y
         self.velocity = [0, 0]  # Initial velocity
         self.gravity = 0.2
-        self.frame = game.frame
+        self.frame = 0
         self.collision = False
     
     def update(self):
@@ -386,21 +386,23 @@ class ExplodingTile(Tile):
         self.player_collision_check()
         self.explode_check()
 
+
     def explode_check(self):
+        
         if self.collision:
-            if self.game.frame < 10:
+            if self.frame < 10/2:
                 self.image = self.EXPLODING_TILE_IMAGE
-            elif self.game.frame  < 20:
+            elif self.frame  < 20/2:
                 self.image = self.EXPLODING_TILE_IMAGE_1
-            elif self.game.frame  < 30:
+            elif self.frame  < 30/2:
                 self.image = self.EXPLODING_TILE_IMAGE_2
-            elif self.game.frame  < 40:
+            elif self.frame  < 40/2:
                 self.image = self.EXPLODING_TILE_IMAGE_3
-            elif self.game.frame  < 50:
+            elif self.frame  < 50/2:
                 self.image = self.EXPLODING_TILE_IMAGE_4
-            elif self.game.frame < 60:
+            elif self.frame < 60/2:
                 self.image = self.EXPLODING_TILE_IMAGE_5
-            elif self.game.frame < 70:
+            elif self.frame < 70/2:
                 self.image = self.EXPLODING_TILE_IMAGE_6
             else:
                 self.image = self.EXPLODING_TILE_IMAGE_7
@@ -419,5 +421,7 @@ class ExplodingTile(Tile):
                 and not self.player.is_flying()):
                 self.player.jump()
                 sounds.tile_break.play()
+        else:
+            self.frame += 1
                 
                 

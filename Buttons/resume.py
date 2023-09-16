@@ -38,6 +38,7 @@ class ResumeButton(PauseButton):
                 self.clicked = False
                 self.game.pause_button.hide = False
                 sounds.button.play()
+                pygame.mixer.set_volume(1)
 
     def draw(self, screen):
         if not self.hide and not self.game.end_game:

@@ -42,6 +42,8 @@ class PlayButton:
                 self.game.main_menu = False
                 self.game.play_game = True
                 self.game.BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
+                self.game.UFOs.sprites()[0].remove()
+                
                 self.game.initialise_game_weights()
                 self.game.initialise_game_objects()
 

@@ -102,29 +102,11 @@ class Game:
   
         self.tile_objects = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
         self.enemy_objects = [Monster, Blackhole, UFO]
+        
        
 
         self.initialise_main_menu_objects()
-        
-     # getter method
-    
-    @property
-    def all_enemies(self):
-        return [enemy for group in self._all_enemies for enemy in group.sprites()]
-    
-    @all_enemies.setter
-    def all_enemies(self, value):
-        self._all_enemies = value
-    
-    @property
-    def all_platforms(self):
-        return [platform for group in self._all_platforms for platform in group.sprites()]
-    
 
-    @all_platforms.setter
-    def all_platforms(self, value):
-        self._all_platforms = value
-            
     """Initialise/Reinitialise Functions"""
     def initialise_main_menu_objects(self):
         self.player = MenuPlayer(self, 110, 750)
@@ -158,7 +140,6 @@ class Game:
     """Generator Functions """
     def generate_random_tile(self):
         if Tile.total <= self.max_tile_number:
-            #print(self.tile_weights)
             tile = random.choices(population=self.tile_objects, weights=self.tile_weights)[0]
             self.generate_n_tiles(top=True, tile_type=tile)
 
@@ -425,3 +406,22 @@ class Game:
             self.clock.tick(60)
         pygame.quit()
         sys.exit()
+
+
+
+    @property
+    def all_enemies(self):
+        return [enemy for group in self._all_enemies for enemy in group.sprites()]
+    
+    @all_enemies.setter
+    def all_enemies(self, value):
+        self._all_enemies = value
+    
+    @property
+    def all_platforms(self):
+        return [platform for group in self._all_platforms for platform in group.sprites()]
+    
+
+    @all_platforms.setter
+    def all_platforms(self, value):
+        self._all_platforms = value

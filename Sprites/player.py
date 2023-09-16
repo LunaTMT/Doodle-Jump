@@ -241,13 +241,12 @@ class Player(pygame.sprite.Sprite):
 
     def update_spawning_properties(self):
         self.game.enemy_weight = self.score / 100000
-
+        
         if 5000 < self.score <= 10000:
             self.game.tile_weights[0] = 250
 
         if 10000 < self.score <= 20000:
             self.game.tile_weights[0] = 100
-            self.game.max_tile_number = 20
             self.game.max_enemy_number = 1
 
         elif 20000 < self.score <= 30000:
@@ -257,8 +256,9 @@ class Player(pygame.sprite.Sprite):
         elif self.score > 30000:
             self.game.tile_weights[0] = 25
             self.game.max_enemy_number = 3
-           
-        
+        elif self.score > 50000: 
+            self.game.tile_weights = [5, 5, 5, 0.1, 5, 1, 2] 
+            
 
 
     
@@ -305,6 +305,7 @@ class Player(pygame.sprite.Sprite):
             self.using_spring_shoes = False
     def update_rect(self):
         self.rect.topleft = (self.x, self.y)
+        
     def update_other_sprites_based_upon_player_jump_difference(self):
         if self.y < self.CENTER_Y - self.rect.height:
             self.moved = True
@@ -316,7 +317,7 @@ class Player(pygame.sprite.Sprite):
                 platform.rect.y -= difference
                 if platform.power_up:
                     platform.power_up.rect.y -= difference
-            
+
             for enemy in self.game.all_enemies:
                 enemy.rect.y -= difference
 

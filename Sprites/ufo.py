@@ -46,7 +46,7 @@ class UFO(pygame.sprite.Sprite):
         self.sound = sounds.ufo
         self.sound.set_volume(2)
         self.sound.play(-1)
-        self.ID += 1
+        UFO.ID += 1
         
         
     @classmethod
@@ -71,8 +71,8 @@ class UFO(pygame.sprite.Sprite):
 
     def death_check(self):
         if self.rect.y > self.SCREEN_HEIGHT:
-            self.kill()
-            del self
+            self.remove()
+            
     
     def player_collision_check(self):
     
@@ -112,7 +112,7 @@ class UFO(pygame.sprite.Sprite):
             self.remove()
 
     def remove(self):
-        sounds.tile_disappear.play()
+        if UFO.ID != 1: sounds.tile_disappear.play() 
         self.sound.stop()
         self.kill()   
         del self
@@ -133,7 +133,5 @@ class UFO(pygame.sprite.Sprite):
             # Update the sprite's x-coordinate based on the figure 8 motion
             self.angle += 0.09 # Adjust this value to control the speed of the motion
 
-            self.x += int(5 * sin(self.angle))
-            self.y += int(2.5 * sin(2*self.angle))
-
-            self.rect.center = (self.x, self.y)
+            self.rect.x += int(5 * sin(self.angle))
+            self.rect.y += int(2.5 * sin(2*self.angle))
