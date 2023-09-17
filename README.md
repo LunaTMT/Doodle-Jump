@@ -102,8 +102,6 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/46bdcf2e-a06a-40f4-8a62-e
 
 </div>
 
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/1f85eff4-4467-4937-95b3-2779927de996
-
 ### Buttons
 
 #### Pause/Resume
