@@ -33,6 +33,8 @@ Please note that all following sprites have different textures depending on the 
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/cfca33bf-e8ba-485b-97bb-2030552846ce
 
+
+
 ### Main Menu
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/c98b835b-062d-456c-bf5f-becffc27a764
@@ -58,11 +60,8 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5dceb57c-7ab7-4ec7-a4ab-6
 #### Exploding
 
 
+
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/8fc7fe6d-ce5e-4110-938c-47679d8ddbcf
-
-
-
-
 
 #### Moveable
 
@@ -96,11 +95,9 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/027b5ef1-8458-409a-a378-5
 
 #### UFO
 
-<div align="center">
+<figure><img src=".gitbook/assets/ufo.png" alt=""><figcaption></figcaption></figure>
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/46bdcf2e-a06a-40f4-8a62-e87d0bb77a95
-
-</div>
 
 ### Buttons
 
@@ -124,13 +121,6 @@ This project took a total of 3 weeks to develop. The base game itself really onl
 
 In general, I am relatively happy with this project and its outcome. I am however, annoyed I could not solve one issue.
 
-The main large issue that could not be solved was player and tile interaction. The issue seems very simply but it turned out not to be so. In order for me to solve it, I would've had to have changed a large majority of the player codebase and I was not willing to do this. I felt a great itch to finish this project and move onto the next. The problem is such that the player rectangle (when falling) will always collide with the tile no matter where the rectangle overlap.&#x20;
+The main large issue that could not be solved was player and tile interaction. The issue seems very simply but it turned out not to be so. In order for me to solve it, I would've had to have changed a large majority of the player codebase and I was not willing to do this. I felt a great itch to finish this project and move onto the next. The problem is such that the player rectangle (when falling) will always collide with the tile no matter where the rectangle overlap.
 
 One would expect that when the feet of the sprite lands on a tile this would cause the player to jump. In my case, however, anytime the player rectangle touches a tile and the player is falling, the player will jump.
-
-
-
-
-
-
-
