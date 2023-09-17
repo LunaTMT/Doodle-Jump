@@ -1,5 +1,5 @@
-import pygame
 import Assets.sounds as sounds
+import pygame
 
 class PlayAgain:
     SPRITE_SHEET = pygame.image.load("Assets/Images/start-end-tiles.png")

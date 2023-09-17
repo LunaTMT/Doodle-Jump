@@ -1,6 +1,7 @@
-import pygame
-from Buttons.pause import PauseButton
 import Assets.sounds as sounds
+import pygame
+
+from Buttons.pause import PauseButton
 
 class ResumeButton(PauseButton):
     

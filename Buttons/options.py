@@ -1,6 +1,6 @@
-import pygame
 import Assets.sounds as sounds
 import Assets.colours as colours
+import pygame
 import texture
 
 from Sprites.tile import Tile

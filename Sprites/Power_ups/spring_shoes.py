@@ -1,5 +1,4 @@
 import pygame
-import Assets.sounds as sounds
 
 class SpringShoes(pygame.sprite.Sprite):
     id = 0 

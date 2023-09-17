@@ -1,6 +1,5 @@
-
-import pygame
 import Assets.sounds as sounds
+import pygame
 import texture
 
 class Trampoline(pygame.sprite.Sprite):
@@ -29,6 +28,9 @@ class Trampoline(pygame.sprite.Sprite):
 
     @classmethod
     def update_images(cls):
+        """
+        This function updates the class images when a different texture pack has been chosen
+        """
         cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
         cls.TRAMPOLINE_1 = cls.SPRITE_SHEET.subsurface(pygame.Rect(188, 98, 36, 14)) 
         cls.TRAMPOLINE_2 = cls.SPRITE_SHEET.subsurface(pygame.Rect(474, 53, 36, 14))

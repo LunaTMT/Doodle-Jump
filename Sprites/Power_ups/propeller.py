@@ -1,5 +1,5 @@
-import pygame
 import Assets.sounds as sounds
+import pygame
 import texture
 
 class Propeller(pygame.sprite.Sprite):

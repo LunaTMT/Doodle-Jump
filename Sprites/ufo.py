@@ -31,7 +31,7 @@ class UFO(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         if x == None:
-            self.x = self.rect.x = random.randint(self.rect.width, self.SCREEN_WIDTH - self.rect.width)
+            self.x = self.rect.x = random.randint(self.rect.width + 80, self.SCREEN_WIDTH - self.rect.width - 80)
         else:
             self.rect.x = x
 
@@ -63,11 +63,7 @@ class UFO(pygame.sprite.Sprite):
         self.player_collision_check()
         self.death_check()
         self.killed_check()
-        self.fade_check()
 
-    def fade_check(self):
-        if self.game.end_game and self.player.dead_by_suction:
-            self.alpha = self.game.fade_out_alpha
 
     def death_check(self):
         if self.rect.y > self.SCREEN_HEIGHT:
@@ -81,7 +77,39 @@ class UFO(pygame.sprite.Sprite):
             and not self.player.is_flying()
             and not self.player.dead):
             
-            if self.player.falling:
+            if self.player.using_shield:
+                
+                self.player.jump(play_sound=False)
+                self.blocked = True
+                self.collision = False
+            
+                if self.player.falling:
+                    self.remove()
+                else:
+                    self.player.using_shield = False
+                    sounds.block.play()
+            
+            elif not self.blocked:
+                self.collision = True
+
+                if self.player.falling:
+                    self.player.jump(play_sound=False)                    
+                    self.remove()
+
+                else:
+                    self.player.using_spring_shoes = False #When sucked into black whole they stick out of edge without being removed
+                    self.player.suction_object_collided_with = self
+                    self.player.suction_object_collision = True
+                    self.player.dead_by_suction = True
+                    self.player.paused = True
+                    self.player.dead = True
+                    self.collision = True
+                    self.game.end_game = True
+                    self.image = self.COLLISION_IMAGE
+                    sounds.ufo_suck.play()
+
+
+            """if self.player.falling:
                 self.player.jump(play_sound=False)                    
                 self.remove()
 
@@ -102,7 +130,7 @@ class UFO(pygame.sprite.Sprite):
                 self.collision = True
                 self.game.end_game = True
                 self.image = self.COLLISION_IMAGE
-                sounds.ufo_suck.play()
+                sounds.ufo_suck.play()"""
 
         else: 
             self.blocked = False
