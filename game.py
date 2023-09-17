@@ -173,7 +173,7 @@ class Game:
         This function will attempt to generate an enemy based on the probability weight insofar as 
         the total number of enemies is less than the maximum boundary set (max_enemy_number)"""
         if len(self.all_enemies) < self.max_enemy_number and not self.player.paused:
-            enemy = random.choices(population=self.enemy_objects + [None], weights=[self.enemy_weight, self.enemy_weight, 20, 100])[0]
+            enemy = random.choices(population=self.enemy_objects + [None], weights=[self.enemy_weight, self.enemy_weight, self.enemy_weight, 100])[0]
             if enemy is None:
                 pass
             elif enemy is Monster:
