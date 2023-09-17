@@ -86,7 +86,6 @@ class Game:
         pygame.init()
 
         #Sprite Groups
-        self.movable_platforms = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
@@ -95,7 +94,7 @@ class Game:
         
         #Sprite groups in joined list form
         self.all_enemies = [self.monsters, self.blackholes, self.UFOs]
-        self.all_platforms = [self.movable_platforms, self.platforms]
+        self.platforms
 
         #List of objects that are used in generation/spawning
         self.tile_objects = [Tile, MovingTile, ShiftingTile, MoveableTile, DisappearingTile, BrokenTile, ExplodingTile]
@@ -112,7 +111,6 @@ class Game:
         self.score_font = pygame.font.Font(None, 50)
 
         self.frame = 0
-        
     
         self.initialise_main_menu_objects()
 
@@ -183,7 +181,6 @@ class Game:
             elif enemy is UFO:
                 self.UFOs.add(enemy(self))
             
-
     def generate_n_tiles(self, n=1, top=False, tile_type=Tile):
         """
         This rather beefy function ensures that the spawning of n tiles:
@@ -255,7 +252,7 @@ class Game:
                 new_platform = pygame.Rect(x, y, 60, 20)
                 center1 = new_platform.center
 
-                for sprite in (self.all_platforms + self.all_enemies):
+                for sprite in (self.platforms.sprites() + self.all_enemies):
                     center2 = sprite.rect.center
                     distance = sqrt((center1[0] - center2[0]) ** 2 + (center1[1] - center2[1]) ** 2)
 
@@ -268,7 +265,6 @@ class Game:
 
 
     def clear_all_sprites(self):
-        self.movable_platforms.empty()
         self.platforms.empty()
         self.bullets.empty()
         self.monsters.empty()
@@ -307,9 +303,8 @@ class Game:
         self.play_again_button.draw(self.screen)
         self.main_menu_button.draw(self.screen)
 
-
-    
-    """Main game loop functions
+    """
+    Main game loop functions
     
     For each of the three functions there are 3 games states that comprise the entire game:
     - main_menu
@@ -347,8 +342,8 @@ class Game:
                 self.resume_button.handle_events(event)
                 self.player.handle_events(event)
                 
-                for platform in self.movable_platforms:
-                        platform.handle_events(event)
+                for platform in self.platforms:
+                    platform.handle_events(event)
             
             elif self.end_game:
                 self.play_again_button.handle_events(event)
@@ -371,7 +366,6 @@ class Game:
             self.generate_random_enemy()
 
             self.bullets.update()
-            self.movable_platforms.update()
             self.platforms.update()
             self.player.update()
             self.monsters.update()
@@ -394,7 +388,7 @@ class Game:
             
             self.player.draw(self.screen)
             self.UFOs.draw(self.screen)
-            for platform in self.all_platforms:
+            for platform in self.platforms:
                 platform.draw(self.screen)
 
         
@@ -406,7 +400,7 @@ class Game:
             self.bullets.draw(self.screen)
             self.player.draw(self.screen)
             
-            for platform in self.all_platforms:
+            for platform in self.platforms:
                 platform.draw(self.screen)
 
             for enemy in self.all_enemies:
@@ -480,11 +474,3 @@ class Game:
     def all_enemies(self, value):
         self._all_enemies = value
     
-    @property
-    def all_platforms(self):
-        return [platform for group in self._all_platforms for platform in group.sprites()]
-    
-
-    @all_platforms.setter
-    def all_platforms(self, value):
-        self._all_platforms = value

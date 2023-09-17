@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.SCREEN_WIDTH   = game.SCREEN_WIDTH
         self.GRAVITY        = game.GRAVITY
         self.JUMP_STRENGTH  = game.JUMP_STRENGTH
-        self.all_platforms  = game.all_platforms
+        self.platforms      = game.platforms
         self.enemies        = game.all_enemies
 
         self.default_x = self.x = x
@@ -253,7 +253,7 @@ class Player(pygame.sprite.Sprite):
                 difference = abs(self.y) - 900 
                 self.y = -900
                 
-                for platform in self.game.all_platforms:
+                for platform in self.platforms:
                     platform.rect.y += difference
                     if platform.power_up:
                         platform.power_up.rect.y += difference
@@ -304,7 +304,7 @@ class Player(pygame.sprite.Sprite):
             difference = int((self.y - self.CENTER_Y) - self.previous_y_difference)
             self.previous_y_difference = int(self.y - self.CENTER_Y) 
             
-            for platform in self.game.all_platforms:
+            for platform in self.platforms:
                 platform.rect.y -= difference
                 if platform.power_up:
                     platform.power_up.rect.y -= difference
