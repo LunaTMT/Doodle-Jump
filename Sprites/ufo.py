@@ -84,7 +84,7 @@ class UFO(pygame.sprite.Sprite):
                 self.collision = False
             
                 if self.player.falling:
-                    self.remove()
+                    self.remove(play_sound=True)
                 else:
                     self.player.using_shield = False
                     sounds.block.play()
@@ -92,9 +92,9 @@ class UFO(pygame.sprite.Sprite):
             elif not self.blocked:
                 self.collision = True
 
-                if self.player.falling:
+                if self.player.falling: # and self.player.rect.bottom > self.rect.top:
                     self.player.jump(play_sound=False)                    
-                    self.remove()
+                    self.remove(play_sound=True)
 
                 else:
                     self.player.using_spring_shoes = False #When sucked into black whole they stick out of edge without being removed
@@ -112,10 +112,10 @@ class UFO(pygame.sprite.Sprite):
 
     def killed_check(self):
         if pygame.sprite.spritecollide(self, self.game.bullets, True):
-            self.remove()
+            self.remove(play_sound=True)
 
-    def remove(self):
-        if UFO.ID != 1: sounds.tile_disappear.play() 
+    def remove(self, play_sound=False):
+        if play_sound: sounds.tile_disappear.play() 
         self.sound.stop()
         self.kill()   
         del self
