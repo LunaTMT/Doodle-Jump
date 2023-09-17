@@ -57,7 +57,11 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5dceb57c-7ab7-4ec7-a4ab-6
 
 #### Exploding
 
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/52a05005-d4fa-4f2d-befe-9775ce09c6e2
+
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/8fc7fe6d-ce5e-4110-938c-47679d8ddbcf
+
+
+
 
 
 #### Moveable
