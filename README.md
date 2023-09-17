@@ -33,7 +33,10 @@ Please note that all following sprites have different textures depending on the 
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/cfca33bf-e8ba-485b-97bb-2030552846ce
 
-### Menu
+### Main Menu
+
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/c98b835b-062d-456c-bf5f-becffc27a764
+
 
 #### Play
 
@@ -97,7 +100,7 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/027b5ef1-8458-409a-a378-5
 
 <div align="center">
 
-<img src="https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5d8c024f-c73d-4cf9-9f68-ca5e2c5c26ef" alt="UFO">
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/46bdcf2e-a06a-40f4-8a62-e87d0bb77a95
 
 </div>
 
