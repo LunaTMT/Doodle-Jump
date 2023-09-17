@@ -224,18 +224,18 @@ class Player(pygame.sprite.Sprite):
         if self.game.frame == 0:
             self.game.enemy_weight = self.score / 100000
             
-            if 5000 < self.score <= 10000:
+            if 2500 < self.score <= 5000:
                 self.game.tile_weights[0] = 250
 
-            if 10000 < self.score <= 20000:
+            if 5000 < self.score <= 1000:
                 self.game.tile_weights[0] = 100
                 self.game.max_enemy_number = 1
 
-            elif 20000 < self.score <= 30000:
+            elif 10000 < self.score <= 25000:
                 self.game.tile_weights[0] = 50
                 self.game.max_enemy_number = 2
 
-            elif self.score > 30000:
+            elif self.score > 25000:
                 self.game.tile_weights[0] = 25
                 self.game.max_enemy_number = 3
             elif self.score > 50000: 

@@ -117,7 +117,7 @@ class Monster(pygame.sprite.Sprite):
         This function checks to see if the player has collided with the monster
         
         so long as the player has not already collided with the monster, meaning we only run this piece of code once upon collision 
-        and the player is not using a flying powewr up
+        and the player is not using a flying power up
         and the player is not dead 
         the collision will occur
         """

@@ -2,7 +2,6 @@ import pygame
 import sys
 import random
 import Assets.colours as colours
-import Assets.sounds as sounds
 from random import choice, randint
 from math import sqrt
 
@@ -473,4 +472,7 @@ class Game:
     @all_enemies.setter
     def all_enemies(self, value):
         self._all_enemies = value
+
+
+    
     
