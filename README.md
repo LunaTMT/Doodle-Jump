@@ -95,7 +95,11 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/027b5ef1-8458-409a-a378-5
 
 #### UFO
 
+<div align="center">
+
 <figure><img src=".gitbook/assets/ufo.png" alt=""><figcaption></figcaption></figure>
+
+</div>
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/46bdcf2e-a06a-40f4-8a62-e87d0bb77a95
 
