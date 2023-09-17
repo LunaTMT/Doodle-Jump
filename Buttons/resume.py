@@ -21,7 +21,7 @@ class ResumeButton(PauseButton):
                     
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
                 """
-                When resume the game we want to set all velocities for all sprites back to what they used to be
+                When resuming the game we want to set all velocities for all sprites back to what they used to be
                 """
                 self.game.player.velocity_y = self.player.prior_y_velocity
                 self.game.player.paused = False
@@ -43,9 +43,8 @@ class ResumeButton(PauseButton):
                 sounds.button.play()
                 
 
-
     def draw(self, screen):
-        if not self.hide and not self.game.end_game:
+        if not self.hide:
             screen.blit(self.image, (self.rect.x, self.rect.y))
             screen.blit(self.pause_screen, (0, 0))
             

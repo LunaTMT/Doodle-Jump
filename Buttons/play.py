@@ -4,10 +4,10 @@ import texture
 
 class PlayButton:
     def __init__(self, game):
-        self.game = game
-        self.player = game.player
-        self.CENTER_X = game.CENTER_X
-        self.CENTER_Y = game.CENTER_Y
+        self.game       = game
+        self.player     = game.player
+        self.CENTER_X   = game.CENTER_X
+        self.CENTER_Y   = game.CENTER_Y
 
         self.image = pygame.image.load("Assets/Images/Buttons/play.png")
         self.hover_image = pygame.image.load("Assets/Images/Buttons/play_hover.png")
@@ -37,6 +37,7 @@ class PlayButton:
 
                 #Background changed
                 self.game.BACKGROUND_IMAGE = pygame.image.load(f"Assets/Images/Backgrounds/Backgrounds/{texture.file_name}.png")
+                
                 #Remove the main menu UFO    
                 self.game.UFOs.sprites()[0].remove()
             

@@ -3,9 +3,9 @@ import Assets.sounds as sounds
 
 class PauseButton:
     def __init__(self, game):
-        self.game = game
-        self.player = game.player
-        self.monsters = game.monsters.sprites()
+        self.game       = game
+        self.player     = game.player
+        self.monsters   = game.monsters.sprites()
 
         self.image = pygame.image.load("Assets/Images/Buttons/pause.png")
         self.rect = self.image.get_rect()
@@ -17,6 +17,10 @@ class PauseButton:
 
     def handle_events(self, event):
         if not self.hide and not self.game.end_game:
+            """
+            Upon clicking the pause button we store prior velocities for certain sprites and set their velcoity to 0 or pause them
+            """
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
                 mouse_pos = pygame.mouse.get_pos()
                 if self.rect.collidepoint(mouse_pos):
@@ -37,10 +41,10 @@ class PauseButton:
                     self.clicked = True
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
+                #When the user releases the left click we hide the button and show the resume button
+                self.game.resume_button.hide = False 
                 self.hide = True
                 self.clicked = False
-
-                self.game.resume_button.hide = False #When clicking pause we want to show the resume button option
                 sounds.button.play()
 
     def draw(self, screen):

@@ -11,15 +11,16 @@ class OptionButton:
     TITLE = pygame.image.load("Assets/Images/Backgrounds/options_title.png")
 
     def __init__(self, game):
-        self.game = game
-        self.player = game.player
-        self.CENTER_X = game.CENTER_X
-        self.CENTER_Y = game.CENTER_Y
-        self.SCREEN_WIDTH = game.SCREEN_WIDTH
-        self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
+        self.game           = game
+        self.player         = game.player
+        self.CENTER_X       = game.CENTER_X
+        self.CENTER_Y       = game.CENTER_Y
+        self.SCREEN_WIDTH   = game.SCREEN_WIDTH
+        self.SCREEN_HEIGHT  = game.SCREEN_HEIGHT
 
         self.image = pygame.image.load("Assets/Images/Buttons/options.png")
         self.hover_image = pygame.image.load("Assets/Images/Buttons/options_hover.png")
+        
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = 300
@@ -47,24 +48,26 @@ class OptionButton:
         mouse_pos = pygame.mouse.get_pos()
 
         if not self.hide:
+            #Upon clicking the button change button state to clicked
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
                 if self.rect.collidepoint(mouse_pos):
                     self.clicked = True
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked:
-                #when clicking on options button we want to change to options menu
+                #when clicking on options button we want to change to options menu and hide options button
                 self.game.BACKGROUND_IMAGE = self.game.OPTIONS_IMAGE
                 self.game.options_menu = True
+                self.game.play_button.hide = True 
+
                 self.clicked = False
                 self.hide = True
-                self.game.play_button.hide = True 
-        
         else:
             #when in options menu, handle all checkboxes to get texture choice
             for checkbox in Checkbox.checkboxes:
                 checkbox.handle_events(event)
                 
     def update(self):
+        """Hover detection"""
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
             self.hovering = True
@@ -74,6 +77,7 @@ class OptionButton:
 
     def draw(self, screen):
         if not self.hide:
+            #default options button
             if self.hovering:
                 screen.blit(self.hover_image, (self.rect.x, self.rect.y))
             else:
@@ -166,13 +170,16 @@ class Checkbox:
                         enemy.update_images()
 
                     #Update current menu and player sprite images
-                    self.game.all_platforms[0].update_current_image()
+                    self.game.platforms.sprites()[0].update_current_image()
                     self.game.all_enemies[0].update_current_image()
                     self.game.player.update_image()     
 
                     sounds.button.play()
 
     def untick_others(self):
+        """
+        In this function we toggle every other checkbox that is not the current one in question (self)
+        """
         for checkbox in self.checkboxes:
             if checkbox.checked and checkbox is not self:
                 checkbox.toggle()
