@@ -33,8 +33,6 @@ Please note that all following sprites have different textures depending on the 
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/cfca33bf-e8ba-485b-97bb-2030552846ce
 
-
-
 ### Main Menu
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/c98b835b-062d-456c-bf5f-becffc27a764
@@ -58,8 +56,6 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/d730202a-3d51-4581-859f-7
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5dceb57c-7ab7-4ec7-a4ab-6e9261e0b3c6
 
 #### Exploding
-
-
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/8fc7fe6d-ce5e-4110-938c-47679d8ddbcf
 
@@ -114,9 +110,8 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/e1b3a5f6-b757-45bf-b9de-0
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/3562393d-1056-4726-a63d-ca6d4b53bb1c
 
 #### Menu
+
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a1fff1e1-e69a-40c9-b641-2d5952f897dc
-
-
 
 ### Overview
 
@@ -127,3 +122,8 @@ In general, I am relatively happy with this project and its outcome. I am howeve
 The main large issue that could not be solved was player and tile interaction. The issue seems very simply but it turned out not to be so. In order for me to solve it, I would've had to have changed a large majority of the player codebase and I was not willing to do this. I felt a great itch to finish this project and move onto the next. The problem is such that the player rectangle (when falling) will always collide with the tile no matter where the rectangle overlap.
 
 One would expect that when the feet of the sprite lands on a tile this would cause the player to jump. In my case, however, anytime the player rectangle touches a tile and the player is falling, the player will jump.
+
+### Future Project
+
+* Tetris
+* Bubbleshooter
