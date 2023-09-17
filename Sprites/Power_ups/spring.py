@@ -11,22 +11,19 @@ class Spring(pygame.sprite.Sprite):
     #x = random.randint(self.rect.topleft, self.rect.topright)
     #y = self.rect.top 
 
-    def __init__(self, game, tile, x, y):
+    def __init__(self, game, x, y, _):
         super().__init__()
-        self.game = game
-        self.SCREEN_HEIGHT = game.SCREEN_HEIGHT
-        self.SCREEN_WIDTH = game.SCREEN_WIDTH
+        self.game           = game
+        self.SCREEN_HEIGHT  = game.SCREEN_HEIGHT
+        self.SCREEN_WIDTH   = game.SCREEN_WIDTH
+        self.CENTER_X       = game.CENTER_X
+        self.player         = game.player
         
-        self.CENTER_X = game.CENTER_X
-        self.player = game.player
-        
-
-        self.alpha = 255
         self.x = x
         self.y = y - 10
+
         self.image = self.SPRING 
         self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (self.x, self.y)
         
         self.expanded = False
@@ -34,6 +31,9 @@ class Spring(pygame.sprite.Sprite):
 
     @classmethod
     def update_images(cls):
+        """
+        This function updates the class images when a different texture pack has been chosen
+        """
         cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Game_tiles/{texture.file_name}.png")
         cls.SPRING = cls.SPRITE_SHEET.subsurface(pygame.Rect(404, 99, 17, 12))  # Extract a 32x32 sprite
         cls.SPRING_EXPANDED = cls.SPRITE_SHEET.subsurface(pygame.Rect(404, 115, 17, 28))
@@ -43,26 +43,31 @@ class Spring(pygame.sprite.Sprite):
         self.player_collision_check()
 
     def player_collision_check(self):
-        collision = self.rect.colliderect(self.game.player.rect)
+        """ 
+        This function checks to see if the player has collided with the spring powerup placed on the tile.
+
+        So long as the player is falling, not dead and the spring hasn't already been used before the collision takes place.
+        """
+        collision = self.rect.colliderect(self.player.rect)
         if (collision 
             and self.player.falling  
             and not self.player.dead
             and not self.expanded):
-
            
-            self.player.using_spring = True
+            previous_jump_strength = self.player.JUMP_STRENGTH
             self.player.JUMP_STRENGTH = -23
             self.player.jump(play_sound=False)
+            self.player.JUMP_STRENGTH = previous_jump_strength
             
-            if not self.player.using_spring_shoes:
-                self.player.JUMP_STRENGTH = -15
-    
             sounds.spring.play()
+            self.player.using_spring = True
             self.collision = True
 
 
-
     def death_check(self):
+        """
+        This function checks to see if the power up on the tile has gone past the bottom of the screen
+        """
         if self.rect.y > self.SCREEN_HEIGHT:
             self.kill()
 
@@ -72,5 +77,5 @@ class Spring(pygame.sprite.Sprite):
             self.rect.y -= 20
             self.expanded = True
 
-        self.image.set_alpha(self.game.fade_out_alpha)    
+        self.image.set_alpha(self.game.fade_out_alpha)   
         screen.blit(self.image, self.rect)

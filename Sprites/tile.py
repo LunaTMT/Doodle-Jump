@@ -105,10 +105,10 @@ class Tile(pygame.sprite.Sprite):
         self.image = self.DEFAULT_IMAGE
 
 
-    def generate_power_up(self): 
+    def generate_power_up(self): #1
         power_up = random.choices(population =  self.POWER_UPS+[None], weights=[0.1, 2, 7, 0.8, 5, 1, 80])[0]
         if power_up:
-            self.power_up = power_up(self.game, self, self.rect.centerx, self.rect.centery)
+            self.power_up = power_up(self.game, self.rect.centerx, self.rect.centery, self)
 
     def update(self):
         self.death_check()
