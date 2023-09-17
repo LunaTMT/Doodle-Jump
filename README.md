@@ -37,15 +37,6 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/cfca33bf-e8ba-485b-97bb-2
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/c98b835b-062d-456c-bf5f-becffc27a764
 
-
-#### Play
-
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/69088888-584f-41d9-bfd9-4cab82fe4912
-
-#### Options
-
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/ba9288d0-e459-4a17-b563-5969ba5b9692
-
 ### Tiles
 
 #### Default
@@ -65,6 +56,9 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/d730202a-3d51-4581-859f-7
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5dceb57c-7ab7-4ec7-a4ab-6e9261e0b3c6
 
 #### Exploding
+
+https://github.com/LunaTMT/Doodle-Jump/assets/44672093/52a05005-d4fa-4f2d-befe-9775ce09c6e2
+
 
 #### Moveable
 
