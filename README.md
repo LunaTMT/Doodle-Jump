@@ -1,7 +1,5 @@
 # Doodle Jump
 
-### Please note that I am still currently in the process of optimisation/refactoring. Therefore, this is not the final product. Thanks, enjoy :P
-
 ## Installation & Setup
 
 To run this program please make sure you have [python](https://www.python.org/downloads/) installed on your system.
@@ -21,8 +19,6 @@ Download the ZIP folder from the GitHub repository.
 </div>
 
 As shown in the following video:
-
-
 
 * Extract the contents of the zip folder into to your desktop.
 * Open the extracted folder, open main.py and run the module.
@@ -46,8 +42,6 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/69088888-584f-41d9-bfd9-4
 #### Options
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/ba9288d0-e459-4a17-b563-5969ba5b9692
-
-
 
 ### Tiles
 
@@ -81,19 +75,31 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/0725b402-a33e-4363-b67a-8
 
 #### Monsters
 
-![enemies](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a3d2d224-35c8-4cb1-8e5a-374647f45f2c)
+<div align="center">
+
+<img src="https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a3d2d224-35c8-4cb1-8e5a-374647f45f2c" alt="enemies">
+
+</div>
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/795bf0a4-d6a1-41a8-8b26-b11cd094e1e6
 
 #### Blackhole
 
-![blackhole](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/f97a6fc6-edee-4eec-90a2-45ff49690d64)
+<div align="center">
+
+<img src="https://github.com/LunaTMT/Doodle-Jump/assets/44672093/f97a6fc6-edee-4eec-90a2-45ff49690d64" alt="blackhole">
+
+</div>
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/027b5ef1-8458-409a-a378-56c8d8777da9
 
 #### UFO
 
-![UFO](https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5d8c024f-c73d-4cf9-9f68-ca5e2c5c26ef)
+<div align="center">
+
+<img src="https://github.com/LunaTMT/Doodle-Jump/assets/44672093/5d8c024f-c73d-4cf9-9f68-ca5e2c5c26ef" alt="UFO">
+
+</div>
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/1f85eff4-4467-4937-95b3-2779927de996
 
@@ -111,4 +117,21 @@ https://github.com/LunaTMT/Doodle-Jump/assets/44672093/3562393d-1056-4726-a63d-c
 
 https://github.com/LunaTMT/Doodle-Jump/assets/44672093/a1fff1e1-e69a-40c9-b641-2d5952f897dc
 
-https://github.com/LunaTMT/Doodle-Jump/assets/44672093/af99696a-3343-4500-9602-3742b352ccb7
+{% embed url="https://github.com/LunaTMT/Doodle-Jump/assets/44672093/af99696a-3343-4500-9602-3742b352ccb7" %}
+
+### Overview
+
+This project took a total of 3 weeks to develop. The base game itself really only took about 2 weeks to develop. The rest of the time, however, was spent on optimisationm refactoring, comments and general code cleanliness. It really takes a long time to make a well polished and beautiful product.
+
+In general, I am relatively happy with this project and its outcome. I am however, annoyed I could not solve one issue.
+
+The main large issue that could not be solved was player and tile interaction. The issue seems very simply but it turned out not to be so. In order for me to solve it, I would've had to have changed a large majority of the player codebase and I was not willing to do this. I felt a great itch to finish this project and move onto the next. The problem is such that the player rectangle (when falling) will always collide with the tile no matter where the rectangle overlap.&#x20;
+
+One would expect that when the feet of the sprite lands on a tile this would cause the player to jump. In my case, however, anytime the player rectangle touches a tile and the player is falling, the player will jump.
+
+
+
+
+
+
+
