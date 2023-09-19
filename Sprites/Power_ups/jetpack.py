@@ -47,24 +47,25 @@ class Jetpack(pygame.sprite.Sprite):
         """
         This function updates the class images when a different texture pack has been chosen
         """
-        SPRITE_SHEET = pygame.image.load(f"Assets/Images/Animations/Jetpack/{texture.file_name}.png")
+        print("Updated")
+        cls.SPRITE_SHEET = pygame.image.load(f"Assets/Images/Animations/Jetpack/{texture.file_name}.png")
         
-        ROCKET_1 = SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 32, 62))  
-        ROCKET_2 = SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 62))  
-        ROCKET_3 = SPRITE_SHEET.subsurface(pygame.Rect(64, 0, 32, 62))  
-        ROCKET_4 = SPRITE_SHEET.subsurface(pygame.Rect(96, 0, 32, 62))  
+        cls.ROCKET_1 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 0, 32, 62))  
+        cls.ROCKET_2 = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 0, 32, 62))  
+        cls.ROCKET_3 = cls.SPRITE_SHEET.subsurface(pygame.Rect(64, 0, 32, 62))  
+        cls.ROCKET_4 = cls.SPRITE_SHEET.subsurface(pygame.Rect(96, 0, 32, 62))  
         
-        ROCKET_5 = SPRITE_SHEET.subsurface(pygame.Rect(0, 64, 32, 62))  
-        ROCKET_6 = SPRITE_SHEET.subsurface(pygame.Rect(32, 64, 32, 62)) 
-        ROCKET_7 = SPRITE_SHEET.subsurface(pygame.Rect(64, 64, 32, 62))  
-        ROCKET_8 = SPRITE_SHEET.subsurface(pygame.Rect(96, 64, 32, 62)) 
+        cls.ROCKET_5 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 64, 32, 62))  
+        cls.ROCKET_6 = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 64, 32, 62)) 
+        cls.ROCKET_7 = cls.SPRITE_SHEET.subsurface(pygame.Rect(64, 64, 32, 62))  
+        cls.ROCKET_8 = cls.SPRITE_SHEET.subsurface(pygame.Rect(96, 64, 32, 62)) 
         
-        ROCKET_9 = SPRITE_SHEET.subsurface(pygame.Rect(0, 128, 32, 62))  
-        DEFAULT_ROCKET = SPRITE_SHEET.subsurface(pygame.Rect(32, 128, 32, 62))  
+        cls.ROCKET_9 = cls.SPRITE_SHEET.subsurface(pygame.Rect(0, 128, 32, 62))  
+        cls.DEFAULT_ROCKET = cls.SPRITE_SHEET.subsurface(pygame.Rect(32, 128, 32, 62))  
 
-        START_ANIMATION = [ROCKET_1, ROCKET_2, ROCKET_3]    #  0  -  16 frames
-        MAIN_BLAST = [ROCKET_4, ROCKET_5, ROCKET_6]         # 16  - 147 frames
-        END_ANIMAITON = [ROCKET_7, ROCKET_8, ROCKET_9]      # 147 - 163 frames
+        cls.START_ANIMATION = [cls.ROCKET_1, cls.ROCKET_2, cls.ROCKET_3]    #  0  -  16 frames
+        cls.MAIN_BLAST = [cls.ROCKET_4, cls.ROCKET_5, cls.ROCKET_6]         # 16  - 147 frames
+        cls.END_ANIMAITON = [cls.ROCKET_7, cls.ROCKET_8, cls.ROCKET_9]      # 147 - 163 frames
 
     def update(self):
         self.death_check()
