@@ -125,5 +125,5 @@ One would expect that when the feet of the sprite lands on a tile this would cau
 
 ### Future Project
 
-* Tetris
+* ~~Tetris~~
 * Bubbleshooter
